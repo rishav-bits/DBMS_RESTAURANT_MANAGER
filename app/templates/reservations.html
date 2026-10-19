@@ -1,0 +1,228 @@
+{% extends "base.html" %}
+
+{% block title %}Table Reservations · Restaurant DBMS{% endblock %}
+
+{% block content %}
+<div class="card-glass p-4 mb-4">
+  <div class="d-flex flex-wrap align-items-center justify-content-between gap-3">
+    <div>
+      <h3 class="fw-bold text-dark mb-1">
+        <i class="bi bi-calendar2-check text-dark me-2"></i>Table Reservation System
+      </h3>
+      <p class="text-dark fw-semibold mb-0">
+        Enforced by function-based unique index & PL/SQL procedure <code>sp_make_reservation</code>. Cancelling a reservation via <code>sp_cancel_reservation</code> immediately frees the slot.
+      </p>
+    </div>
+    <div>
+      <button class="btn btn-primary btn-sm px-3" data-bs-toggle="modal" data-bs-target="#newReservationModal">
+        <i class="bi bi-plus-circle me-1"></i> Make Reservation
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Reservations List -->
+<div class="card-glass">
+  <div class="table-responsive">
+    <table class="table table-custom">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Customer</th>
+          <th>Restaurant</th>
+          <th>Table Number</th>
+          <th>Date & Slot</th>
+          <th>Guests</th>
+          <th>Status</th>
+          <th class="text-end">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for r in reservations %}
+        <tr>
+          <td class="fw-bold">#{{ r.reservation_id }}</td>
+          <td>
+            <div class="text-dark fw-bold">{{ r.customer_name }}</div>
+            <div class="text-dark small">{{ r.customer_phone or '—' }}</div>
+          </td>
+          <td class="text-dark small fw-semibold">{{ r.restaurant_name }}</td>
+          <td>
+            <span class="badge bg-warning text-dark">Table {{ r.table_number }}</span>
+            <span class="text-dark small fw-semibold">({{ r.table_capacity }} seats)</span>
+          </td>
+          <td>
+            <div class="fw-bold text-dark">{{ r.res_date }}</div>
+            <div class="small fw-bold text-dark"><i class="bi bi-clock me-1"></i>{{ r.time_slot }}</div>
+          </td>
+          <td>
+            <span class="badge bg-info text-dark">{{ r.number_of_guests }} guests</span>
+          </td>
+          <td>
+            <span class="badge-status status-{{ r.status|lower }}">{{ r.status }}</span>
+          </td>
+          <td class="text-end">
+            <!-- Edit Button -->
+            <button class="btn btn-sm btn-outline-info me-1"
+                    onclick="openEditReservationModal('{{ r.reservation_id }}', '{{ r.number_of_guests }}', '{{ r.time_slot }}', '{{ r.status }}')">
+              <i class="bi bi-pencil-square"></i> Edit
+            </button>
+            <!-- Cancel Button (Calls sp_cancel_reservation) -->
+            {% if r.status not in ['CANCELLED', 'COMPLETED'] %}
+            <form method="POST" action="{{ url_for('reservation_cancel', reservation_id=r.reservation_id) }}" class="d-inline"
+                  onsubmit="return confirm('Cancel reservation #{{ r.reservation_id }}? The table will be freed for rebooking.');">
+              <button type="submit" class="btn btn-sm btn-outline-warning me-1">
+                <i class="bi bi-x-circle"></i> Cancel
+              </button>
+            </form>
+            {% endif %}
+            <!-- Delete Button (Owner Only) -->
+            {% if current_user.is_owner %}
+            <form method="POST" action="{{ url_for('reservation_delete', reservation_id=r.reservation_id) }}" class="d-inline"
+                  onsubmit="return confirm('Permanently delete reservation #{{ r.reservation_id }}?');">
+              <button type="submit" class="btn btn-sm btn-outline-danger">
+                <i class="bi bi-trash"></i>
+              </button>
+            </form>
+            {% endif %}
+          </td>
+        </tr>
+        {% else %}
+        <tr>
+          <td colspan="8" class="text-center text-dark py-4 fw-bold">No reservations on record.</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Modal: New Reservation (with Live Table Availability Checker) -->
+<div class="modal fade" id="newReservationModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content modal-content-custom">
+      <div class="modal-header modal-header-custom">
+        <h5 class="modal-title text-dark">
+          <i class="bi bi-calendar-plus text-dark me-2"></i>Book a Table (Live Availability)
+        </h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <form method="POST" action="{{ url_for('reservation_create') }}">
+        <div class="modal-body p-4">
+          <div class="row g-3">
+            <!-- Customer Selection (Auto-filled if Customer role) -->
+            {% if current_user.is_customer %}
+              <input type="hidden" name="customer_id" value="{{ current_user.customer_id }}">
+              <div class="col-md-6">
+                <label class="form-label">Booking For *</label>
+                <input type="text" class="form-control" value="{{ current_user.name }} ({{ current_user.email }})" readonly disabled>
+              </div>
+            {% else %}
+              <div class="col-md-6">
+                <label class="form-label">Customer *</label>
+                <select name="customer_id" class="form-select" required>
+                  <option value="">-- Select Customer --</option>
+                  {% for c in customers %}
+                  <option value="{{ c.customer_id }}">{{ c.name }} ({{ c.email }})</option>
+                  {% endfor %}
+                </select>
+              </div>
+            {% endif %}
+            <div class="col-md-6">
+              <label class="form-label">Restaurant *</label>
+              <select name="restaurant_id" id="res_rest_id" class="form-select" onchange="checkAvailableTables()" required>
+                <option value="">-- Select Restaurant --</option>
+                {% for r in restaurants %}
+                <option value="{{ r.restaurant_id }}">{{ r.name }}</option>
+                {% endfor %}
+              </select>
+            </div>
+            <div class="col-md-4">
+              <label class="form-label">Reservation Date *</label>
+              <input type="date" name="reservation_date" id="res_date" class="form-control"
+                     value="2026-10-15" onchange="checkAvailableTables()" required>
+            </div>
+            <div class="col-md-4">
+              <label class="form-label">Time Slot *</label>
+              <select name="time_slot" id="res_slot" class="form-select" onchange="checkAvailableTables()" required>
+                <option value="12:00-14:00">12:00 - 14:00 (Lunch)</option>
+                <option value="14:00-16:00">14:00 - 16:00 (Afternoon)</option>
+                <option value="19:00-21:00" selected>19:00 - 21:00 (Dinner 1)</option>
+                <option value="21:00-23:00">21:00 - 23:00 (Dinner 2)</option>
+              </select>
+            </div>
+            <div class="col-md-4">
+              <label class="form-label">Number of Guests *</label>
+              <input type="number" name="number_of_guests" id="res_guests" class="form-control"
+                     value="2" min="1" max="12" onchange="checkAvailableTables()" required>
+            </div>
+
+            <!-- Dynamic Available Tables Dropdown -->
+            <div class="col-12 mt-4 p-3" style="background: #ffffff; border: 2.5px solid #000; box-shadow: 2px 2px 0 #000; border-radius: 8px;">
+              <label class="form-label text-dark fw-bold">
+                <i class="bi bi-grid-3x3 me-1"></i> Select Available Dining Table *
+              </label>
+              <select name="table_id" id="res_table_id" class="form-select form-select-lg" required>
+                <option value="">-- Choose restaurant, date and slot above --</option>
+              </select>
+              <div id="table_search_hint" class="small text-dark fw-semibold mt-1">
+                Tables will be queried in real time based on capacity and non-conflicting active reservations.
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer modal-footer-custom">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          <button type="submit" class="btn btn-primary">
+            <i class="bi bi-check-lg me-1"></i> Confirm & Book Table
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: Edit Reservation -->
+<div class="modal fade" id="editReservationModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content modal-content-custom">
+      <div class="modal-header modal-header-custom" style="background: var(--neo-cyan);">
+        <h5 class="modal-title text-dark">
+          <i class="bi bi-pencil-square text-dark me-2"></i>Update Reservation
+        </h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <form method="POST" action="{{ url_for('reservation_update') }}">
+        <input type="hidden" name="reservation_id" id="edit_res_id">
+        <div class="modal-body p-4">
+          <div class="mb-3">
+            <label class="form-label">Number of Guests *</label>
+            <input type="number" name="number_of_guests" id="edit_res_guests" class="form-control" min="1" required>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Time Slot *</label>
+            <select name="time_slot" id="edit_res_slot" class="form-select" required>
+              <option value="12:00-14:00">12:00 - 14:00</option>
+              <option value="14:00-16:00">14:00 - 16:00</option>
+              <option value="19:00-21:00">19:00 - 21:00</option>
+              <option value="21:00-23:00">21:00 - 23:00</option>
+            </select>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Status *</label>
+            <select name="status" id="edit_res_status" class="form-select" required>
+              <option value="BOOKED">BOOKED</option>
+              <option value="CONFIRMED">CONFIRMED</option>
+              <option value="COMPLETED">COMPLETED</option>
+              <option value="CANCELLED">CANCELLED</option>
+            </select>
+          </div>
+        </div>
+        <div class="modal-footer modal-footer-custom">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          <button type="submit" class="btn btn-info">Save Changes</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

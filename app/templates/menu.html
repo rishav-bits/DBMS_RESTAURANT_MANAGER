@@ -1,0 +1,312 @@
+{% extends "base.html" %}
+
+{% block title %}Menu Items & Price Management · Restaurant DBMS{% endblock %}
+
+{% block content %}
+<div class="card-glass p-4 mb-4">
+  <div class="d-flex flex-wrap align-items-center justify-content-between gap-3">
+    <div>
+      <h3 class="fw-bold text-dark mb-1">
+        <i class="bi bi-menu-button-wide text-dark me-2"></i>Menu Items & Price Management
+      </h3>
+      <p class="text-dark fw-semibold mb-0">
+        Prices are normalized into <code>PRICE_HISTORY</code>. Changing a price invokes PL/SQL procedure <code>sp_set_price</code> to preserve audit history.
+      </p>
+    </div>
+    <div class="d-flex gap-2">
+      <!-- Restaurant Filter -->
+      <form method="GET" action="{{ url_for('menu') }}" class="d-flex gap-2">
+        <select name="restaurant_id" class="form-select form-select-sm" onchange="this.form.submit()">
+          <option value="">All Restaurants</option>
+          {% for r in restaurants %}
+          <option value="{{ r.restaurant_id }}" {% if selected_rest == r.restaurant_id|string %}selected{% endif %}>
+            {{ r.name }}
+          </option>
+          {% endfor %}
+        </select>
+        {% if selected_rest %}
+        <a href="{{ url_for('menu') }}" class="btn btn-sm btn-outline-danger">Reset</a>
+        {% endif %}
+      </form>
+      {% if current_user.is_owner %}
+      <!-- Add Menu Item Button (Owner Only) -->
+      <button class="btn btn-primary btn-sm px-3" data-bs-toggle="modal" data-bs-target="#addMenuModal">
+        <i class="bi bi-plus-circle me-1"></i> Add Menu Item
+      </button>
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+<!-- Menu Items Table -->
+<div class="card-glass">
+  <div class="table-responsive">
+    <table class="table table-custom">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Dish Name</th>
+          <th>Restaurant</th>
+          <th>Category</th>
+          <th>Type</th>
+          <th>Current Price</th>
+          <th>Prep Time</th>
+          <th>Audit History</th>
+          {% if current_user.is_owner %}
+          <th class="text-end">Actions</th>
+          {% endif %}
+        </tr>
+      </thead>
+      <tbody>
+        {% for item in items %}
+        <tr>
+          <td class="fw-bold">#{{ item.item_id }}</td>
+          <td>
+            <div class="text-dark fw-bold">{{ item.name }}</div>
+            <div class="text-dark small text-truncate" style="max-width: 280px;">{{ item.description or '—' }}</div>
+          </td>
+          <td class="text-dark small fw-semibold">{{ item.restaurant_name }}</td>
+          <td>
+            <span class="badge bg-warning text-dark">{{ item.category_name }}</span>
+          </td>
+          <td>
+            {% if item.is_veg == 'Y' %}
+              <span class="badge-veg"><i class="bi bi-circle-fill" style="font-size: 8px;"></i> VEG</span>
+            {% else %}
+              <span class="badge-nonveg"><i class="bi bi-triangle-fill" style="font-size: 8px;"></i> NON-VEG</span>
+            {% endif %}
+          </td>
+          <td>
+            <div class="fw-bold fs-6" style="color: #b45309;">₹{{ "%.2f"|format(item.current_price) }}</div>
+          </td>
+          <td class="small fw-semibold text-dark">{{ item.preparation_time }} mins</td>
+          <td>
+            <button class="btn btn-sm btn-outline-secondary py-0 px-2" onclick="viewPriceHistory('{{ item.item_id }}')">
+              <i class="bi bi-clock-history me-1"></i> {{ item.revisions_count }} revisions
+            </button>
+          </td>
+          {% if current_user.is_owner %}
+          <td class="text-end">
+            <!-- Change Price Button -->
+            <button class="btn btn-sm btn-outline-warning me-1"
+                    onclick="openChangePriceModal('{{ item.item_id }}', '{{ item.name|replace('\'', '\\\'') }}', '{{ item.current_price }}')">
+              <i class="bi bi-currency-rupee"></i> Price
+            </button>
+            <!-- Edit Item Button -->
+            <button class="btn btn-sm btn-outline-info me-1"
+                    onclick="openEditMenuModal('{{ item.item_id }}', '{{ item.name|replace('\'', '\\\'') }}', '{{ item.category_id }}', '{{ item.is_veg }}', '{{ item.preparation_time }}', '{{ item.description or ''|replace('\'', '\\\'') }}')">
+              <i class="bi bi-pencil-square"></i> Edit
+            </button>
+            <!-- Delete Form -->
+            <form method="POST" action="{{ url_for('menu_delete', item_id=item.item_id) }}" class="d-inline"
+                  onsubmit="return confirm('Delete {{ item.name }}? (Will fail if item was previously ordered).');">
+              <button type="submit" class="btn btn-sm btn-outline-danger">
+                <i class="bi bi-trash"></i>
+              </button>
+            </form>
+          </td>
+          {% endif %}
+        </tr>
+        {% else %}
+        <tr>
+          <td colspan="9" class="text-center text-dark py-4 fw-bold">No menu items found.</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Modal: Add Menu Item -->
+<div class="modal fade" id="addMenuModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content modal-content-custom">
+      <div class="modal-header modal-header-custom">
+        <h5 class="modal-title text-dark">
+          <i class="bi bi-plus-circle text-dark me-2"></i>Add New Menu Item
+        </h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <form method="POST" action="{{ url_for('menu_create') }}">
+        <div class="modal-body p-4">
+          <div class="row g-3">
+            <div class="col-md-6">
+              <label class="form-label">Restaurant *</label>
+              <select name="restaurant_id" class="form-select" required>
+                {% for r in restaurants %}
+                <option value="{{ r.restaurant_id }}">{{ r.name }}</option>
+                {% endfor %}
+              </select>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Category *</label>
+              <select name="category_id" class="form-select" required>
+                {% for c in categories %}
+                <option value="{{ c.category_id }}">{{ c.name }}</option>
+                {% endfor %}
+              </select>
+            </div>
+            <div class="col-12">
+              <label class="form-label">Item / Dish Name *</label>
+              <input type="text" name="name" class="form-control" placeholder="e.g. Tandoori Soya Chaap" required>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Initial Price (₹) *</label>
+              <input type="number" step="0.5" name="price" class="form-control" placeholder="320.00" required>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Preparation Time (mins)</label>
+              <input type="number" name="preparation_time" class="form-control" value="15" min="1" required>
+            </div>
+            <div class="col-12">
+              <label class="form-label">Dietary Classification *</label>
+              <select name="is_veg" class="form-select" required>
+                <option value="Y">Vegetarian (VEG)</option>
+                <option value="N">Non-Vegetarian (NON-VEG)</option>
+              </select>
+            </div>
+            <div class="col-12">
+              <label class="form-label">Description</label>
+              <textarea name="description" class="form-control" rows="2" placeholder="Ingredients and flavor profile description"></textarea>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer modal-footer-custom">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          <button type="submit" class="btn btn-primary">
+            <i class="bi bi-check-lg me-1"></i> Save Menu Item
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: Edit Menu Item -->
+<div class="modal fade" id="editMenuModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content modal-content-custom">
+      <div class="modal-header modal-header-custom" style="background: var(--neo-cyan);">
+        <h5 class="modal-title text-dark">
+          <i class="bi bi-pencil-square text-dark me-2"></i>Update Menu Item Details
+        </h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <form method="POST" action="{{ url_for('menu_update') }}">
+        <input type="hidden" name="item_id" id="edit_menu_item_id">
+        <div class="modal-body p-4">
+          <div class="row g-3">
+            <div class="col-md-6">
+              <label class="form-label">Category *</label>
+              <select name="category_id" id="edit_category_id" class="form-select" required>
+                {% for c in categories %}
+                <option value="{{ c.category_id }}">{{ c.name }}</option>
+                {% endfor %}
+              </select>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Dietary Classification</label>
+              <select name="is_veg" id="edit_is_veg" class="form-select" required>
+                <option value="Y">Vegetarian</option>
+                <option value="N">Non-Vegetarian</option>
+              </select>
+            </div>
+            <div class="col-12">
+              <label class="form-label">Item Name *</label>
+              <input type="text" name="name" id="edit_menu_name" class="form-control" required>
+            </div>
+            <div class="col-12">
+              <label class="form-label">Prep Time (mins)</label>
+              <input type="number" name="preparation_time" id="edit_prep_time" class="form-control" required>
+            </div>
+            <div class="col-12">
+              <label class="form-label">Description</label>
+              <textarea name="description" id="edit_description" class="form-control" rows="2"></textarea>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer modal-footer-custom">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          <button type="submit" class="btn btn-info">Save Changes</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: Change Price (PL/SQL sp_set_price) -->
+<div class="modal fade" id="changePriceModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content modal-content-custom">
+      <div class="modal-header modal-header-custom" style="background: var(--neo-orange);">
+        <h5 class="modal-title text-dark">
+          <i class="bi bi-currency-rupee text-dark me-2"></i>Update Price via <code>sp_set_price</code>
+        </h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <form method="POST" action="{{ url_for('menu_change_price') }}">
+        <input type="hidden" name="item_id" id="price_item_id">
+        <div class="modal-body p-4">
+          <p class="text-dark fw-semibold small mb-3">
+            Modifying price will atomically close the active period in <code>PRICE_HISTORY</code> and create a new open record. Historical orders will continue referencing their historical price basis.
+          </p>
+          <div class="d-flex justify-content-between p-3 mb-3" style="background: #ffffff; border: 2.5px solid #000; box-shadow: 2px 2px 0 #000; border-radius: 8px;">
+            <div>
+              <div class="small fw-bold text-dark text-uppercase">Item Name:</div>
+              <div class="fw-bold text-dark fs-6" id="price_item_name">—</div>
+            </div>
+            <div class="text-end">
+              <div class="small fw-bold text-dark text-uppercase">Current Price:</div>
+              <div class="fw-bold fs-6" style="color: #b45309;" id="current_price_display">₹0.00</div>
+            </div>
+          </div>
+          <div>
+            <label class="form-label">New Effective Price (₹) *</label>
+            <input type="number" step="0.5" name="new_price" id="new_price_input" class="form-control form-control-lg" required>
+          </div>
+        </div>
+        <div class="modal-footer modal-footer-custom">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          <button type="submit" class="btn btn-warning fw-bold">
+            <i class="bi bi-check-circle me-1"></i> Apply & Log Price
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: Price History Breakdown -->
+<div class="modal fade" id="priceHistoryModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content modal-content-custom">
+      <div class="modal-header modal-header-custom" style="background: var(--neo-purple);">
+        <h5 class="modal-title text-dark">
+          <i class="bi bi-clock-history text-dark me-2"></i>Price History Log: <span id="history_item_title" class="fw-bold"></span>
+        </h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body p-4">
+        <div class="table-responsive">
+          <table class="table table-custom">
+            <thead>
+              <tr>
+                <th>Price</th>
+                <th>Effective Start</th>
+                <th>Effective End</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody id="price_history_body">
+              <!-- Loaded via AJAX -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="modal-footer modal-footer-custom">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,228 @@
+{% extends "base.html" %}
+
+{% block title %}Front Desk & Kitchen Operations · Restaurant DBMS{% endblock %}
+
+{% block content %}
+<!-- Staff Operations Header -->
+<div class="row g-4 mb-4">
+  <div class="col-12">
+    <div class="card-glass p-4" style="background: #ffffff;">
+      <div class="d-flex flex-wrap align-items-center justify-content-between gap-3">
+        <div>
+          <span class="badge bg-info text-dark px-3 py-1 mb-2">
+            <i class="bi bi-briefcase-fill me-1"></i> Front Desk & Floor Operations
+          </span>
+          <h2 class="fw-bold mb-1 text-dark">{{ current_user.staff_title or 'Staff Member' }} Operations</h2>
+          <p class="text-dark fw-semibold mb-0">
+            Assigned Location: <strong>{{ staff_rest.name if staff_rest else 'All Restaurant Branches' }}</strong>
+            {% if staff_rest %}· Operating Hours: {{ staff_rest.opening_hour }} to {{ staff_rest.closing_hour }}{% endif %}
+          </p>
+        </div>
+        <div class="d-flex flex-wrap gap-2">
+          <a href="{{ url_for('reservations') }}" class="btn btn-primary">
+            <i class="bi bi-calendar2-plus me-1"></i> Seat Walk-In / Book Table
+          </a>
+          <a href="{{ url_for('orders') }}" class="btn btn-info">
+            <i class="bi bi-cart-plus me-1"></i> Take New Table Order
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Staff Operational KPIs -->
+<div class="row g-3 mb-4">
+  <div class="col-xl-3 col-md-6">
+    <div class="kpi-card">
+      <div class="kpi-icon bg-warning text-dark">
+        <i class="bi bi-calendar2-week"></i>
+      </div>
+      <div>
+        <div class="kpi-val">{{ staff_kpis.today_res }}</div>
+        <div class="kpi-lbl">Bookings Today</div>
+      </div>
+    </div>
+  </div>
+  <div class="col-xl-3 col-md-6">
+    <div class="kpi-card">
+      <div class="kpi-icon bg-info text-dark">
+        <i class="bi bi-grid-3x3"></i>
+      </div>
+      <div>
+        <div class="kpi-val">{{ staff_kpis.tables_occupied }} / {{ staff_kpis.total_tables }}</div>
+        <div class="kpi-lbl">Tables Occupied</div>
+      </div>
+    </div>
+  </div>
+  <div class="col-xl-3 col-md-6">
+    <div class="kpi-card">
+      <div class="kpi-icon bg-danger text-dark">
+        <i class="bi bi-fire"></i>
+      </div>
+      <div>
+        <div class="kpi-val">{{ staff_kpis.orders_in_kitchen }}</div>
+        <div class="kpi-lbl">Orders in Kitchen</div>
+      </div>
+    </div>
+  </div>
+  <div class="col-xl-3 col-md-6">
+    <div class="kpi-card">
+      <div class="kpi-icon bg-success text-dark">
+        <i class="bi bi-check2-all"></i>
+      </div>
+      <div>
+        <div class="kpi-val">{{ staff_kpis.orders_ready }}</div>
+        <div class="kpi-lbl">Ready to Serve</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row g-4">
+  <!-- Today's Reservations Check-in Desk -->
+  <div class="col-lg-6">
+    <div class="card-glass h-100">
+      <div class="card-header-custom d-flex justify-content-between align-items-center" style="background: var(--neo-yellow);">
+        <span class="text-dark fs-6 fw-bold">
+          <i class="bi bi-calendar-check text-dark me-2"></i>Arrivals & Check-in Desk
+        </span>
+        <a href="{{ url_for('reservations') }}" class="btn btn-sm btn-secondary">All Reservations</a>
+      </div>
+      <div class="table-responsive">
+        <table class="table table-custom">
+          <thead>
+            <tr>
+              <th>Guest Name</th>
+              <th>Table</th>
+              <th>Slot</th>
+              <th>Guests</th>
+              <th>Status</th>
+              <th class="text-end">Desk Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for r in today_reservations %}
+            <tr>
+              <td>
+                <div class="text-dark fw-bold">{{ r.customer_name }}</div>
+                <div class="text-dark small">{{ r.customer_phone or '—' }}</div>
+              </td>
+              <td>
+                <span class="badge bg-warning text-dark">Table {{ r.table_number }}</span>
+              </td>
+              <td class="small fw-bold text-dark">{{ r.time_slot }}</td>
+              <td>
+                <span class="badge bg-info text-dark">{{ r.number_of_guests }}</span>
+              </td>
+              <td>
+                <span class="badge-status status-{{ r.status|lower }}">{{ r.status }}</span>
+              </td>
+              <td class="text-end">
+                {% if r.status == 'BOOKED' %}
+                <form method="POST" action="{{ url_for('reservation_update') }}" class="d-inline">
+                  <input type="hidden" name="reservation_id" value="{{ r.reservation_id }}">
+                  <input type="hidden" name="number_of_guests" value="{{ r.number_of_guests }}">
+                  <input type="hidden" name="time_slot" value="{{ r.time_slot }}">
+                  <input type="hidden" name="status" value="CONFIRMED">
+                  <button type="submit" class="btn btn-sm btn-success py-0 px-2" title="Check-in & Seat Guests">
+                    <i class="bi bi-check-lg"></i> Seat
+                  </button>
+                </form>
+                {% elif r.status == 'CONFIRMED' %}
+                <form method="POST" action="{{ url_for('reservation_update') }}" class="d-inline">
+                  <input type="hidden" name="reservation_id" value="{{ r.reservation_id }}">
+                  <input type="hidden" name="number_of_guests" value="{{ r.number_of_guests }}">
+                  <input type="hidden" name="time_slot" value="{{ r.time_slot }}">
+                  <input type="hidden" name="status" value="COMPLETED">
+                  <button type="submit" class="btn btn-sm btn-secondary py-0 px-2" title="Mark Dining Finished">
+                    <i class="bi bi-check2-all"></i> Done
+                  </button>
+                </form>
+                {% else %}
+                <span class="small fw-bold text-dark">—</span>
+                {% endif %}
+              </td>
+            </tr>
+            {% else %}
+            <tr>
+              <td colspan="6" class="text-center text-dark py-4 fw-bold">No pending reservations for this shift.</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Active Kitchen & Serving Workflow Pipeline -->
+  <div class="col-lg-6">
+    <div class="card-glass h-100">
+      <div class="card-header-custom d-flex justify-content-between align-items-center" style="background: var(--neo-cyan);">
+        <span class="text-dark fs-6 fw-bold">
+          <i class="bi bi-arrow-repeat text-dark me-2"></i>Kitchen & Order Service Pipeline
+        </span>
+        <a href="{{ url_for('orders') }}" class="btn btn-sm btn-secondary">All Orders</a>
+      </div>
+      <div class="table-responsive">
+        <table class="table table-custom">
+          <thead>
+            <tr>
+              <th>Order #</th>
+              <th>Customer</th>
+              <th>Amount</th>
+              <th>Workflow Status</th>
+              <th class="text-end">Advance Stage</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for o in active_orders %}
+            <tr>
+              <td class="fw-bold">#{{ o.order_id }}</td>
+              <td class="text-dark fw-bold">{{ o.customer_name }}</td>
+              <td class="fw-bold fs-6" style="color: #b45309;">₹{{ "%.2f"|format(o.total_amount) }}</td>
+              <td>
+                <span class="badge-status status-{{ o.order_status|lower }}">{{ o.order_status }}</span>
+              </td>
+              <td class="text-end">
+                <form method="POST" action="{{ url_for('order_update_status', order_id=o.order_id) }}" class="d-inline">
+                  {% if o.order_status == 'PLACED' %}
+                    <input type="hidden" name="new_status" value="PREPARING">
+                    <button type="submit" class="btn btn-sm btn-warning py-0 px-2" title="Send to Kitchen">
+                      <i class="bi bi-fire"></i> To Kitchen
+                    </button>
+                  {% elif o.order_status == 'PREPARING' %}
+                    <input type="hidden" name="new_status" value="READY">
+                    <button type="submit" class="btn btn-sm btn-info py-0 px-2" title="Mark Food Ready">
+                      <i class="bi bi-bell-fill"></i> Ready
+                    </button>
+                  {% elif o.order_status == 'READY' %}
+                    <input type="hidden" name="new_status" value="SERVED">
+                    <button type="submit" class="btn btn-sm btn-success py-0 px-2" title="Deliver to Table">
+                      <i class="bi bi-check2"></i> Serve Table
+                    </button>
+                  {% elif o.order_status == 'SERVED' %}
+                    <input type="hidden" name="new_status" value="DELIVERED">
+                    <button type="submit" class="btn btn-sm btn-secondary py-0 px-2" title="Complete Order">
+                      <i class="bi bi-check-all"></i> Complete
+                    </button>
+                  {% else %}
+                    <a href="{{ url_for('order_detail', order_id=o.order_id) }}" class="btn btn-sm btn-outline-primary py-0 px-2">
+                      <i class="bi bi-eye"></i> View
+                    </a>
+                  {% endif %}
+                </form>
+              </td>
+            </tr>
+            {% else %}
+            <tr>
+              <td colspan="5" class="text-center text-dark py-4 fw-bold">All kitchen orders are currently completed and served.</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

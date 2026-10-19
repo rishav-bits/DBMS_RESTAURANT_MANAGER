@@ -1,0 +1,210 @@
+{% extends "base.html" %}
+
+{% block title %}System Reports (12 SQL & PL/SQL Queries) · Restaurant DBMS{% endblock %}
+
+{% block content %}
+<div class="card-glass p-4 mb-4">
+  <div class="d-flex flex-wrap align-items-center justify-content-between gap-3">
+    <div>
+      <h3 class="fw-bold text-dark mb-1">
+        <i class="bi bi-bar-chart-line text-dark me-2"></i>System Analytics & Reports
+      </h3>
+      <p class="text-dark fw-semibold mb-0">
+        DA2 Evaluation Deliverable: 12 System-Specific Queries demonstrating Subqueries, Joins, Aggregations, Analytic Ranking, Database Views, and PL/SQL Stored Procedures.
+      </p>
+    </div>
+  </div>
+</div>
+
+<!-- Query Selection Pills -->
+<div class="card-glass p-3 mb-4">
+  <div class="d-flex flex-wrap gap-2">
+    {% set q_labels = [
+      ("1", "Q1: Free Tables", "NOT EXISTS"),
+      ("2", "Q2: Top Sellers", "JOIN + GROUP BY"),
+      ("3", "Q3: Monthly Revenue", "SUM + TO_CHAR"),
+      ("4", "Q4: Loyal Customers", "HAVING > 2"),
+      ("5", "Q5: Ratings & Reviews", "LEFT JOIN + AVG"),
+      ("6", "Q6: Price Changes", "PRICE_HISTORY"),
+      ("7", "Q7: Reserved No Order", "NOT EXISTS"),
+      ("8", "Q8: Unpaid Auditing", "VIEW SUMMARY"),
+      ("9", "Q9: Never Ordered", "NOT EXISTS"),
+      ("10", "Q10: Top Price / Rest", "ANALYTIC RANK"),
+      ("11", "Q11: Sales Report", "PL/SQL CURSOR"),
+      ("12", "Q12: Customer Spend", "PL/SQL REFCURSOR")
+    ] %}
+    {% for q_id, q_text, q_tech in q_labels %}
+    <a href="{{ url_for('reports', q=q_id) }}" 
+       class="btn btn-sm {% if query_num == q_id %}btn-primary{% else %}btn-secondary{% endif %} d-flex align-items-center gap-2">
+      <span>{{ q_text }}</span>
+      <span class="badge {% if 'PL/SQL' in q_tech %}bg-warning text-dark{% else %}bg-info text-dark{% endif %}" style="font-size: 0.72rem; border: 1.5px solid #000; box-shadow: 1px 1px 0 #000;">
+        {{ q_tech }}
+      </span>
+    </a>
+    {% endfor %}
+  </div>
+</div>
+
+<!-- Active Query Details & Parameter Form -->
+<div class="row g-4 mb-4">
+  <div class="col-lg-8">
+    <div class="card-glass p-4 h-100">
+      <div class="d-flex align-items-center gap-2 mb-2">
+        <span class="badge bg-warning text-dark border-2 border-dark">Query {{ query_num }}</span>
+        <h4 class="fw-bold text-dark mb-0">{{ query_title }}</h4>
+      </div>
+      <div class="text-dark fw-bold small mb-3">
+        <strong>DBMS Technique:</strong> <span class="badge bg-info text-dark ms-1">{{ query_technique }}</span>
+      </div>
+
+      <label class="form-label text-dark small text-uppercase fw-bold">SQL / PL/SQL Executed in Oracle:</label>
+      <div class="code-box">{{ query_sql }}</div>
+    </div>
+  </div>
+
+  <!-- Parameter Controls (if applicable) -->
+  <div class="col-lg-4">
+    <div class="card-glass p-4 h-100">
+      <h5 class="fw-bold text-dark mb-3">
+        <i class="bi bi-sliders text-dark me-2"></i>Query Parameters
+      </h5>
+
+      {% if query_num == '1' %}
+      <form method="GET" action="{{ url_for('reports') }}">
+        <input type="hidden" name="q" value="1">
+        <div class="mb-2">
+          <label class="form-label small">Restaurant:</label>
+          <select name="p_rest_id" class="form-select form-select-sm">
+            {% for r in restaurants %}
+            <option value="{{ r.restaurant_id }}" {% if request.args.get('p_rest_id') == r.restaurant_id|string %}selected{% endif %}>
+              {{ r.name }}
+            </option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="mb-2">
+          <label class="form-label small">Date:</label>
+          <input type="date" name="p_date" class="form-control form-control-sm" value="{{ request.args.get('p_date', '2026-10-15') }}">
+        </div>
+        <div class="mb-2">
+          <label class="form-label small">Time Slot:</label>
+          <select name="p_slot" class="form-select form-select-sm">
+            <option value="12:00-14:00" {% if request.args.get('p_slot') == '12:00-14:00' %}selected{% endif %}>12:00-14:00</option>
+            <option value="14:00-16:00" {% if request.args.get('p_slot') == '14:00-16:00' %}selected{% endif %}>14:00-16:00</option>
+            <option value="19:00-21:00" {% if request.args.get('p_slot', '19:00-21:00') == '19:00-21:00' %}selected{% endif %}>19:00-21:00</option>
+            <option value="21:00-23:00" {% if request.args.get('p_slot') == '21:00-23:00' %}selected{% endif %}>21:00-23:00</option>
+          </select>
+        </div>
+        <div class="mb-3">
+          <label class="form-label small">Min Capacity:</label>
+          <input type="number" name="p_cap" class="form-control form-control-sm" value="{{ request.args.get('p_cap', '4') }}" min="1">
+        </div>
+        <button type="submit" class="btn btn-sm btn-primary w-100">Apply Filter</button>
+      </form>
+
+      {% elif query_num == '11' %}
+      <form method="GET" action="{{ url_for('reports') }}">
+        <input type="hidden" name="q" value="11">
+        <div class="mb-3">
+          <label class="form-label small">Restaurant:</label>
+          <select name="p_rest_id" class="form-select form-select-sm">
+            {% for r in restaurants %}
+            <option value="{{ r.restaurant_id }}" {% if request.args.get('p_rest_id', '1') == r.restaurant_id|string %}selected{% endif %}>
+              {{ r.name }}
+            </option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="mb-3">
+          <label class="form-label small">Report Date:</label>
+          <input type="date" name="p_date" class="form-control form-control-sm" value="{{ request.args.get('p_date', '2026-06-10') }}">
+        </div>
+        <button type="submit" class="btn btn-sm btn-warning w-100 fw-bold">Execute PL/SQL Procedure</button>
+      </form>
+
+      {% elif query_num == '12' %}
+      <form method="GET" action="{{ url_for('reports') }}">
+        <input type="hidden" name="q" value="12">
+        <div class="mb-3">
+          <label class="form-label small">Minimum Orders Placed:</label>
+          <input type="number" name="p_min_orders" class="form-control form-control-sm" value="{{ request.args.get('p_min_orders', '2') }}" min="1">
+        </div>
+        <button type="submit" class="btn btn-sm btn-warning w-100 fw-bold">Fetch Ref Cursor</button>
+      </form>
+
+      {% else %}
+      <p class="text-dark fw-semibold small">
+        This query executes statically across all populated database records and requires no additional parameters.
+      </p>
+      <a href="{{ url_for('reports', q=query_num) }}" class="btn btn-sm btn-secondary w-100">
+        <i class="bi bi-arrow-clockwise me-1"></i> Re-execute Query
+      </a>
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+<!-- Output Section -->
+{% if query_num == '11' and plsql_output %}
+<!-- PL/SQL DBMS_OUTPUT Result Box -->
+<div class="card-glass p-4 mb-4">
+  <div class="d-flex align-items-center justify-content-between mb-3">
+    <h5 class="fw-bold text-dark mb-0">
+      <i class="bi bi-terminal text-dark me-2"></i>Captured Oracle DBMS_OUTPUT Buffer
+    </h5>
+    <span class="badge bg-success text-dark">Procedure Executed</span>
+  </div>
+  <div class="code-box p-3 font-monospace" style="color: #ffe600;">{{ plsql_output }}</div>
+</div>
+
+{% else %}
+<!-- Tabular Results Table -->
+<div class="card-glass">
+  <div class="card-header-custom d-flex justify-content-between align-items-center">
+    <span class="text-dark fs-6 fw-bold">
+      <i class="bi bi-table text-dark me-2"></i>Query Results Set
+    </span>
+    <span class="badge bg-dark border-2 border-dark text-dark">{{ results|length }} Rows Returned</span>
+  </div>
+  <div class="table-responsive">
+    <table class="table table-custom">
+      <thead>
+        <tr>
+          <th>#</th>
+          {% for col in columns %}
+          <th>{{ col|replace('_', ' ')|upper }}</th>
+          {% endfor %}
+        </tr>
+      </thead>
+      <tbody>
+        {% for row in results %}
+        <tr>
+          <td class="text-dark fw-bold small">{{ loop.index }}</td>
+          {% for col in columns %}
+          <td>
+            {% set val = row[col] %}
+            {% if val is none %}
+              <span class="text-dark fw-bold fst-italic">—</span>
+            {% elif 'price' in col or 'amount' in col or 'spent' in col or 'revenue' in col %}
+              <span class="fw-bold fs-6" style="color: #b45309;">₹{{ "%.2f"|format(val|float) }}</span>
+            {% elif 'status' in col %}
+              <span class="badge-status status-{{ val|string|lower }}">{{ val }}</span>
+            {% elif col == 'is_veg' %}
+              {% if val == 'Y' %}<span class="badge-veg">VEG</span>{% else %}<span class="badge-nonveg">NON-VEG</span>{% endif %}
+            {% else %}
+              <span class="text-dark fw-semibold">{{ val }}</span>
+            {% endif %}
+          </td>
+          {% endfor %}
+        </tr>
+        {% else %}
+        <tr>
+          <td colspan="{{ (columns|length) + 1 }}" class="text-center text-dark py-4 fw-bold">No records returned for this query.</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endif %}
+{% endblock %}

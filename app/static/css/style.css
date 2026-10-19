@@ -1,0 +1,616 @@
+/* ==========================================================================
+   Restaurant Table Reservation & Food Ordering System (Restaurant DBMS - DA2)
+   NEO-BRUTALISM / NEUBRUTALISM DESIGN SYSTEM
+   High-Contrast, Bold Geometry, Crisp Ink Black Lines & Hard Offset Shadows
+   ========================================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@600;700;800;900&family=Space+Grotesk:wght@600;700;800;900&family=JetBrains+Mono:wght@600;700;800&display=swap');
+
+:root {
+  /* Neo-Brutalist Color Palette */
+  --neo-bg: #faf8f5;
+  --neo-bg-alt: #f3efe6;
+  --neo-card-bg: #ffffff;
+  --neo-black: #000000;
+  --neo-white: #ffffff;
+  
+  /* Bold Punchy Accent Colors */
+  --neo-yellow: #ffe600;
+  --neo-pink: #ff6b8b;
+  --neo-cyan: #38bdf8;
+  --neo-green: #34d399;
+  --neo-purple: #c084fc;
+  --neo-orange: #fb923c;
+  --neo-red: #f87171;
+  --neo-blue: #60a5fa;
+  
+  /* Text Colors - 100% Pure Legibility */
+  --text-dark: #000000;
+  --text-body: #111827;
+  --text-muted: #374151;
+  --text-dim: #4b5563;
+  
+  /* Hard Neo-Brutalist Borders & Shadows */
+  --border-thick: 3px solid #000000;
+  --border-medium: 2.5px solid #000000;
+  --border-thin: 2px solid #000000;
+  --shadow-sm: 2px 2px 0px #000000;
+  --shadow-md: 4px 4px 0px #000000;
+  --shadow-lg: 6px 6px 0px #000000;
+  --shadow-xl: 9px 9px 0px #000000;
+  --radius-neo: 10px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Space Grotesk', 'Plus Jakarta Sans', sans-serif;
+  background-color: var(--neo-bg);
+  background-image: radial-gradient(#000000 1.2px, transparent 1.2px);
+  background-size: 24px 24px;
+  color: var(--text-dark);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  padding: 0;
+}
+
+/* Ensure all typography is crisp and ink-black */
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Space Grotesk', sans-serif;
+  font-weight: 800;
+  color: var(--neo-black) !important;
+  letter-spacing: -0.5px;
+}
+
+p, span, div, label, td, th {
+  color: var(--neo-black);
+}
+
+/* --------------------------------------------------------------------------
+   NAVBAR (Neo-Brutalist Sticky Bar)
+   -------------------------------------------------------------------------- */
+.navbar-custom {
+  background-color: var(--neo-white);
+  border-bottom: 3.5px solid var(--neo-black);
+  box-shadow: 0 4px 0px var(--neo-black);
+  padding: 0.85rem 1.75rem;
+  position: sticky;
+  top: 0;
+  z-index: 1030;
+}
+
+.navbar-brand {
+  font-family: 'Space Grotesk', sans-serif;
+  font-weight: 900;
+  font-size: 1.45rem;
+  letter-spacing: -0.5px;
+  color: var(--neo-black) !important;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  background: var(--neo-yellow);
+  padding: 0.4rem 0.95rem;
+  border: var(--border-medium);
+  box-shadow: var(--shadow-sm);
+  border-radius: 8px;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.navbar-brand:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: var(--shadow-md);
+}
+
+.nav-link {
+  color: var(--neo-black) !important;
+  font-family: 'Space Grotesk', sans-serif;
+  font-weight: 700;
+  font-size: 0.95rem;
+  padding: 0.5rem 0.9rem !important;
+  border-radius: 8px;
+  border: 2px solid transparent;
+  transition: all 0.15s ease;
+  margin: 0 0.15rem;
+}
+
+.nav-link:hover {
+  background-color: var(--neo-yellow);
+  border: var(--border-thin);
+  box-shadow: var(--shadow-sm);
+  transform: translate(-1px, -1px);
+}
+
+.nav-link.active {
+  background-color: var(--neo-cyan) !important;
+  border: var(--border-medium) !important;
+  box-shadow: var(--shadow-sm) !important;
+  color: var(--neo-black) !important;
+}
+
+/* --------------------------------------------------------------------------
+   NEO-BRUTALIST CARDS
+   -------------------------------------------------------------------------- */
+.card-glass, .card-neo {
+  background: var(--neo-card-bg);
+  border: var(--border-thick);
+  border-radius: var(--radius-neo);
+  box-shadow: var(--shadow-lg);
+  position: relative;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  overflow: hidden;
+}
+
+.card-glass:hover, .card-neo:hover {
+  box-shadow: var(--shadow-xl);
+}
+
+.card-header-custom {
+  background: var(--neo-yellow);
+  border-bottom: var(--border-thick);
+  padding: 1rem 1.25rem;
+  font-family: 'Space Grotesk', sans-serif;
+  font-weight: 800;
+  font-size: 1.15rem;
+  color: var(--neo-black) !important;
+}
+
+/* --------------------------------------------------------------------------
+   KPI STAT CARDS
+   -------------------------------------------------------------------------- */
+.kpi-card {
+  border: var(--border-thick);
+  border-radius: var(--radius-neo);
+  padding: 1.25rem;
+  display: flex;
+  align-items: center;
+  gap: 1.2rem;
+  background: var(--neo-white);
+  box-shadow: var(--shadow-md);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.kpi-card:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: var(--shadow-lg);
+}
+
+.kpi-icon {
+  width: 58px;
+  height: 58px;
+  border-radius: 10px;
+  border: var(--border-thick);
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.8rem;
+  flex-shrink: 0;
+  color: var(--neo-black) !important;
+}
+
+.kpi-val {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 2.1rem;
+  font-weight: 900;
+  line-height: 1.1;
+  color: var(--neo-black) !important;
+  letter-spacing: -1px;
+}
+
+.kpi-lbl {
+  font-size: 0.88rem;
+  color: var(--text-dark) !important;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* --------------------------------------------------------------------------
+   NEO-BRUTALIST TABLES
+   -------------------------------------------------------------------------- */
+.table-responsive {
+  border-radius: 0 0 var(--radius-neo) var(--radius-neo);
+  background: var(--neo-white);
+}
+
+.table-custom {
+  color: var(--text-dark) !important;
+  margin-bottom: 0;
+  border-collapse: separate;
+  border-spacing: 0;
+  width: 100%;
+}
+
+.table-custom th {
+  background: var(--neo-yellow) !important;
+  color: var(--neo-black) !important;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 0.88rem;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  padding: 1rem 1.1rem;
+  border-bottom: var(--border-thick) !important;
+  border-top: none;
+}
+
+.table-custom td {
+  padding: 1rem 1.1rem;
+  vertical-align: middle;
+  border-bottom: 2px solid #e5e7eb !important;
+  color: var(--neo-black) !important;
+  font-weight: 700;
+  font-size: 0.95rem;
+}
+
+.table-custom tbody tr {
+  background-color: var(--neo-white);
+  transition: background-color 0.15s ease;
+}
+
+.table-custom tbody tr:hover {
+  background-color: #fffde0 !important;
+}
+
+.table-custom tfoot tr td {
+  background-color: #f3efe6 !important;
+  border-top: var(--border-thick) !important;
+  color: var(--neo-black) !important;
+  font-weight: 900;
+}
+
+/* --------------------------------------------------------------------------
+   NEO-BRUTALIST BUTTONS
+   -------------------------------------------------------------------------- */
+.btn {
+  font-family: 'Space Grotesk', sans-serif;
+  font-weight: 800 !important;
+  border: var(--border-thick) !important;
+  box-shadow: var(--shadow-sm) !important;
+  border-radius: 8px !important;
+  padding: 0.55rem 1.15rem;
+  transition: transform 0.12s ease, box-shadow 0.12s ease, background-color 0.12s ease;
+  letter-spacing: 0.2px;
+  color: var(--neo-black) !important;
+}
+
+.btn:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: var(--shadow-md) !important;
+  color: var(--neo-black) !important;
+}
+
+.btn:active {
+  transform: translate(2px, 2px);
+  box-shadow: 1px 1px 0px var(--neo-black) !important;
+}
+
+.btn-primary {
+  background-color: var(--neo-yellow) !important;
+  color: var(--neo-black) !important;
+}
+.btn-primary:hover {
+  background-color: #ffd700 !important;
+}
+
+.btn-secondary {
+  background-color: #ffffff !important;
+  color: var(--neo-black) !important;
+}
+.btn-secondary:hover {
+  background-color: #f3f4f6 !important;
+}
+
+.btn-info {
+  background-color: var(--neo-cyan) !important;
+  color: var(--neo-black) !important;
+}
+.btn-info:hover {
+  background-color: #0ea5e9 !important;
+}
+
+.btn-success {
+  background-color: var(--neo-green) !important;
+  color: var(--neo-black) !important;
+}
+.btn-success:hover {
+  background-color: #10b981 !important;
+}
+
+.btn-warning {
+  background-color: var(--neo-orange) !important;
+  color: var(--neo-black) !important;
+}
+.btn-warning:hover {
+  background-color: #f97316 !important;
+}
+
+.btn-danger {
+  background-color: var(--neo-pink) !important;
+  color: var(--neo-black) !important;
+}
+.btn-danger:hover {
+  background-color: #f43f5e !important;
+}
+
+.btn-outline-primary {
+  background-color: #fff !important;
+  color: var(--neo-black) !important;
+}
+.btn-outline-primary:hover {
+  background-color: var(--neo-yellow) !important;
+}
+
+.btn-outline-info {
+  background-color: #fff !important;
+  color: var(--neo-black) !important;
+}
+.btn-outline-info:hover {
+  background-color: var(--neo-cyan) !important;
+}
+
+.btn-outline-warning {
+  background-color: #fff !important;
+  color: var(--neo-black) !important;
+}
+.btn-outline-warning:hover {
+  background-color: var(--neo-orange) !important;
+}
+
+.btn-outline-danger {
+  background-color: #fff !important;
+  color: #b91c1c !important;
+}
+.btn-outline-danger:hover {
+  background-color: var(--neo-pink) !important;
+  color: var(--neo-black) !important;
+}
+
+.btn-outline-secondary {
+  background-color: #fff !important;
+  color: var(--neo-black) !important;
+}
+.btn-outline-secondary:hover {
+  background-color: #e5e7eb !important;
+}
+
+/* --------------------------------------------------------------------------
+   NEO-BRUTALIST BADGES
+   -------------------------------------------------------------------------- */
+.badge {
+  font-family: 'Space Grotesk', sans-serif;
+  font-weight: 800;
+  border: var(--border-thin) !important;
+  box-shadow: 2px 2px 0px var(--neo-black) !important;
+  border-radius: 6px;
+  padding: 0.35rem 0.65rem;
+  color: var(--neo-black) !important;
+}
+
+.badge.bg-dark {
+  background-color: #ffe600 !important;
+  color: #000000 !important;
+}
+
+.badge.bg-secondary {
+  background-color: #f3efe6 !important;
+  color: #000000 !important;
+}
+
+.badge-status {
+  padding: 0.35rem 0.65rem;
+  font-size: 0.8rem;
+  font-weight: 800;
+  border-radius: 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  border: var(--border-thin);
+  box-shadow: 2px 2px 0px var(--neo-black);
+  color: var(--neo-black) !important;
+  display: inline-block;
+}
+
+.status-placed     { background: var(--neo-cyan); }
+.status-preparing  { background: var(--neo-yellow); }
+.status-ready      { background: var(--neo-green); }
+.status-served     { background: var(--neo-purple); }
+.status-delivered  { background: #4ade80; }
+.status-cancelled  { background: var(--neo-pink); }
+
+.status-booked     { background: var(--neo-cyan); }
+.status-confirmed  { background: var(--neo-green); }
+.status-completed  { background: #d1d5db; }
+
+.status-success    { background: var(--neo-green); }
+.status-pending    { background: var(--neo-yellow); }
+.status-failed     { background: var(--neo-pink); }
+
+.badge-veg {
+  background: var(--neo-green);
+  color: var(--neo-black);
+  border: var(--border-thin);
+  box-shadow: 1.5px 1.5px 0px var(--neo-black);
+  padding: 0.25rem 0.55rem;
+  border-radius: 4px;
+  font-weight: 800;
+  font-size: 0.78rem;
+  display: inline-block;
+}
+
+.badge-nonveg {
+  background: var(--neo-pink);
+  color: var(--neo-black);
+  border: var(--border-thin);
+  box-shadow: 1.5px 1.5px 0px var(--neo-black);
+  padding: 0.25rem 0.55rem;
+  border-radius: 4px;
+  font-weight: 800;
+  font-size: 0.78rem;
+  display: inline-block;
+}
+
+/* --------------------------------------------------------------------------
+   NEO-BRUTALIST FORMS & INPUTS
+   -------------------------------------------------------------------------- */
+.form-control, .form-select {
+  background-color: var(--neo-white) !important;
+  border: var(--border-thick) !important;
+  color: var(--neo-black) !important;
+  border-radius: 8px !important;
+  padding: 0.7rem 0.9rem !important;
+  font-weight: 700 !important;
+  font-size: 0.95rem !important;
+  box-shadow: var(--shadow-sm);
+  transition: all 0.15s ease;
+}
+
+.form-control:focus, .form-select:focus {
+  border-color: var(--neo-black) !important;
+  box-shadow: var(--shadow-md) !important;
+  outline: none !important;
+  background-color: #fffef2 !important;
+}
+
+.form-label {
+  font-family: 'Space Grotesk', sans-serif;
+  font-weight: 800 !important;
+  font-size: 0.88rem !important;
+  color: var(--neo-black) !important;
+  margin-bottom: 0.4rem;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+}
+
+.form-text {
+  font-weight: 700;
+  color: var(--text-muted) !important;
+}
+
+/* --------------------------------------------------------------------------
+   NEO-BRUTALIST MODALS
+   -------------------------------------------------------------------------- */
+.modal-content-custom {
+  background: var(--neo-white);
+  border: 4px solid var(--neo-black);
+  border-radius: 14px;
+  box-shadow: var(--shadow-xl);
+  overflow: hidden;
+}
+
+.modal-header-custom {
+  background: var(--neo-yellow);
+  border-bottom: var(--border-thick);
+  padding: 1.25rem 1.5rem;
+  color: var(--neo-black) !important;
+}
+
+.modal-header-custom .modal-title {
+  font-family: 'Space Grotesk', sans-serif;
+  font-weight: 900;
+  font-size: 1.25rem;
+  color: var(--neo-black) !important;
+}
+
+.modal-footer-custom {
+  background: #faf8f5;
+  border-top: var(--border-thick);
+  padding: 1.1rem 1.5rem;
+}
+
+.btn-close {
+  opacity: 1 !important;
+  border: var(--border-thin) !important;
+  background-color: var(--neo-white) !important;
+  box-shadow: var(--shadow-sm) !important;
+  border-radius: 6px !important;
+  padding: 0.5rem !important;
+}
+
+.btn-close:hover {
+  background-color: var(--neo-pink) !important;
+  transform: translate(-1px, -1px);
+}
+
+/* --------------------------------------------------------------------------
+   NEO-BRUTALIST ALERTS & CODE BOXES
+   -------------------------------------------------------------------------- */
+.alert {
+  border: var(--border-thick) !important;
+  border-radius: 10px !important;
+  box-shadow: var(--shadow-md) !important;
+  font-weight: 800 !important;
+  color: var(--neo-black) !important;
+}
+
+.alert-success { background-color: var(--neo-green) !important; }
+.alert-danger  { background-color: var(--neo-pink) !important; }
+.alert-info    { background-color: var(--neo-cyan) !important; }
+.alert-warning { background-color: var(--neo-yellow) !important; }
+
+.code-box {
+  background: #111827;
+  color: #38bdf8;
+  border: var(--border-thick);
+  box-shadow: var(--shadow-md);
+  border-radius: 8px;
+  padding: 1.1rem;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.92rem;
+  font-weight: 600;
+  overflow-x: auto;
+  white-space: pre-wrap;
+  line-height: 1.5;
+}
+
+/* Ensure 100% visibility of all utility text classes */
+.text-white, .text-light {
+  color: var(--neo-black) !important;
+}
+
+.text-muted {
+  color: #374151 !important;
+  font-weight: 600;
+}
+
+.text-warning {
+  color: #b45309 !important;
+  font-weight: 700;
+}
+
+.text-danger {
+  color: #b91c1c !important;
+  font-weight: 700;
+}
+
+.text-success {
+  color: #047857 !important;
+  font-weight: 700;
+}
+
+.text-info {
+  color: #0369a1 !important;
+  font-weight: 700;
+}
+
+.text-primary {
+  color: #1d4ed8 !important;
+  font-weight: 700;
+}
+
+/* --------------------------------------------------------------------------
+   FOOTER
+   -------------------------------------------------------------------------- */
+footer {
+  margin-top: auto;
+  border-top: 3.5px solid var(--neo-black);
+  background: var(--neo-white);
+  padding: 1.35rem 0;
+  color: var(--neo-black);
+  font-weight: 800;
+  font-size: 0.92rem;
+  box-shadow: 0 -3px 0px var(--neo-black);
+}

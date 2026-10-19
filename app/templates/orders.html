@@ -1,0 +1,140 @@
+{% extends "base.html" %}
+
+{% block title %}Orders & Billing · Restaurant DBMS{% endblock %}
+
+{% block content %}
+<div class="card-glass p-4 mb-4">
+  <div class="d-flex flex-wrap align-items-center justify-content-between gap-3">
+    <div>
+      <h3 class="fw-bold text-dark mb-1">
+        <i class="bi bi-receipt text-dark me-2"></i>Orders & Billing Operations
+      </h3>
+      <p class="text-dark fw-semibold mb-0">
+        Order totals are managed strictly by Oracle compound trigger <code>trg_order_item_total</code> based on active date prices.
+      </p>
+    </div>
+    <div>
+      <button class="btn btn-primary btn-sm px-3" data-bs-toggle="modal" data-bs-target="#createOrderModal">
+        <i class="bi bi-cart-plus me-1"></i> Create New Order
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Orders Table -->
+<div class="card-glass">
+  <div class="table-responsive">
+    <table class="table table-custom">
+      <thead>
+        <tr>
+          <th>Order #</th>
+          <th>Date & Time</th>
+          <th>Customer</th>
+          <th>Restaurant</th>
+          <th>Items Count</th>
+          <th>Total Amount</th>
+          <th>Order Workflow</th>
+          <th>Payment Settlement</th>
+          <th class="text-end">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for o in orders %}
+        <tr>
+          <td class="fw-bold">#{{ o.order_id }}</td>
+          <td class="small fw-semibold text-dark">{{ o.order_date }}</td>
+          <td class="text-dark fw-bold">{{ o.customer_name }}</td>
+          <td class="text-dark small">{{ o.restaurant_name }}</td>
+          <td>
+            <span class="badge bg-warning text-dark">{{ o.items_count }} items</span>
+          </td>
+          <td>
+            <div class="fw-bold fs-6" style="color: #b45309;">₹{{ "%.2f"|format(o.total_amount) }}</div>
+          </td>
+          <td>
+            <span class="badge-status status-{{ o.order_status|lower }}">{{ o.order_status }}</span>
+          </td>
+          <td>
+            {% if o.payment_status %}
+              <span class="badge-status status-{{ o.payment_status|lower }}">{{ o.payment_status }} ({{ o.payment_method }})</span>
+            {% else %}
+              <span class="badge bg-secondary text-dark">UNPAID</span>
+            {% endif %}
+          </td>
+          <td class="text-end">
+            <a href="{{ url_for('order_detail', order_id=o.order_id) }}" class="btn btn-sm btn-outline-primary me-1">
+              <i class="bi bi-pencil"></i> Manage
+            </a>
+            {% if current_user.is_owner %}
+            <form method="POST" action="{{ url_for('order_delete', order_id=o.order_id) }}" class="d-inline"
+                  onsubmit="return confirm('Delete order #{{ o.order_id }}?');">
+              <button type="submit" class="btn btn-sm btn-outline-danger">
+                <i class="bi bi-trash"></i>
+              </button>
+            </form>
+            {% endif %}
+          </td>
+        </tr>
+        {% else %}
+        <tr>
+          <td colspan="9" class="text-center text-dark py-4 fw-bold">No orders found.</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Modal: Create Order -->
+<div class="modal fade" id="createOrderModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content modal-content-custom">
+      <div class="modal-header modal-header-custom">
+        <h5 class="modal-title text-dark">
+          <i class="bi bi-cart-plus text-dark me-2"></i>Create New Order
+        </h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <form method="POST" action="{{ url_for('order_create') }}">
+        <div class="modal-body p-4">
+          {% if current_user.is_customer %}
+            <input type="hidden" name="customer_id" value="{{ current_user.customer_id }}">
+            <div class="mb-3">
+              <label class="form-label">Order Placed By *</label>
+              <input type="text" class="form-control" value="{{ current_user.name }}" readonly disabled>
+            </div>
+          {% else %}
+            <div class="mb-3">
+              <label class="form-label">Customer *</label>
+              <select name="customer_id" class="form-select" required>
+                <option value="">-- Choose Customer --</option>
+                {% for c in customers %}
+                <option value="{{ c.customer_id }}">{{ c.name }}</option>
+                {% endfor %}
+              </select>
+            </div>
+          {% endif %}
+          <div class="mb-3">
+            <label class="form-label">Restaurant *</label>
+            <select name="restaurant_id" class="form-select" required>
+              <option value="">-- Choose Restaurant --</option>
+              {% for r in restaurants %}
+              <option value="{{ r.restaurant_id }}">{{ r.name }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="alert alert-info py-2 small mb-0">
+            <i class="bi bi-info-circle me-1"></i> Order will be initialized in <code>PLACED</code> status. You can add food dishes on the next screen.
+          </div>
+        </div>
+        <div class="modal-footer modal-footer-custom">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          <button type="submit" class="btn btn-primary">
+            <i class="bi bi-check-lg me-1"></i> Create Order
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

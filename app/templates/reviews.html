@@ -1,0 +1,134 @@
+{% extends "base.html" %}
+
+{% block title %}Customer Reviews · Restaurant DBMS{% endblock %}
+
+{% block content %}
+<div class="card-glass p-4 mb-4">
+  <div class="d-flex flex-wrap align-items-center justify-content-between gap-3">
+    <div>
+      <h3 class="fw-bold text-dark mb-1">
+        <i class="bi bi-star-fill text-dark me-2"></i>Customer Reviews & Ratings
+      </h3>
+      <p class="text-dark fw-semibold mb-0">
+        Governed by trigger <code>trg_review_validate</code>: reviews are permitted ONLY for orders with status <code>SERVED</code> or <code>DELIVERED</code> and verified <code>SUCCESS</code> payment.
+      </p>
+    </div>
+    <div>
+      <button class="btn btn-primary btn-sm px-3" data-bs-toggle="modal" data-bs-target="#addReviewModal">
+        <i class="bi bi-pencil-square me-1"></i> Submit Review
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Reviews Table -->
+<div class="card-glass">
+  <div class="table-responsive">
+    <table class="table table-custom">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Restaurant</th>
+          <th>Customer</th>
+          <th>Order</th>
+          <th>Rating</th>
+          <th>Review Feedback</th>
+          <th>Date</th>
+          <th class="text-end">Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for rev in reviews %}
+        <tr>
+          <td class="fw-bold">#{{ rev.review_id }}</td>
+          <td class="text-dark fw-bold">{{ rev.restaurant_name }}</td>
+          <td class="text-dark fw-semibold">{{ rev.customer_name }}</td>
+          <td>
+            <a href="{{ url_for('order_detail', order_id=rev.order_id) }}" class="fw-bold" style="color: #0369a1;">
+              Order #{{ rev.order_id }} (₹{{ "%.2f"|format(rev.total_amount) }})
+            </a>
+          </td>
+          <td>
+            <div class="text-dark fw-bold">
+              <span style="color: #f59e0b; font-size: 1.1rem;">
+                {% for star in range(rev.rating) %}★{% endfor %}
+              </span>
+              <span style="color: #9ca3af; font-size: 1.1rem;">
+                {% for star in range(5 - rev.rating) %}★{% endfor %}
+              </span>
+              <span class="text-dark small ms-1">({{ rev.rating }}/5)</span>
+            </div>
+          </td>
+          <td style="max-width: 340px;">
+            <div class="text-dark fw-bold small fst-italic">"{{ rev.review_comment }}"</div>
+          </td>
+          <td class="small fw-semibold text-dark">{{ rev.review_date }}</td>
+          <td class="text-end">
+            <form method="POST" action="{{ url_for('review_delete', review_id=rev.review_id) }}" class="d-inline"
+                  onsubmit="return confirm('Delete review #{{ rev.review_id }}?');">
+              <button type="submit" class="btn btn-sm btn-outline-danger">
+                <i class="bi bi-trash"></i>
+              </button>
+            </form>
+          </td>
+        </tr>
+        {% else %}
+        <tr>
+          <td colspan="8" class="text-center text-dark py-4 fw-bold">No reviews recorded yet.</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Modal: Add Review -->
+<div class="modal fade" id="addReviewModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content modal-content-custom">
+      <div class="modal-header modal-header-custom">
+        <h5 class="modal-title text-dark">
+          <i class="bi bi-star text-dark me-2"></i>Write a Verified Review
+        </h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <form method="POST" action="{{ url_for('review_create') }}">
+        <div class="modal-body p-4">
+          <div class="mb-3">
+            <label class="form-label">Eligible Completed Order *</label>
+            <select name="order_id" class="form-select" required>
+              <option value="">-- Select Completed Order --</option>
+              {% for eo in eligible_orders %}
+              <option value="{{ eo.order_id }}">
+                Order #{{ eo.order_id }} — {{ eo.customer_name }} at {{ eo.restaurant_name }}
+              </option>
+              {% endfor %}
+            </select>
+            <div class="form-text text-dark small fw-semibold">Only served/delivered orders with settled payments are eligible.</div>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Star Rating (1 to 5) *</label>
+            <select name="rating" class="form-select" required>
+              <option value="5" selected>★★★★★ (5 Stars - Exceptional)</option>
+              <option value="4">★★★★☆ (4 Stars - Very Good)</option>
+              <option value="3">★★★☆☆ (3 Stars - Average)</option>
+              <option value="2">★★☆☆☆ (2 Stars - Poor)</option>
+              <option value="1">★☆☆☆☆ (1 Star - Terrible)</option>
+            </select>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Detailed Comments & Feedback *</label>
+            <textarea name="comment" class="form-control" rows="3" placeholder="Share your experience regarding food taste, service quality, and dining ambience..." required></textarea>
+          </div>
+        </div>
+        <div class="modal-footer modal-footer-custom">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          <button type="submit" class="btn btn-primary">
+            <i class="bi bi-send me-1"></i> Submit Review
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

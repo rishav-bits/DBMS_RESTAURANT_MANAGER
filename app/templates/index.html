@@ -1,0 +1,134 @@
+{% extends "base.html" %}
+
+{% block title %}Restaurant Management System · DBMS DA2{% endblock %}
+
+{% block content %}
+<!-- Welcome Banner -->
+<div class="row g-4 mb-4">
+  <div class="col-12">
+    <div class="card-glass p-4 p-md-5" style="background: #ffffff;">
+      <div class="d-flex flex-wrap align-items-center justify-content-between gap-3">
+        <div>
+          <span class="badge bg-warning text-dark px-3 py-1 mb-2 fs-6">
+            <i class="bi bi-shield-check me-1"></i> Database Systems (BACSE202) · Multi-Role Architecture
+          </span>
+          <h1 class="fw-bold mb-2 text-dark">Restaurant Table Reservation & Food Ordering System</h1>
+          <p class="text-dark fw-bold mb-0" style="max-width: 850px; font-size: 1.05rem;">
+            Unified relational DBMS built on Oracle 21c XE with dedicated interfaces and tailored access permissions for 
+            <strong>Customers</strong>, <strong>Restaurant Staff (Receptionist)</strong>, and the <strong>Restaurant Owner</strong>.
+          </p>
+        </div>
+        <div class="d-flex flex-wrap gap-2">
+          <a href="{{ url_for('login') }}" class="btn btn-primary btn-lg">
+            <i class="bi bi-box-arrow-in-right me-1"></i> Sign In to Account
+          </a>
+          <a href="{{ url_for('register') }}" class="btn btn-secondary btn-lg">
+            <i class="bi bi-person-plus me-1"></i> Register New User
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Three Distinct Role Portals Cards -->
+<div class="row g-4 mb-5">
+  <!-- 1. Customer Role Card -->
+  <div class="col-lg-4 col-md-6">
+    <div class="card-glass h-100 p-4 d-flex flex-column justify-content-between" style="background: #ffffff;">
+      <div>
+        <div class="d-flex align-items-center justify-content-between mb-3">
+          <span class="fs-1">🍽️</span>
+          <span class="badge bg-warning text-dark fs-6">CUSTOMER PORTAL</span>
+        </div>
+        <h4 class="fw-bold text-dark mb-2">Customer Experience</h4>
+        <p class="text-dark fw-semibold mb-3">
+          Designed for diners to reserve dining tables with real-time seat availability checking, order dishes from active menus, view personal running totals, and write verified dining feedback.
+        </p>
+        <ul class="list-unstyled text-dark fw-bold small mb-4">
+          <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i>Live table availability checking by time slot</li>
+          <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i>Multi-dish ordering with trigger total updates</li>
+          <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i>UPI, Card & Cash bill payments</li>
+          <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i>Personal reservations and order history</li>
+        </ul>
+      </div>
+      <div>
+        <a href="{{ url_for('login') }}" class="btn btn-primary w-100">
+          <i class="bi bi-box-arrow-in-right me-1"></i> Enter Customer Portal
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2. Staff / Receptionist Role Card -->
+  <div class="col-lg-4 col-md-6">
+    <div class="card-glass h-100 p-4 d-flex flex-column justify-content-between" style="background: #ffffff;">
+      <div>
+        <div class="d-flex align-items-center justify-content-between mb-3">
+          <span class="fs-1">📋</span>
+          <span class="badge bg-info text-dark fs-6">STAFF & RECEPTION</span>
+        </div>
+        <h4 class="fw-bold text-dark mb-2">Front Desk & Kitchen Operations</h4>
+        <p class="text-dark fw-semibold mb-3">
+          Designed for receptionists, floor captains, and kitchen coordinators to seat arriving guests, manage dining tables, and advance orders along the preparation track.
+        </p>
+        <ul class="list-unstyled text-dark fw-bold small mb-4">
+          <li class="mb-2"><i class="bi bi-check-circle-fill text-info me-2"></i>Guest arrival check-in & seating desk</li>
+          <li class="mb-2"><i class="bi bi-check-circle-fill text-info me-2"></i>Live table occupancy status tracking</li>
+          <li class="mb-2"><i class="bi bi-check-circle-fill text-info me-2"></i>Kitchen order pipeline (PLACED &rarr; READY &rarr; SERVED)</li>
+          <li class="mb-2"><i class="bi bi-check-circle-fill text-info me-2"></i>Bill settlement at front counter</li>
+        </ul>
+      </div>
+      <div>
+        <a href="{{ url_for('login') }}" class="btn btn-info w-100">
+          <i class="bi bi-box-arrow-in-right me-1"></i> Enter Staff Operations
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- 3. Owner Role Card -->
+  <div class="col-lg-4 col-md-12">
+    <div class="card-glass h-100 p-4 d-flex flex-column justify-content-between" style="background: #ffffff;">
+      <div>
+        <div class="d-flex align-items-center justify-content-between mb-3">
+          <span class="fs-1">👑</span>
+          <span class="badge bg-success text-dark fs-6">EXECUTIVE OWNER</span>
+        </div>
+        <h4 class="fw-bold text-dark mb-2">Executive Administration</h4>
+        <p class="text-dark fw-semibold mb-3">
+          Designed for restaurant owners and system administrators. Unrestricted control over menu pricing with PL/SQL audit history, customer and staff rosters, and 12 database reports.
+        </p>
+        <ul class="list-unstyled text-dark fw-bold small mb-4">
+          <li class="mb-2"><i class="bi bi-check-circle-fill text-dark me-2"></i>Dynamic price adjustments via PL/SQL sp_set_price</li>
+          <li class="mb-2"><i class="bi bi-check-circle-fill text-dark me-2"></i>Execution of 12 system SQL & PL/SQL queries</li>
+          <li class="mb-2"><i class="bi bi-check-circle-fill text-dark me-2"></i>Full customer and staff records management</li>
+          <li class="mb-2"><i class="bi bi-check-circle-fill text-dark me-2"></i>Branch-wide financial revenue analytics</li>
+        </ul>
+      </div>
+      <div>
+        <a href="{{ url_for('login') }}" class="btn btn-warning w-100 fw-bold">
+          <i class="bi bi-lightning-charge-fill me-1"></i> Enter Owner Portal
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Quick Statistics Banner -->
+<div class="row g-3 mb-4">
+  {% for kpi in counts %}
+  <div class="col-xl-3 col-md-6">
+    <div class="kpi-card">
+      <div class="kpi-icon bg-{{ kpi.color }} text-dark">
+        <i class="bi {{ kpi.icon }}"></i>
+      </div>
+      <div>
+        <div class="kpi-val">{{ kpi.count }}</div>
+        <div class="kpi-lbl">{{ kpi.label }}</div>
+      </div>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+{% endblock %}

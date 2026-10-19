@@ -1,0 +1,194 @@
+{% extends "base.html" %}
+
+{% block title %}My Account Profile · Restaurant DBMS{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center py-4">
+  <div class="col-lg-8 col-md-10">
+    <div class="card-glass p-4 p-md-5">
+      <!-- Profile Header -->
+      <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-4 pb-3" style="border-bottom: 3px solid #000;">
+        <div class="d-flex align-items-center gap-3">
+          <div class="d-flex align-items-center justify-content-center" 
+               style="width: 70px; height: 70px; border: 3px solid #000; border-radius: 12px; font-size: 2.2rem; background: {% if user.role == 'OWNER' %}var(--neo-green){% elif user.role == 'STAFF' %}var(--neo-cyan){% else %}var(--neo-yellow){% endif %}; box-shadow: 3px 3px 0 #000;">
+            {% if user.role == 'OWNER' %}👑{% elif user.role == 'STAFF' %}📋{% else %}🍽️{% endif %}
+          </div>
+          <div>
+            <h3 class="fw-bold text-dark mb-0">{{ user.full_name }}</h3>
+            <div class="d-flex align-items-center gap-2 mt-1">
+              <span class="badge {% if user.role == 'OWNER' %}bg-success{% elif user.role == 'STAFF' %}bg-info{% else %}bg-warning{% endif %} text-dark">
+                ROLE: {{ user.role }}
+              </span>
+              <span class="text-dark fw-bold small">Account #{{ user.user_id }}</span>
+            </div>
+          </div>
+        </div>
+        <div>
+          <a href="{{ url_for('logout') }}" class="btn btn-danger btn-sm">
+            <i class="bi bi-box-arrow-right me-1"></i> Sign Out
+          </a>
+        </div>
+      </div>
+
+      <!-- Account Specification Details -->
+      <div class="row g-4 mb-4">
+        <div class="col-md-6">
+          <div class="p-3 border-2 border-dark h-100" style="background: #ffffff; border: 2.5px solid #000; box-shadow: 2px 2px 0 #000; border-radius: 8px;">
+            <h6 class="fw-bold text-dark text-uppercase small mb-3"><i class="bi bi-envelope me-1"></i> Identity Credentials</h6>
+            <div class="mb-2">
+              <div class="small fw-bold text-dark text-uppercase">Email Address:</div>
+              <div class="fw-bold font-monospace" style="color: #0369a1;">{{ user.email }}</div>
+            </div>
+            <div class="mb-2">
+              <div class="small fw-bold text-dark text-uppercase">Phone:</div>
+              <div class="fw-bold text-dark">{{ user.phone or 'Not Specified' }}</div>
+            </div>
+            <div>
+              <div class="small fw-bold text-dark text-uppercase">Member Since:</div>
+              <div class="fw-bold text-dark">{{ user.created_at_str or 'Active Record' }}</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-6">
+          <div class="p-3 border-2 border-dark h-100" style="background: #ffffff; border: 2.5px solid #000; box-shadow: 2px 2px 0 #000; border-radius: 8px;">
+            <h6 class="fw-bold text-dark text-uppercase small mb-3"><i class="bi bi-shield-check me-1"></i> Role Specifics</h6>
+            {% if user.role == 'CUSTOMER' %}
+            <div class="mb-2">
+              <div class="small fw-bold text-dark text-uppercase">Customer ID:</div>
+              <div class="fw-bold text-dark">#{{ user.customer_id or '—' }}</div>
+            </div>
+            <div class="mb-2">
+              <div class="small fw-bold text-dark text-uppercase">Delivery Address:</div>
+              <div class="small fw-bold text-dark">{{ user.address or '—' }}</div>
+            </div>
+            <div>
+              <div class="small fw-bold text-dark text-uppercase">Activity Summary:</div>
+              <div class="fw-bold text-dark">{{ stats.orders_count or 0 }} Orders Placed · {{ stats.res_count or 0 }} Reservations</div>
+            </div>
+
+            {% elif user.role == 'STAFF' %}
+            <div class="mb-2">
+              <div class="small fw-bold text-dark text-uppercase">Staff Job Title:</div>
+              <div class="fw-bold text-dark">{{ user.staff_title or 'Front Desk Receptionist' }}</div>
+            </div>
+            <div class="mb-2">
+              <div class="small fw-bold text-dark text-uppercase">Assigned Location:</div>
+              <div class="fw-bold text-dark">{{ user.restaurant_name or 'Main Branch' }}</div>
+            </div>
+            <div>
+              <div class="small fw-bold text-dark text-uppercase">Staff ID:</div>
+              <div class="fw-bold text-dark">#{{ user.staff_id or '—' }}</div>
+            </div>
+
+            {% else %}
+            <div class="mb-2">
+              <div class="small fw-bold text-dark text-uppercase">Administrative Scope:</div>
+              <div class="fw-bold text-dark">Master Executive Access</div>
+            </div>
+            <div class="mb-2">
+              <div class="small fw-bold text-dark text-uppercase">System Control:</div>
+              <div class="fw-bold text-dark">All 3 Restaurant Branches & Kitchens</div>
+            </div>
+            <div>
+              <div class="small fw-bold text-dark text-uppercase">Database Privilege:</div>
+              <div class="fw-bold text-dark">PL/SQL Stored Procedures & 12 Analytic Queries</div>
+            </div>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+
+      <!-- Accessibilities & Permissions Matrix -->
+      <h5 class="fw-bold text-dark mb-3"><i class="bi bi-key-fill text-dark me-2"></i>Permissions & Accessibilities</h5>
+      <div class="table-responsive">
+        <table class="table table-custom">
+          <thead>
+            <tr>
+              <th>System Module</th>
+              <th>Access Level</th>
+              <th>Functional Privileges</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="fw-bold">Table Reservations</td>
+              <td>
+                {% if user.role == 'CUSTOMER' %}
+                  <span class="badge bg-warning text-dark">Self Booking</span>
+                {% else %}
+                  <span class="badge bg-success text-dark">Full Management</span>
+                {% endif %}
+              </td>
+              <td class="small fw-bold text-dark">
+                {% if user.role == 'CUSTOMER' %}
+                  Book tables for self, check live availability, cancel own bookings.
+                {% else %}
+                  Seat walk-in guests, check-in arrivals, reassign tables, cancel/complete any reservation.
+                {% endif %}
+              </td>
+            </tr>
+            <tr>
+              <td class="fw-bold">Food Orders & Billing</td>
+              <td>
+                {% if user.role == 'CUSTOMER' %}
+                  <span class="badge bg-warning text-dark">Personal Orders</span>
+                {% else %}
+                  <span class="badge bg-success text-dark">Floor & Kitchen Desk</span>
+                {% endif %}
+              </td>
+              <td class="small fw-bold text-dark">
+                {% if user.role == 'CUSTOMER' %}
+                  Place food orders for own table, add dishes, settle bill payment.
+                {% else %}
+                  Take orders at tables, advance order pipeline (PLACED &rarr; PREPARING &rarr; SERVED), record payments.
+                {% endif %}
+              </td>
+            </tr>
+            <tr>
+              <td class="fw-bold">Menu Prices & Audit Trail</td>
+              <td>
+                {% if user.role == 'OWNER' %}
+                  <span class="badge bg-success text-dark">Master Admin (sp_set_price)</span>
+                {% else %}
+                  <span class="badge bg-secondary text-dark">Read-Only Menu</span>
+                {% endif %}
+              </td>
+              <td class="small fw-bold text-dark">
+                {% if user.role == 'OWNER' %}
+                  Create dishes, update descriptions, execute PL/SQL procedure sp_set_price, inspect full revision history.
+                {% else %}
+                  Browse menu items, prices, dietary tags (VEG/NON-VEG) and prep times.
+                {% endif %}
+              </td>
+            </tr>
+            <tr>
+              <td class="fw-bold">12 SQL/PL-SQL Reports</td>
+              <td>
+                {% if user.role == 'OWNER' %}
+                  <span class="badge bg-success text-dark">Unrestricted Analytics</span>
+                {% else %}
+                  <span class="badge bg-secondary text-dark">Restricted</span>
+                {% endif %}
+              </td>
+              <td class="small fw-bold text-dark">
+                {% if user.role == 'OWNER' %}
+                  Execute all 12 system-specific queries, cursors, revenue aggregations, rankings and PL/SQL procedures.
+                {% else %}
+                  Administrative database queries are restricted to executive owner accounts.
+                {% endif %}
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="mt-4 text-center">
+        <a href="{{ url_for('index') }}" class="btn btn-primary">
+          <i class="bi bi-arrow-left me-1"></i> Return to Role Dashboard
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -177,7 +177,7 @@ INSERT INTO PRICE_HISTORY (item_id, price, start_date, end_date) VALUES (28, 460
 -- ----------------------------------------------------------------------------
 -- 6. CUSTOMERS (18 Customers)
 -- ----------------------------------------------------------------------------
-INSERT INTO CUSTOMER (name, email, phone, address, reg_date) VALUES ('Aarav Sharma', 'aarav.sharma@example.com', '+91 98111 22334', 'Flat 402, Oakwood Apts, Bengaluru', DATE '2026-01-10');
+INSERT INTO CUSTOMER (name, email, phone, address, reg_date) VALUES ('Rohan Jena', 'rohan.jena@example.com', '+91 98111 22334', 'Flat 402, Oakwood Apts, Bengaluru', DATE '2026-01-10');
 INSERT INTO CUSTOMER (name, email, phone, address, reg_date) VALUES ('Diya Iyer', 'diya.iyer@example.com', '+91 98222 33445', '14 Temple Street, Chennai', DATE '2026-01-15');
 INSERT INTO CUSTOMER (name, email, phone, address, reg_date) VALUES ('Kabir Patel', 'kabir.patel@example.com', '+91 98333 44556', '702 Sea View Heights, Bandra, Mumbai', DATE '2026-02-01');
 INSERT INTO CUSTOMER (name, email, phone, address, reg_date) VALUES ('Ananya Deshmukh', 'ananya.d@example.com', '+91 98444 55667', '23 Park Residency, Pune', DATE '2026-02-12');

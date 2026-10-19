@@ -38,7 +38,7 @@ BEGIN
     -- TEST 1: Unique Email Constraint on CUSTOMER
     BEGIN
         INSERT INTO CUSTOMER (name, email, phone, address)
-        VALUES ('Duplicate Person', 'aarav.sharma@example.com', '1234567890', 'Somewhere');
+        VALUES ('Duplicate Person', 'rohan.jena@example.com', '1234567890', 'Somewhere');
         report('Duplicate email must be rejected', FALSE, 'Allowed duplicate email insert');
         ROLLBACK;
     EXCEPTION

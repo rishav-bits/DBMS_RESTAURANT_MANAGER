@@ -1,616 +1,921 @@
 /* ==========================================================================
-   Restaurant Table Reservation & Food Ordering System (Restaurant DBMS - DA2)
-   NEO-BRUTALISM / NEUBRUTALISM DESIGN SYSTEM
-   High-Contrast, Bold Geometry, Crisp Ink Black Lines & Hard Offset Shadows
+   RESTAURANT TABLE RESERVATION & FOOD ORDERING SYSTEM (DA2)
+   RECEIPTIFY DESIGN SYSTEM & PAPER ANIMATION ENGINE
+   Aesthetic: Thermal Printed Restaurant Receipts, Perforated Tickets,
+              Rubber Ink Stamps, Tactile Paper Animations & Monospaced Typography
    ========================================================================== */
 
-@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@600;700;800;900&family=Space+Grotesk:wght@600;700;800;900&family=JetBrains+Mono:wght@600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Courier+Prime:ital,wght@0,400;0,700;1,400&family=DM+Mono:ital,wght@0,400;0,500;1,400&family=Libre+Barcode+128&family=Space+Grotesk:wght@600;700;800&family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Syne:wght@700;800;900&display=swap');
 
 :root {
-  /* Neo-Brutalist Color Palette */
-  --neo-bg: #faf8f5;
-  --neo-bg-alt: #f3efe6;
-  --neo-card-bg: #ffffff;
-  --neo-black: #000000;
-  --neo-white: #ffffff;
+  /* Atmosphere & Countertop */
+  --counter-bg: #111215;
+  --counter-surface: #18191e;
+  --counter-border: #282a32;
   
-  /* Bold Punchy Accent Colors */
-  --neo-yellow: #ffe600;
-  --neo-pink: #ff6b8b;
-  --neo-cyan: #38bdf8;
-  --neo-green: #34d399;
-  --neo-purple: #c084fc;
-  --neo-orange: #fb923c;
-  --neo-red: #f87171;
-  --neo-blue: #60a5fa;
+  /* Authentic Thermal Receipt Paper Palette */
+  --paper-bg: #fffef9;
+  --paper-bg-warm: #fcfbf5;
+  --paper-bg-crease: #f5f3e9;
+  --paper-edge: #e7e4d8;
   
-  /* Text Colors - 100% Pure Legibility */
-  --text-dark: #000000;
-  --text-body: #111827;
-  --text-muted: #374151;
-  --text-dim: #4b5563;
+  /* Ink Tones */
+  --ink-black: #111111;
+  --ink-pure: #000000;
+  --ink-charcoal: #2a2a2a;
+  --ink-muted: #555555;
+  --ink-faint: #777777;
+  --ink-rule: #333333;
+  --ink-rule-faint: #d5d1c4;
   
-  /* Hard Neo-Brutalist Borders & Shadows */
-  --border-thick: 3px solid #000000;
-  --border-medium: 2.5px solid #000000;
-  --border-thin: 2px solid #000000;
-  --shadow-sm: 2px 2px 0px #000000;
-  --shadow-md: 4px 4px 0px #000000;
-  --shadow-lg: 6px 6px 0px #000000;
-  --shadow-xl: 9px 9px 0px #000000;
-  --radius-neo: 10px;
+  /* Rubber Stamp Ink Accents */
+  --stamp-paid: #059669;
+  --stamp-preparing: #d97706;
+  --stamp-ready: #2563eb;
+  --stamp-served: #7c3aed;
+  --stamp-cancelled: #dc2626;
+  --stamp-confirmed: #059669;
+  --stamp-yellow: #ca8a04;
+  
+  /* Thermal Paper Shadows */
+  --shadow-paper: 0 4px 6px -1px rgba(0, 0, 0, 0.25), 0 14px 28px -4px rgba(0, 0, 0, 0.45), 0 1px 2px rgba(0,0,0,0.15);
+  --shadow-paper-hover: 0 10px 15px -3px rgba(0, 0, 0, 0.3), 0 24px 38px -6px rgba(0, 0, 0, 0.55), 0 2px 4px rgba(0,0,0,0.2);
+  --shadow-paper-sm: 0 2px 4px rgba(0, 0, 0, 0.2), 0 6px 14px rgba(0, 0, 0, 0.3);
+  --shadow-slit: inset 0 3px 6px rgba(0,0,0,0.8), 0 2px 0 rgba(255,255,255,0.06);
+
+  /* Fonts */
+  --font-mono: 'Space Mono', 'Courier Prime', monospace;
+  --font-thermal: 'Courier Prime', 'DM Mono', monospace;
+  --font-title: 'Space Grotesk', 'Syne', sans-serif;
+  --font-barcode: 'Libre Barcode 128', cursive;
 }
 
 * {
   box-sizing: border-box;
 }
 
+/* --------------------------------------------------------------------------
+   BASE ATMOSPHERE (Moody Restaurant Countertop with Spotlight)
+   -------------------------------------------------------------------------- */
 body {
-  font-family: 'Space Grotesk', 'Plus Jakarta Sans', sans-serif;
-  background-color: var(--neo-bg);
-  background-image: radial-gradient(#000000 1.2px, transparent 1.2px);
-  background-size: 24px 24px;
-  color: var(--text-dark);
+  font-family: var(--font-mono);
+  background-color: var(--counter-bg);
+  background-image: 
+    radial-gradient(circle at 50% 0%, rgba(245, 158, 11, 0.08) 0%, transparent 65%),
+    radial-gradient(circle at 10% 90%, rgba(56, 189, 248, 0.04) 0%, transparent 50%),
+    repeating-linear-gradient(45deg, rgba(255,255,255,0.012) 0, rgba(255,255,255,0.012) 1px, transparent 1px, transparent 12px);
+  background-attachment: fixed;
+  color: var(--ink-black);
   min-height: 100vh;
   display: flex;
   flex-direction: column;
   margin: 0;
   padding: 0;
+  letter-spacing: -0.2px;
 }
 
-/* Ensure all typography is crisp and ink-black */
+/* Typography Defaults */
 h1, h2, h3, h4, h5, h6 {
-  font-family: 'Space Grotesk', sans-serif;
+  font-family: var(--font-title);
   font-weight: 800;
-  color: var(--neo-black) !important;
   letter-spacing: -0.5px;
-}
-
-p, span, div, label, td, th {
-  color: var(--neo-black);
+  color: var(--ink-pure);
+  margin-bottom: 0.5rem;
 }
 
 /* --------------------------------------------------------------------------
-   NAVBAR (Neo-Brutalist Sticky Bar)
+   KEYFRAME ANIMATIONS (Thermal Printing & Tactile Paper)
+   -------------------------------------------------------------------------- */
+
+/* 1. Thermal Rollout (Paper rolling smoothly out of printer feed) */
+@keyframes thermalPrintRoll {
+  0% {
+    opacity: 0;
+    transform: translateY(-26px) scale(0.98);
+    clip-path: inset(0 0 100% 0);
+    filter: drop-shadow(0 0 0 rgba(0,0,0,0));
+  }
+  30% {
+    opacity: 0.85;
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    clip-path: inset(0 0 0 0);
+  }
+}
+
+/* 2. Paper Feed Ejection with Jitter */
+@keyframes printerFeedSlot {
+  0% { transform: translateY(-3px); }
+  25% { transform: translateY(1px); }
+  50% { transform: translateY(-1px); }
+  75% { transform: translateY(1px); }
+  100% { transform: translateY(0); }
+}
+
+/* 3. Rubber Stamp Slam (Inking onto paper) */
+@keyframes stampSlam {
+  0% {
+    opacity: 0;
+    transform: scale(2.2) rotate(16deg);
+  }
+  50% {
+    opacity: 0.95;
+    transform: scale(0.92) rotate(-7deg);
+  }
+  75% {
+    transform: scale(1.05) rotate(-5deg);
+  }
+  100% {
+    opacity: 0.92;
+    transform: scale(1) rotate(-6deg);
+  }
+}
+
+/* 4. Subtle Tactile Paper Flutter */
+@keyframes paperFlutter {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  50% { transform: translateY(-3px) rotate(0.4deg); }
+}
+
+/* 5. Paper Crease Ripple */
+@keyframes tearLineGlow {
+  0%, 100% { opacity: 0.4; }
+  50% { opacity: 0.9; }
+}
+
+/* Animation Utility Classes */
+.animate-print {
+  animation: thermalPrintRoll 0.65s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.delay-1 { animation-delay: 0.1s; }
+.delay-2 { animation-delay: 0.2s; }
+.delay-3 { animation-delay: 0.3s; }
+.delay-4 { animation-delay: 0.4s; }
+
+/* --------------------------------------------------------------------------
+   THE RECEIPTIFY TOP NAVIGATION BAR (Cash Register Terminal Tape)
    -------------------------------------------------------------------------- */
 .navbar-custom {
-  background-color: var(--neo-white);
-  border-bottom: 3.5px solid var(--neo-black);
-  box-shadow: 0 4px 0px var(--neo-black);
-  padding: 0.85rem 1.75rem;
+  background-color: var(--counter-surface);
+  border-bottom: 2px solid var(--counter-border);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.6);
+  padding: 0.75rem 1.75rem;
   position: sticky;
   top: 0;
   z-index: 1030;
+  backdrop-filter: blur(12px);
+}
+
+/* Thermal Printer Ejection Slit Line beneath Navbar */
+.navbar-custom::after {
+  content: "";
+  position: absolute;
+  bottom: -4px;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: repeating-linear-gradient(90deg, #1f2026, #1f2026 8px, #000 8px, #000 16px);
+  border-bottom: 1px dashed rgba(255, 255, 255, 0.15);
 }
 
 .navbar-brand {
-  font-family: 'Space Grotesk', sans-serif;
+  font-family: var(--font-title);
   font-weight: 900;
-  font-size: 1.45rem;
-  letter-spacing: -0.5px;
-  color: var(--neo-black) !important;
+  font-size: 1.25rem;
+  color: #fff !important;
   display: flex;
   align-items: center;
   gap: 0.6rem;
-  background: var(--neo-yellow);
-  padding: 0.4rem 0.95rem;
-  border: var(--border-medium);
-  box-shadow: var(--shadow-sm);
-  border-radius: 8px;
-  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  background: #23252e;
+  padding: 0.4rem 0.9rem;
+  border: 1.5px solid #3a3d4a;
+  border-radius: 6px;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.1), 0 2px 4px rgba(0,0,0,0.4);
+  transition: all 0.2s ease;
 }
 
 .navbar-brand:hover {
-  transform: translate(-2px, -2px);
-  box-shadow: var(--shadow-md);
+  background: #2b2e3a;
+  border-color: #f59e0b;
+  transform: translateY(-1px);
+}
+
+.navbar-brand .receipt-icon {
+  font-size: 1.3rem;
+  filter: drop-shadow(0 0 6px rgba(245, 158, 11, 0.6));
 }
 
 .nav-link {
-  color: var(--neo-black) !important;
-  font-family: 'Space Grotesk', sans-serif;
-  font-weight: 700;
-  font-size: 0.95rem;
-  padding: 0.5rem 0.9rem !important;
-  border-radius: 8px;
-  border: 2px solid transparent;
-  transition: all 0.15s ease;
+  color: #c9cdd8 !important;
+  font-family: var(--font-mono);
+  font-size: 0.88rem;
+  font-weight: 600;
+  padding: 0.45rem 0.8rem !important;
+  border-radius: 6px;
+  border: 1px solid transparent;
+  transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
   margin: 0 0.15rem;
+  display: inline-flex;
+  align-items: center;
 }
 
 .nav-link:hover {
-  background-color: var(--neo-yellow);
-  border: var(--border-thin);
-  box-shadow: var(--shadow-sm);
-  transform: translate(-1px, -1px);
+  color: #fff !important;
+  background-color: #272a34;
+  border-color: #3f4352;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.3);
 }
 
 .nav-link.active {
-  background-color: var(--neo-cyan) !important;
-  border: var(--border-medium) !important;
-  box-shadow: var(--shadow-sm) !important;
-  color: var(--neo-black) !important;
-}
-
-/* --------------------------------------------------------------------------
-   NEO-BRUTALIST CARDS
-   -------------------------------------------------------------------------- */
-.card-glass, .card-neo {
-  background: var(--neo-card-bg);
-  border: var(--border-thick);
-  border-radius: var(--radius-neo);
-  box-shadow: var(--shadow-lg);
+  background: var(--paper-bg) !important;
+  color: var(--ink-pure) !important;
+  border-color: #fff !important;
+  box-shadow: 0 3px 10px rgba(255, 255, 255, 0.15), inset 0 0 4px rgba(0,0,0,0.05) !important;
+  font-weight: 700;
   position: relative;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-  overflow: hidden;
 }
 
-.card-glass:hover, .card-neo:hover {
-  box-shadow: var(--shadow-xl);
-}
-
-.card-header-custom {
-  background: var(--neo-yellow);
-  border-bottom: var(--border-thick);
-  padding: 1rem 1.25rem;
-  font-family: 'Space Grotesk', sans-serif;
-  font-weight: 800;
-  font-size: 1.15rem;
-  color: var(--neo-black) !important;
+/* Little paper tear triangle indicator under active tab */
+.nav-link.active::after {
+  content: "";
+  position: absolute;
+  bottom: -6px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 0;
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+  border-top: 5px solid var(--paper-bg);
 }
 
 /* --------------------------------------------------------------------------
-   KPI STAT CARDS
+   THE THERMAL RECEIPT PAPER CARDS (.card-glass, .card-neo, .receipt-paper)
+   -------------------------------------------------------------------------- */
+.card-glass, 
+.card-neo,
+.receipt-paper,
+.receipt-card {
+  background-color: var(--paper-bg);
+  background-image: 
+    radial-gradient(var(--ink-rule-faint) 0.5px, transparent 0.5px),
+    linear-gradient(180deg, rgba(0,0,0,0.015) 0%, transparent 8%, transparent 92%, rgba(0,0,0,0.02) 100%);
+  background-size: 16px 16px, 100% 100%;
+  color: var(--ink-black);
+  border: 1px solid var(--paper-edge);
+  border-radius: 4px;
+  box-shadow: var(--shadow-paper);
+  position: relative;
+  transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.25s ease;
+  overflow: visible;
+  font-family: var(--font-thermal);
+}
+
+/* Hover Lift & 3D Tactile Paper Curl */
+.card-glass:hover,
+.card-neo:hover,
+.receipt-paper:hover,
+.receipt-card:hover {
+  transform: translateY(-4px) rotate(-0.3deg);
+  box-shadow: var(--shadow-paper-hover);
+}
+
+/* Receipt Top & Bottom Perforated Sawtooth / Jagged Edge Effect */
+.receipt-sawtooth-top::before {
+  content: "";
+  position: absolute;
+  top: -8px;
+  left: 0;
+  right: 0;
+  height: 8px;
+  background-image: linear-gradient(135deg, transparent 50%, var(--paper-bg) 50%),
+                    linear-gradient(-135deg, transparent 50%, var(--paper-bg) 50%);
+  background-size: 14px 8px;
+  background-repeat: repeat-x;
+  z-index: 2;
+  filter: drop-shadow(0 -1px 1px rgba(0,0,0,0.06));
+}
+
+.receipt-sawtooth-bottom::after {
+  content: "";
+  position: absolute;
+  bottom: -8px;
+  left: 0;
+  right: 0;
+  height: 8px;
+  background-image: linear-gradient(45deg, transparent 50%, var(--paper-bg) 50%),
+                    linear-gradient(-45deg, transparent 50%, var(--paper-bg) 50%);
+  background-size: 14px 8px;
+  background-repeat: repeat-x;
+  z-index: 2;
+  filter: drop-shadow(0 2px 2px rgba(0,0,0,0.08));
+}
+
+/* Receipt Header Strip */
+.card-header-custom,
+.receipt-header {
+  background: var(--paper-bg-warm);
+  border-bottom: 2px dashed var(--ink-rule);
+  padding: 0.9rem 1.25rem;
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: var(--ink-pure) !important;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  position: relative;
+}
+
+/* Dotted Receipt Divider Rules */
+.receipt-divider {
+  border-top: 1.5px dashed var(--ink-rule);
+  margin: 0.85rem 0;
+  position: relative;
+}
+
+.receipt-divider-double {
+  border-top: 3px double var(--ink-rule);
+  margin: 1rem 0;
+}
+
+.receipt-divider-text {
+  text-align: center;
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  color: var(--ink-faint);
+  letter-spacing: 2px;
+  margin: 0.6rem 0;
+  user-select: none;
+}
+
+/* --------------------------------------------------------------------------
+   KPI METRIC SLIPS (Thermal Register Summary Tapes)
    -------------------------------------------------------------------------- */
 .kpi-card {
-  border: var(--border-thick);
-  border-radius: var(--radius-neo);
-  padding: 1.25rem;
+  background-color: var(--paper-bg);
+  border: 1px solid var(--paper-edge);
+  border-left: 5px solid var(--ink-black);
+  border-radius: 4px;
+  padding: 1.15rem 1.25rem;
   display: flex;
   align-items: center;
-  gap: 1.2rem;
-  background: var(--neo-white);
-  box-shadow: var(--shadow-md);
-  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  gap: 1.1rem;
+  box-shadow: var(--shadow-paper-sm);
+  position: relative;
+  transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+  font-family: var(--font-thermal);
 }
 
 .kpi-card:hover {
-  transform: translate(-2px, -2px);
-  box-shadow: var(--shadow-lg);
+  transform: translateY(-3px) scale(1.015);
+  box-shadow: var(--shadow-paper);
+  border-left-color: #f59e0b;
 }
 
 .kpi-icon {
-  width: 58px;
-  height: 58px;
-  border-radius: 10px;
-  border: var(--border-thick);
-  box-shadow: var(--shadow-sm);
+  width: 52px;
+  height: 52px;
+  border-radius: 6px;
+  background: var(--paper-bg-crease);
+  border: 1.5px dashed var(--ink-rule);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.8rem;
+  font-size: 1.6rem;
   flex-shrink: 0;
-  color: var(--neo-black) !important;
+  color: var(--ink-black) !important;
+  transition: transform 0.2s ease;
+}
+
+.kpi-card:hover .kpi-icon {
+  transform: rotate(5deg) scale(1.08);
 }
 
 .kpi-val {
-  font-family: 'Space Grotesk', sans-serif;
-  font-size: 2.1rem;
-  font-weight: 900;
+  font-family: var(--font-mono);
+  font-size: 1.95rem;
+  font-weight: 700;
   line-height: 1.1;
-  color: var(--neo-black) !important;
-  letter-spacing: -1px;
+  color: var(--ink-pure) !important;
+  letter-spacing: -0.5px;
 }
 
 .kpi-lbl {
-  font-size: 0.88rem;
-  color: var(--text-dark) !important;
-  font-weight: 800;
+  font-family: var(--font-mono);
+  font-size: 0.76rem;
+  color: var(--ink-muted) !important;
+  font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.5px;
+  letter-spacing: 0.8px;
 }
 
 /* --------------------------------------------------------------------------
-   NEO-BRUTALIST TABLES
+   THERMAL PRINTED AUDIT LOG TABLES (.table-custom)
    -------------------------------------------------------------------------- */
 .table-responsive {
-  border-radius: 0 0 var(--radius-neo) var(--radius-neo);
-  background: var(--neo-white);
+  background: var(--paper-bg);
+  border-radius: 0 0 4px 4px;
+  position: relative;
 }
 
 .table-custom {
-  color: var(--text-dark) !important;
+  color: var(--ink-black) !important;
   margin-bottom: 0;
-  border-collapse: separate;
-  border-spacing: 0;
+  border-collapse: collapse;
   width: 100%;
+  font-family: var(--font-thermal);
 }
 
 .table-custom th {
-  background: var(--neo-yellow) !important;
-  color: var(--neo-black) !important;
-  font-family: 'Space Grotesk', sans-serif;
-  font-size: 0.88rem;
-  font-weight: 900;
+  background: var(--paper-bg-warm) !important;
+  color: var(--ink-pure) !important;
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.6px;
-  padding: 1rem 1.1rem;
-  border-bottom: var(--border-thick) !important;
+  letter-spacing: 0.8px;
+  padding: 0.85rem 1rem;
+  border-bottom: 2px dashed var(--ink-rule) !important;
   border-top: none;
 }
 
 .table-custom td {
-  padding: 1rem 1.1rem;
+  padding: 0.85rem 1rem;
   vertical-align: middle;
-  border-bottom: 2px solid #e5e7eb !important;
-  color: var(--neo-black) !important;
-  font-weight: 700;
-  font-size: 0.95rem;
+  border-bottom: 1px dotted var(--ink-rule-faint) !important;
+  color: var(--ink-black) !important;
+  font-size: 0.9rem;
 }
 
 .table-custom tbody tr {
-  background-color: var(--neo-white);
-  transition: background-color 0.15s ease;
+  background-color: var(--paper-bg);
+  transition: background-color 0.15s ease, transform 0.15s ease;
 }
 
 .table-custom tbody tr:hover {
-  background-color: #fffde0 !important;
+  background-color: #faf7ec !important;
 }
 
 .table-custom tfoot tr td {
-  background-color: #f3efe6 !important;
-  border-top: var(--border-thick) !important;
-  color: var(--neo-black) !important;
-  font-weight: 900;
+  background-color: var(--paper-bg-crease) !important;
+  border-top: 2px dashed var(--ink-rule) !important;
+  color: var(--ink-pure) !important;
+  font-family: var(--font-mono);
+  font-weight: 700;
 }
 
 /* --------------------------------------------------------------------------
-   NEO-BRUTALIST BUTTONS
+   TACTILE PERFORATED BUTTONS & REGISTER KEYS
    -------------------------------------------------------------------------- */
 .btn {
-  font-family: 'Space Grotesk', sans-serif;
-  font-weight: 800 !important;
-  border: var(--border-thick) !important;
-  box-shadow: var(--shadow-sm) !important;
-  border-radius: 8px !important;
-  padding: 0.55rem 1.15rem;
-  transition: transform 0.12s ease, box-shadow 0.12s ease, background-color 0.12s ease;
-  letter-spacing: 0.2px;
-  color: var(--neo-black) !important;
+  font-family: var(--font-mono);
+  font-weight: 700 !important;
+  font-size: 0.86rem;
+  border: 1.5px solid var(--ink-pure) !important;
+  border-radius: 4px !important;
+  padding: 0.5rem 1rem;
+  transition: all 0.15s cubic-bezier(0.34, 1.56, 0.64, 1);
+  letter-spacing: 0.3px;
+  box-shadow: 2px 2px 0px rgba(0, 0, 0, 0.85) !important;
+  position: relative;
 }
 
 .btn:hover {
-  transform: translate(-2px, -2px);
-  box-shadow: var(--shadow-md) !important;
-  color: var(--neo-black) !important;
+  transform: translate(-1.5px, -1.5px);
+  box-shadow: 3.5px 3.5px 0px rgba(0, 0, 0, 0.9) !important;
 }
 
 .btn:active {
-  transform: translate(2px, 2px);
-  box-shadow: 1px 1px 0px var(--neo-black) !important;
+  transform: translate(1.5px, 1.5px);
+  box-shadow: 0.5px 0.5px 0px rgba(0, 0, 0, 0.8) !important;
 }
 
 .btn-primary {
-  background-color: var(--neo-yellow) !important;
-  color: var(--neo-black) !important;
+  background-color: #f59e0b !important;
+  color: #000 !important;
+  border-color: #000 !important;
 }
 .btn-primary:hover {
-  background-color: #ffd700 !important;
+  background-color: #d97706 !important;
+  color: #000 !important;
 }
 
 .btn-secondary {
-  background-color: #ffffff !important;
-  color: var(--neo-black) !important;
+  background-color: #f3efe6 !important;
+  color: #000 !important;
+  border-color: #000 !important;
 }
 .btn-secondary:hover {
-  background-color: #f3f4f6 !important;
+  background-color: #e5dec9 !important;
 }
 
 .btn-info {
-  background-color: var(--neo-cyan) !important;
-  color: var(--neo-black) !important;
+  background-color: #38bdf8 !important;
+  color: #000 !important;
+  border-color: #000 !important;
 }
 .btn-info:hover {
-  background-color: #0ea5e9 !important;
+  background-color: #0284c7 !important;
 }
 
 .btn-success {
-  background-color: var(--neo-green) !important;
-  color: var(--neo-black) !important;
+  background-color: #10b981 !important;
+  color: #000 !important;
+  border-color: #000 !important;
 }
 .btn-success:hover {
-  background-color: #10b981 !important;
+  background-color: #059669 !important;
 }
 
 .btn-warning {
-  background-color: var(--neo-orange) !important;
-  color: var(--neo-black) !important;
+  background-color: #fb923c !important;
+  color: #000 !important;
+  border-color: #000 !important;
 }
 .btn-warning:hover {
-  background-color: #f97316 !important;
+  background-color: #ea580c !important;
 }
 
 .btn-danger {
-  background-color: var(--neo-pink) !important;
-  color: var(--neo-black) !important;
+  background-color: #f87171 !important;
+  color: #000 !important;
+  border-color: #000 !important;
 }
 .btn-danger:hover {
-  background-color: #f43f5e !important;
+  background-color: #dc2626 !important;
 }
 
-.btn-outline-primary {
-  background-color: #fff !important;
-  color: var(--neo-black) !important;
+.btn-outline-primary,
+.btn-outline-secondary,
+.btn-outline-info,
+.btn-outline-warning,
+.btn-outline-danger {
+  background-color: var(--paper-bg) !important;
+  color: var(--ink-pure) !important;
+  border: 1.5px dashed var(--ink-pure) !important;
 }
+
 .btn-outline-primary:hover {
-  background-color: var(--neo-yellow) !important;
-}
-
-.btn-outline-info {
-  background-color: #fff !important;
-  color: var(--neo-black) !important;
+  background-color: #fef3c7 !important;
+  border-style: solid !important;
 }
 .btn-outline-info:hover {
-  background-color: var(--neo-cyan) !important;
-}
-
-.btn-outline-warning {
-  background-color: #fff !important;
-  color: var(--neo-black) !important;
+  background-color: #e0f2fe !important;
+  border-style: solid !important;
 }
 .btn-outline-warning:hover {
-  background-color: var(--neo-orange) !important;
-}
-
-.btn-outline-danger {
-  background-color: #fff !important;
-  color: #b91c1c !important;
+  background-color: #ffedd5 !important;
+  border-style: solid !important;
 }
 .btn-outline-danger:hover {
-  background-color: var(--neo-pink) !important;
-  color: var(--neo-black) !important;
+  background-color: #fee2e2 !important;
+  border-style: solid !important;
 }
 
-.btn-outline-secondary {
-  background-color: #fff !important;
-  color: var(--neo-black) !important;
+/* Tear-Off Coupon Button */
+.btn-tear-coupon {
+  background: var(--paper-bg);
+  border: 1.5px dashed var(--ink-rule) !important;
+  color: var(--ink-pure) !important;
+  box-shadow: 2px 2px 0 var(--ink-pure) !important;
+  position: relative;
 }
-.btn-outline-secondary:hover {
-  background-color: #e5e7eb !important;
+.btn-tear-coupon:hover {
+  background: #fdf8e4;
+  transform: rotate(-1deg) translateY(-2px);
 }
 
 /* --------------------------------------------------------------------------
-   NEO-BRUTALIST BADGES
+   AUTHENTIC RUBBER INK STAMPS (.receipt-stamp, .badge-status)
    -------------------------------------------------------------------------- */
-.badge {
-  font-family: 'Space Grotesk', sans-serif;
-  font-weight: 800;
-  border: var(--border-thin) !important;
-  box-shadow: 2px 2px 0px var(--neo-black) !important;
-  border-radius: 6px;
-  padding: 0.35rem 0.65rem;
-  color: var(--neo-black) !important;
+.receipt-stamp {
+  display: inline-block;
+  padding: 0.25rem 0.65rem;
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  border: 2px solid currentColor;
+  border-radius: 4px;
+  position: relative;
+  user-select: none;
+  animation: stampSlam 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) both;
 }
 
-.badge.bg-dark {
-  background-color: #ffe600 !important;
-  color: #000000 !important;
+.stamp-paid,
+.status-paid,
+.status-success {
+  color: var(--stamp-paid) !important;
+  border-color: var(--stamp-paid) !important;
+  background-color: rgba(5, 150, 105, 0.08) !important;
+  transform: rotate(-5deg);
 }
 
-.badge.bg-secondary {
-  background-color: #f3efe6 !important;
-  color: #000000 !important;
+.stamp-preparing,
+.status-preparing,
+.status-pending {
+  color: var(--stamp-preparing) !important;
+  border-color: var(--stamp-preparing) !important;
+  background-color: rgba(217, 119, 6, 0.08) !important;
+  transform: rotate(3deg);
 }
 
+.stamp-ready,
+.status-ready,
+.status-booked {
+  color: var(--stamp-ready) !important;
+  border-color: var(--stamp-ready) !important;
+  background-color: rgba(37, 99, 235, 0.08) !important;
+  transform: rotate(-3deg);
+}
+
+.stamp-placed,
+.status-placed {
+  color: #0284c7 !important;
+  border-color: #0284c7 !important;
+  background-color: rgba(2, 132, 199, 0.08) !important;
+  transform: rotate(2deg);
+}
+
+.stamp-served,
+.status-served,
+.status-delivered,
+.status-completed {
+  color: var(--stamp-served) !important;
+  border-color: var(--stamp-served) !important;
+  background-color: rgba(124, 58, 237, 0.08) !important;
+  transform: rotate(-4deg);
+}
+
+.stamp-confirmed,
+.status-confirmed {
+  color: #059669 !important;
+  border-color: #059669 !important;
+  background-color: rgba(5, 150, 105, 0.08) !important;
+  transform: rotate(4deg);
+}
+
+.stamp-cancelled,
+.status-cancelled,
+.status-failed {
+  color: var(--stamp-cancelled) !important;
+  border-color: var(--stamp-cancelled) !important;
+  background-color: rgba(220, 38, 38, 0.08) !important;
+  transform: rotate(-7deg);
+  text-decoration: line-through;
+}
+
+/* Legacy .badge-status adapter */
 .badge-status {
-  padding: 0.35rem 0.65rem;
-  font-size: 0.8rem;
+  padding: 0.25rem 0.6rem;
+  font-size: 0.78rem;
+  font-family: var(--font-mono);
   font-weight: 800;
-  border-radius: 6px;
+  border-radius: 4px;
   text-transform: uppercase;
   letter-spacing: 0.5px;
-  border: var(--border-thin);
-  box-shadow: 2px 2px 0px var(--neo-black);
-  color: var(--neo-black) !important;
+  border: 1.5px solid currentColor;
   display: inline-block;
+  box-shadow: 1px 1px 0 rgba(0,0,0,0.4);
 }
 
-.status-placed     { background: var(--neo-cyan); }
-.status-preparing  { background: var(--neo-yellow); }
-.status-ready      { background: var(--neo-green); }
-.status-served     { background: var(--neo-purple); }
-.status-delivered  { background: #4ade80; }
-.status-cancelled  { background: var(--neo-pink); }
-
-.status-booked     { background: var(--neo-cyan); }
-.status-confirmed  { background: var(--neo-green); }
-.status-completed  { background: #d1d5db; }
-
-.status-success    { background: var(--neo-green); }
-.status-pending    { background: var(--neo-yellow); }
-.status-failed     { background: var(--neo-pink); }
+.badge {
+  font-family: var(--font-mono);
+  font-weight: 700;
+  border: 1px solid var(--ink-rule) !important;
+  border-radius: 4px;
+  padding: 0.3rem 0.55rem;
+  color: var(--ink-black) !important;
+}
 
 .badge-veg {
-  background: var(--neo-green);
-  color: var(--neo-black);
-  border: var(--border-thin);
-  box-shadow: 1.5px 1.5px 0px var(--neo-black);
-  padding: 0.25rem 0.55rem;
-  border-radius: 4px;
-  font-weight: 800;
-  font-size: 0.78rem;
+  background: rgba(16, 185, 129, 0.15);
+  color: #065f46;
+  border: 1px solid #059669;
+  padding: 0.2rem 0.45rem;
+  border-radius: 3px;
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: 0.72rem;
   display: inline-block;
 }
 
 .badge-nonveg {
-  background: var(--neo-pink);
-  color: var(--neo-black);
-  border: var(--border-thin);
-  box-shadow: 1.5px 1.5px 0px var(--neo-black);
-  padding: 0.25rem 0.55rem;
-  border-radius: 4px;
-  font-weight: 800;
-  font-size: 0.78rem;
+  background: rgba(244, 63, 94, 0.15);
+  color: #9f1239;
+  border: 1px solid #e11d48;
+  padding: 0.2rem 0.45rem;
+  border-radius: 3px;
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: 0.72rem;
   display: inline-block;
 }
 
 /* --------------------------------------------------------------------------
-   NEO-BRUTALIST FORMS & INPUTS
+   BARCODE GRAPHICS (Scannable Receipt Thermal Barcodes)
+   -------------------------------------------------------------------------- */
+.receipt-barcode {
+  height: 40px;
+  background: repeating-linear-gradient(
+    90deg,
+    #111 0px, #111 2px,
+    transparent 2px, transparent 4px,
+    #111 4px, #111 7px,
+    transparent 7px, transparent 9px,
+    #111 9px, #111 11px,
+    transparent 11px, transparent 13px,
+    #111 13px, #111 16px,
+    transparent 16px, transparent 18px,
+    #111 18px, #111 19px,
+    transparent 19px, transparent 22px,
+    #111 22px, #111 25px,
+    transparent 25px, transparent 27px,
+    #111 27px, #111 31px,
+    transparent 31px, transparent 34px,
+    #111 34px, #111 36px,
+    transparent 36px, transparent 39px
+  );
+  margin: 1.25rem auto 0.35rem;
+  width: 82%;
+  max-width: 280px;
+  opacity: 0.92;
+}
+
+.barcode-number {
+  font-family: var(--font-mono);
+  font-size: 0.74rem;
+  letter-spacing: 3px;
+  color: var(--ink-faint);
+  text-align: center;
+  margin-bottom: 0.5rem;
+}
+
+/* --------------------------------------------------------------------------
+   FORMS & INPUTS (Register Entry Fields)
    -------------------------------------------------------------------------- */
 .form-control, .form-select {
-  background-color: var(--neo-white) !important;
-  border: var(--border-thick) !important;
-  color: var(--neo-black) !important;
-  border-radius: 8px !important;
-  padding: 0.7rem 0.9rem !important;
-  font-weight: 700 !important;
-  font-size: 0.95rem !important;
-  box-shadow: var(--shadow-sm);
-  transition: all 0.15s ease;
+  background-color: var(--paper-bg-warm) !important;
+  border: 1.5px solid var(--ink-black) !important;
+  color: var(--ink-pure) !important;
+  border-radius: 4px !important;
+  padding: 0.65rem 0.85rem !important;
+  font-family: var(--font-thermal) !important;
+  font-size: 0.92rem !important;
+  box-shadow: inset 1px 1px 3px rgba(0,0,0,0.06);
+  transition: all 0.2s ease;
 }
 
 .form-control:focus, .form-select:focus {
-  border-color: var(--neo-black) !important;
-  box-shadow: var(--shadow-md) !important;
+  border-color: #f59e0b !important;
+  box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.25) !important;
   outline: none !important;
-  background-color: #fffef2 !important;
+  background-color: #ffffff !important;
 }
 
 .form-label {
-  font-family: 'Space Grotesk', sans-serif;
-  font-weight: 800 !important;
-  font-size: 0.88rem !important;
-  color: var(--neo-black) !important;
-  margin-bottom: 0.4rem;
+  font-family: var(--font-mono);
+  font-weight: 700 !important;
+  font-size: 0.8rem !important;
+  color: var(--ink-black) !important;
+  margin-bottom: 0.35rem;
   text-transform: uppercase;
-  letter-spacing: 0.4px;
+  letter-spacing: 0.5px;
 }
 
 .form-text {
-  font-weight: 700;
-  color: var(--text-muted) !important;
+  font-family: var(--font-mono);
+  font-size: 0.76rem;
+  color: var(--ink-muted) !important;
 }
 
 /* --------------------------------------------------------------------------
-   NEO-BRUTALIST MODALS
+   MODALS (Clipped Paper Vouchers)
    -------------------------------------------------------------------------- */
 .modal-content-custom {
-  background: var(--neo-white);
-  border: 4px solid var(--neo-black);
-  border-radius: 14px;
-  box-shadow: var(--shadow-xl);
+  background: var(--paper-bg);
+  border: 2px solid var(--ink-black);
+  border-radius: 6px;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.7);
   overflow: hidden;
+  font-family: var(--font-thermal);
 }
 
 .modal-header-custom {
-  background: var(--neo-yellow);
-  border-bottom: var(--border-thick);
-  padding: 1.25rem 1.5rem;
-  color: var(--neo-black) !important;
+  background: var(--paper-bg-warm);
+  border-bottom: 2px dashed var(--ink-rule);
+  padding: 1.15rem 1.4rem;
+  color: var(--ink-pure) !important;
 }
 
 .modal-header-custom .modal-title {
-  font-family: 'Space Grotesk', sans-serif;
-  font-weight: 900;
-  font-size: 1.25rem;
-  color: var(--neo-black) !important;
+  font-family: var(--font-mono);
+  font-weight: 800;
+  font-size: 1.15rem;
+  letter-spacing: -0.2px;
+  color: var(--ink-pure) !important;
 }
 
 .modal-footer-custom {
-  background: #faf8f5;
-  border-top: var(--border-thick);
-  padding: 1.1rem 1.5rem;
-}
-
-.btn-close {
-  opacity: 1 !important;
-  border: var(--border-thin) !important;
-  background-color: var(--neo-white) !important;
-  box-shadow: var(--shadow-sm) !important;
-  border-radius: 6px !important;
-  padding: 0.5rem !important;
-}
-
-.btn-close:hover {
-  background-color: var(--neo-pink) !important;
-  transform: translate(-1px, -1px);
+  background: var(--paper-bg-warm);
+  border-top: 2px dashed var(--ink-rule);
+  padding: 1rem 1.4rem;
 }
 
 /* --------------------------------------------------------------------------
-   NEO-BRUTALIST ALERTS & CODE BOXES
+   ALERTS (Urgent Kitchen & Terminal Slips with Paper Clip)
    -------------------------------------------------------------------------- */
 .alert {
-  border: var(--border-thick) !important;
-  border-radius: 10px !important;
-  box-shadow: var(--shadow-md) !important;
-  font-weight: 800 !important;
-  color: var(--neo-black) !important;
+  background: var(--paper-bg) !important;
+  border: 2px solid var(--ink-pure) !important;
+  border-radius: 4px !important;
+  box-shadow: 3px 3px 0px rgba(0, 0, 0, 0.8) !important;
+  color: var(--ink-pure) !important;
+  font-family: var(--font-mono) !important;
+  font-size: 0.88rem !important;
+  position: relative;
+  padding-left: 2.2rem;
 }
 
-.alert-success { background-color: var(--neo-green) !important; }
-.alert-danger  { background-color: var(--neo-pink) !important; }
-.alert-info    { background-color: var(--neo-cyan) !important; }
-.alert-warning { background-color: var(--neo-yellow) !important; }
+/* Paper Clip Visual on Alerts */
+.alert::before {
+  content: "📎";
+  position: absolute;
+  left: 0.65rem;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 1.1rem;
+}
 
+.alert-success {
+  border-left: 6px solid #10b981 !important;
+}
+.alert-danger {
+  border-left: 6px solid #ef4444 !important;
+}
+.alert-warning {
+  border-left: 6px solid #f59e0b !important;
+}
+.alert-info {
+  border-left: 6px solid #0ea5e9 !important;
+}
+
+/* Code Display Box */
 .code-box {
-  background: #111827;
+  background: #18191f;
   color: #38bdf8;
-  border: var(--border-thick);
-  box-shadow: var(--shadow-md);
-  border-radius: 8px;
+  border: 1.5px solid #2e313d;
+  box-shadow: inset 0 2px 4px rgba(0,0,0,0.6);
+  border-radius: 4px;
   padding: 1.1rem;
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 0.92rem;
-  font-weight: 600;
-  overflow-x: auto;
-  white-space: pre-wrap;
-  line-height: 1.5;
-}
-
-/* Ensure 100% visibility of all utility text classes */
-.text-white, .text-light {
-  color: var(--neo-black) !important;
-}
-
-.text-muted {
-  color: #374151 !important;
-  font-weight: 600;
-}
-
-.text-warning {
-  color: #b45309 !important;
-  font-weight: 700;
-}
-
-.text-danger {
-  color: #b91c1c !important;
-  font-weight: 700;
-}
-
-.text-success {
-  color: #047857 !important;
-  font-weight: 700;
-}
-
-.text-info {
-  color: #0369a1 !important;
-  font-weight: 700;
-}
-
-.text-primary {
-  color: #1d4ed8 !important;
-  font-weight: 700;
+  font-family: 'DM Mono', monospace;
+  font-size: 0.88rem;
+  line-height: 1.6;
 }
 
 /* --------------------------------------------------------------------------
-   FOOTER
+   FOOTER (Receipt Tape Reel End)
    -------------------------------------------------------------------------- */
 footer {
   margin-top: auto;
-  border-top: 3.5px solid var(--neo-black);
-  background: var(--neo-white);
-  padding: 1.35rem 0;
-  color: var(--neo-black);
-  font-weight: 800;
-  font-size: 0.92rem;
-  box-shadow: 0 -3px 0px var(--neo-black);
+  border-top: 2px dashed var(--counter-border);
+  background: var(--counter-surface);
+  padding: 1.25rem 0;
+  color: #8c909e;
+  font-family: var(--font-mono);
+  font-size: 0.82rem;
+  text-align: center;
+  box-shadow: 0 -4px 16px rgba(0,0,0,0.4);
+}
+
+footer .receipt-tear-strip {
+  letter-spacing: 2px;
+  color: #4a4e5e;
+  margin-bottom: 0.35rem;
+}
+
+/* --------------------------------------------------------------------------
+   PRINT STYLES (Clean Thermal Slip Printout on Physical Paper)
+   -------------------------------------------------------------------------- */
+@media print {
+  body {
+    background: #fff !important;
+    color: #000 !important;
+  }
+  .navbar-custom, footer, .btn, .no-print {
+    display: none !important;
+  }
+  .card-glass, .receipt-card {
+    box-shadow: none !important;
+    border: 1px solid #000 !important;
+    margin: 0 !important;
+    width: 100% !important;
+    max-width: 80mm !important; /* Standard thermal receipt width */
+    page-break-inside: avoid;
+  }
 }

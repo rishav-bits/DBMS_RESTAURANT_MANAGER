@@ -1,29 +1,31 @@
 {% extends "base.html" %}
 
-{% block title %}Front Desk & Kitchen Operations · Restaurant DBMS{% endblock %}
+{% block title %}Kitchen & Front Desk Ticket Rail · Receiptify{% endblock %}
 
 {% block content %}
-<!-- Staff Operations Header -->
+<!-- Staff Operations Header Chit -->
 <div class="row g-4 mb-4">
   <div class="col-12">
-    <div class="card-glass p-4" style="background: #ffffff;">
+    <div class="card-glass receipt-sawtooth-top p-4 paper-tilt animate-print">
       <div class="d-flex flex-wrap align-items-center justify-content-between gap-3">
         <div>
-          <span class="badge bg-info text-dark px-3 py-1 mb-2">
-            <i class="bi bi-briefcase-fill me-1"></i> Front Desk & Floor Operations
-          </span>
-          <h2 class="fw-bold mb-1 text-dark">{{ current_user.staff_title or 'Staff Member' }} Operations</h2>
-          <p class="text-dark fw-semibold mb-0">
+          <div class="receipt-divider-text text-start mb-1">*** FRONT DESK & KITCHEN TICKET RAIL ***</div>
+          <div class="d-flex align-items-center gap-2 mb-2">
+            <span class="receipt-stamp stamp-preparing py-0 px-2" style="font-size: 0.7rem;">FLOOR STATION</span>
+            <span class="small text-muted">{{ current_user.staff_title or 'Floor Operations Captain' }}</span>
+          </div>
+          <h2 class="fw-bold mb-1" style="font-family: var(--font-title);">Front Desk & Kitchen Operations</h2>
+          <p class="small text-muted mb-0">
             Assigned Location: <strong>{{ staff_rest.name if staff_rest else 'All Restaurant Branches' }}</strong>
-            {% if staff_rest %}· Operating Hours: {{ staff_rest.opening_hour }} to {{ staff_rest.closing_hour }}{% endif %}
+            {% if staff_rest %} &bull; Service Window: {{ staff_rest.opening_hour }} to {{ staff_rest.closing_hour }}{% endif %}
           </p>
         </div>
         <div class="d-flex flex-wrap gap-2">
-          <a href="{{ url_for('reservations') }}" class="btn btn-primary">
-            <i class="bi bi-calendar2-plus me-1"></i> Seat Walk-In / Book Table
+          <a href="{{ url_for('reservations') }}" class="btn btn-primary btn-tear-coupon">
+            <i class="bi bi-calendar2-plus me-1"></i> Seat Guest / New Voucher
           </a>
-          <a href="{{ url_for('orders') }}" class="btn btn-info">
-            <i class="bi bi-cart-plus me-1"></i> Take New Table Order
+          <a href="{{ url_for('orders') }}" class="btn btn-info btn-tear-coupon">
+            <i class="bi bi-cart-plus me-1"></i> Open Table Order Slip
           </a>
         </div>
       </div>
@@ -31,11 +33,11 @@
   </div>
 </div>
 
-<!-- Staff Operational KPIs -->
+<!-- Operational Register KPIs -->
 <div class="row g-3 mb-4">
   <div class="col-xl-3 col-md-6">
-    <div class="kpi-card">
-      <div class="kpi-icon bg-warning text-dark">
+    <div class="kpi-card paper-interactive animate-print delay-1">
+      <div class="kpi-icon">
         <i class="bi bi-calendar2-week"></i>
       </div>
       <div>
@@ -45,8 +47,8 @@
     </div>
   </div>
   <div class="col-xl-3 col-md-6">
-    <div class="kpi-card">
-      <div class="kpi-icon bg-info text-dark">
+    <div class="kpi-card paper-interactive animate-print delay-2">
+      <div class="kpi-icon">
         <i class="bi bi-grid-3x3"></i>
       </div>
       <div>
@@ -56,19 +58,19 @@
     </div>
   </div>
   <div class="col-xl-3 col-md-6">
-    <div class="kpi-card">
-      <div class="kpi-icon bg-danger text-dark">
+    <div class="kpi-card paper-interactive animate-print delay-3">
+      <div class="kpi-icon">
         <i class="bi bi-fire"></i>
       </div>
       <div>
         <div class="kpi-val">{{ staff_kpis.orders_in_kitchen }}</div>
-        <div class="kpi-lbl">Orders in Kitchen</div>
+        <div class="kpi-lbl">Chits in Kitchen</div>
       </div>
     </div>
   </div>
   <div class="col-xl-3 col-md-6">
-    <div class="kpi-card">
-      <div class="kpi-icon bg-success text-dark">
+    <div class="kpi-card paper-interactive animate-print delay-4">
+      <div class="kpi-icon">
         <i class="bi bi-check2-all"></i>
       </div>
       <div>
@@ -80,43 +82,43 @@
 </div>
 
 <div class="row g-4">
-  <!-- Today's Reservations Check-in Desk -->
+  <!-- Check-in Desk Voucher Sheet -->
   <div class="col-lg-6">
-    <div class="card-glass h-100">
-      <div class="card-header-custom d-flex justify-content-between align-items-center" style="background: var(--neo-yellow);">
-        <span class="text-dark fs-6 fw-bold">
-          <i class="bi bi-calendar-check text-dark me-2"></i>Arrivals & Check-in Desk
+    <div class="card-glass receipt-sawtooth-bottom h-100 animate-print delay-2">
+      <div class="card-header-custom d-flex justify-content-between align-items-center">
+        <span class="fs-6 fw-bold">
+          <i class="bi bi-calendar-check me-2"></i>Arrivals & Check-in Desk
         </span>
-        <a href="{{ url_for('reservations') }}" class="btn btn-sm btn-secondary">All Reservations</a>
+        <a href="{{ url_for('reservations') }}" class="btn btn-sm btn-secondary">All Vouchers</a>
       </div>
       <div class="table-responsive">
         <table class="table table-custom">
           <thead>
             <tr>
-              <th>Guest Name</th>
-              <th>Table</th>
-              <th>Slot</th>
-              <th>Guests</th>
-              <th>Status</th>
-              <th class="text-end">Desk Action</th>
+              <th>DINER</th>
+              <th>TABLE</th>
+              <th>SLOT</th>
+              <th>GUESTS</th>
+              <th>STATUS</th>
+              <th class="text-end">ACTION</th>
             </tr>
           </thead>
           <tbody>
             {% for r in today_reservations %}
-            <tr>
+            <tr class="paper-interactive">
               <td>
-                <div class="text-dark fw-bold">{{ r.customer_name }}</div>
-                <div class="text-dark small">{{ r.customer_phone or '—' }}</div>
+                <div class="fw-bold text-dark">{{ r.customer_name }}</div>
+                <div class="small text-muted">{{ r.customer_phone or '—' }}</div>
               </td>
               <td>
-                <span class="badge bg-warning text-dark">Table {{ r.table_number }}</span>
+                <span class="badge bg-light text-dark">Table {{ r.table_number }}</span>
               </td>
-              <td class="small fw-bold text-dark">{{ r.time_slot }}</td>
+              <td class="small fw-bold">{{ r.time_slot }}</td>
               <td>
-                <span class="badge bg-info text-dark">{{ r.number_of_guests }}</span>
+                <span class="badge bg-light text-dark">{{ r.number_of_guests }}p</span>
               </td>
               <td>
-                <span class="badge-status status-{{ r.status|lower }}">{{ r.status }}</span>
+                <span class="receipt-stamp status-{{ r.status|lower }}" style="font-size: 0.68rem;">{{ r.status }}</span>
               </td>
               <td class="text-end">
                 {% if r.status == 'BOOKED' %}
@@ -125,7 +127,7 @@
                   <input type="hidden" name="number_of_guests" value="{{ r.number_of_guests }}">
                   <input type="hidden" name="time_slot" value="{{ r.time_slot }}">
                   <input type="hidden" name="status" value="CONFIRMED">
-                  <button type="submit" class="btn btn-sm btn-success py-0 px-2" title="Check-in & Seat Guests">
+                  <button type="submit" class="btn btn-sm btn-success py-0 px-2" title="Seat Diner">
                     <i class="bi bi-check-lg"></i> Seat
                   </button>
                 </form>
@@ -135,18 +137,18 @@
                   <input type="hidden" name="number_of_guests" value="{{ r.number_of_guests }}">
                   <input type="hidden" name="time_slot" value="{{ r.time_slot }}">
                   <input type="hidden" name="status" value="COMPLETED">
-                  <button type="submit" class="btn btn-sm btn-secondary py-0 px-2" title="Mark Dining Finished">
+                  <button type="submit" class="btn btn-sm btn-secondary py-0 px-2" title="Mark Finished">
                     <i class="bi bi-check2-all"></i> Done
                   </button>
                 </form>
                 {% else %}
-                <span class="small fw-bold text-dark">—</span>
+                <span class="small text-muted">—</span>
                 {% endif %}
               </td>
             </tr>
             {% else %}
             <tr>
-              <td colspan="6" class="text-center text-dark py-4 fw-bold">No pending reservations for this shift.</td>
+              <td colspan="6" class="text-center py-4 fw-bold">No pending arrival vouchers for this shift.</td>
             </tr>
             {% endfor %}
           </tbody>
@@ -155,34 +157,34 @@
     </div>
   </div>
 
-  <!-- Active Kitchen & Serving Workflow Pipeline -->
+  <!-- Kitchen & Serving Workflow Ticket Rail -->
   <div class="col-lg-6">
-    <div class="card-glass h-100">
-      <div class="card-header-custom d-flex justify-content-between align-items-center" style="background: var(--neo-cyan);">
-        <span class="text-dark fs-6 fw-bold">
-          <i class="bi bi-arrow-repeat text-dark me-2"></i>Kitchen & Order Service Pipeline
+    <div class="card-glass receipt-sawtooth-bottom h-100 animate-print delay-3">
+      <div class="card-header-custom d-flex justify-content-between align-items-center">
+        <span class="fs-6 fw-bold">
+          <i class="bi bi-arrow-repeat me-2"></i>Kitchen Ticket Rail
         </span>
-        <a href="{{ url_for('orders') }}" class="btn btn-sm btn-secondary">All Orders</a>
+        <a href="{{ url_for('orders') }}" class="btn btn-sm btn-secondary">All Slips</a>
       </div>
       <div class="table-responsive">
         <table class="table table-custom">
           <thead>
             <tr>
-              <th>Order #</th>
-              <th>Customer</th>
-              <th>Amount</th>
-              <th>Workflow Status</th>
-              <th class="text-end">Advance Stage</th>
+              <th>SLIP #</th>
+              <th>DINER</th>
+              <th>TOTAL</th>
+              <th>STAGE</th>
+              <th class="text-end">ADVANCE STAMP</th>
             </tr>
           </thead>
           <tbody>
             {% for o in active_orders %}
-            <tr>
+            <tr class="paper-interactive">
               <td class="fw-bold">#{{ o.order_id }}</td>
-              <td class="text-dark fw-bold">{{ o.customer_name }}</td>
+              <td class="fw-bold text-dark">{{ o.customer_name }}</td>
               <td class="fw-bold fs-6" style="color: #b45309;">₹{{ "%.2f"|format(o.total_amount) }}</td>
               <td>
-                <span class="badge-status status-{{ o.order_status|lower }}">{{ o.order_status }}</span>
+                <span class="receipt-stamp status-{{ o.order_status|lower }}" style="font-size: 0.68rem;">{{ o.order_status }}</span>
               </td>
               <td class="text-end">
                 <form method="POST" action="{{ url_for('order_update_status', order_id=o.order_id) }}" class="d-inline">
@@ -208,7 +210,7 @@
                     </button>
                   {% else %}
                     <a href="{{ url_for('order_detail', order_id=o.order_id) }}" class="btn btn-sm btn-outline-primary py-0 px-2">
-                      <i class="bi bi-eye"></i> View
+                      <i class="bi bi-eye"></i> Slip
                     </a>
                   {% endif %}
                 </form>
@@ -216,7 +218,7 @@
             </tr>
             {% else %}
             <tr>
-              <td colspan="5" class="text-center text-dark py-4 fw-bold">All kitchen orders are currently completed and served.</td>
+              <td colspan="5" class="text-center py-4 fw-bold">All kitchen order slips are currently completed and cleared.</td>
             </tr>
             {% endfor %}
           </tbody>

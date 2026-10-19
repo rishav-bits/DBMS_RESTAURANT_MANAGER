@@ -1,20 +1,22 @@
 {% extends "base.html" %}
 
-{% block title %}Customer Management · Restaurant DBMS{% endblock %}
+{% block title %}Diner Directory & Ledger · Receiptify{% endblock %}
 
 {% block content %}
-<div class="card-glass p-4 mb-4">
+<!-- Top Header Chit -->
+<div class="card-glass receipt-sawtooth-top p-4 mb-4 animate-print">
   <div class="d-flex flex-wrap align-items-center justify-content-between gap-3">
     <div>
-      <h3 class="fw-bold text-dark mb-1">
-        <i class="bi bi-people text-dark me-2"></i>Customer Management
+      <div class="receipt-divider-text text-start mb-1">*** DINER DIRECTORY · GUEST LEDGER ***</div>
+      <h3 class="fw-bold mb-1" style="font-family: var(--font-title);">
+        <i class="bi bi-people me-2"></i>Diner Directory & Account Ledger
       </h3>
-      <p class="text-dark fw-semibold mb-0">Demonstrating INSERT, UPDATE, and DELETE operations with UNIQUE email validation.</p>
+      <p class="small text-muted mb-0">Demonstrating Oracle INSERT, UPDATE, and DELETE operations with UNIQUE email constraint validation.</p>
     </div>
     <div class="d-flex gap-2">
       <!-- Search Form -->
       <form method="GET" action="{{ url_for('customers') }}" class="d-flex gap-2">
-        <input type="text" name="q" class="form-control form-control-sm" placeholder="Search by name, email..." value="{{ search }}">
+        <input type="text" name="q" class="form-control form-control-sm" placeholder="Search diner or email..." value="{{ search }}">
         <button type="submit" class="btn btn-sm btn-secondary">
           <i class="bi bi-search"></i>
         </button>
@@ -23,62 +25,62 @@
         {% endif %}
       </form>
       <!-- Add Customer Button -->
-      <button class="btn btn-primary btn-sm px-3" data-bs-toggle="modal" data-bs-target="#addCustomerModal">
-        <i class="bi bi-person-plus-fill me-1"></i> Add Customer
+      <button class="btn btn-primary btn-sm px-3 btn-tear-coupon" data-bs-toggle="modal" data-bs-target="#addCustomerModal">
+        <i class="bi bi-person-plus-fill me-1"></i> Enroll Diner
       </button>
     </div>
   </div>
 </div>
 
 <!-- Customers Table -->
-<div class="card-glass">
+<div class="card-glass receipt-sawtooth-bottom animate-print delay-1">
   <div class="table-responsive">
     <table class="table table-custom">
       <thead>
         <tr>
-          <th>ID</th>
-          <th>Name</th>
-          <th>Email Address</th>
-          <th>Phone</th>
-          <th>Address</th>
-          <th>Registered</th>
-          <th>Activity</th>
-          <th class="text-end">Actions</th>
+          <th>DINER #</th>
+          <th>FULL NAME</th>
+          <th>EMAIL ADDRESS</th>
+          <th>PHONE</th>
+          <th>RESIDENTIAL / DELIVERY ADDRESS</th>
+          <th>REGISTERED</th>
+          <th>ACTIVITY SLIPS</th>
+          <th class="text-end">ACTIONS</th>
         </tr>
       </thead>
       <tbody>
         {% for c in customers %}
-        <tr>
+        <tr class="paper-interactive">
           <td class="fw-bold">#{{ c.customer_id }}</td>
-          <td class="text-dark fw-bold">{{ c.name }}</td>
+          <td class="fw-bold text-dark">{{ c.name }}</td>
           <td>
-            <span class="font-monospace fw-bold small" style="color: #0369a1;">{{ c.email }}</span>
+            <span class="small" style="font-family: var(--font-mono); color: #0284c7;">{{ c.email }}</span>
           </td>
-          <td class="text-dark fw-semibold">{{ c.phone or '—' }}</td>
-          <td class="text-dark small">{{ c.address or '—' }}</td>
-          <td class="small fw-semibold text-dark">{{ c.reg_date.strftime('%Y-%m-%d') if c.reg_date else '' }}</td>
+          <td class="small">{{ c.phone or '—' }}</td>
+          <td class="small text-muted">{{ c.address or '—' }}</td>
+          <td class="small">{{ c.reg_date.strftime('%Y-%m-%d') if c.reg_date else '' }}</td>
           <td>
-            <span class="badge bg-warning text-dark me-1">{{ c.total_orders }} orders</span>
-            <span class="badge bg-info text-dark">{{ c.total_reservations }} bookings</span>
+            <span class="badge bg-light text-dark me-1">{{ c.total_orders }} orders</span>
+            <span class="badge bg-light text-dark">{{ c.total_reservations }} bookings</span>
           </td>
           <td class="text-end">
             <!-- Edit Button -->
-            <button class="btn btn-sm btn-outline-info me-1"
+            <button class="btn btn-sm btn-outline-info me-1 py-0 px-2"
                     onclick="openEditCustomerModal('{{ c.customer_id }}', '{{ c.name|replace('\'', '\\\'') }}', '{{ c.email }}', '{{ c.phone or '' }}', '{{ c.address or ''|replace('\'', '\\\'') }}')">
-              <i class="bi bi-pencil-square"></i> Edit
+              <i class="bi bi-pencil"></i>
             </button>
             <!-- Delete Form -->
             <form method="POST" action="{{ url_for('customer_delete', customer_id=c.customer_id) }}" class="d-inline"
-                  onsubmit="return confirm('Are you sure you want to delete customer #{{ c.customer_id }} ({{ c.name }})?');">
-              <button type="submit" class="btn btn-sm btn-outline-danger">
-                <i class="bi bi-trash"></i> Delete
+                  onsubmit="return confirm('Delete customer #{{ c.customer_id }} ({{ c.name }})?');">
+              <button type="submit" class="btn btn-sm btn-outline-danger py-0 px-2" title="Delete Diner">
+                <i class="bi bi-trash"></i>
               </button>
             </form>
           </td>
         </tr>
         {% else %}
         <tr>
-          <td colspan="8" class="text-center text-dark py-4 fw-bold">No customers found matching search criteria.</td>
+          <td colspan="8" class="text-center py-4 fw-bold">No diner records found matching search query.</td>
         </tr>
         {% endfor %}
       </tbody>
@@ -91,8 +93,8 @@
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content modal-content-custom">
       <div class="modal-header modal-header-custom">
-        <h5 class="modal-title text-dark">
-          <i class="bi bi-person-plus text-dark me-2"></i>Add New Customer
+        <h5 class="modal-title">
+          <i class="bi bi-person-plus me-2"></i>Enroll New Diner
         </h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
@@ -103,9 +105,9 @@
             <input type="text" name="name" class="form-control" placeholder="e.g. Priyanshu Sharma" required>
           </div>
           <div class="mb-3">
-            <label class="form-label">Email Address * (Unique)</label>
+            <label class="form-label">Email Address * (Unique Sign-in ID)</label>
             <input type="email" name="email" class="form-control" placeholder="e.g. priyanshu@example.com" required>
-            <div class="form-text text-dark small fw-semibold">Must be unique across all customer records.</div>
+            <div class="form-text small">Must be unique across all customer records.</div>
           </div>
           <div class="mb-3">
             <label class="form-label">Phone Number</label>
@@ -118,8 +120,8 @@
         </div>
         <div class="modal-footer modal-footer-custom">
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-          <button type="submit" class="btn btn-primary">
-            <i class="bi bi-check-lg me-1"></i> Save Customer
+          <button type="submit" class="btn btn-primary btn-tear-coupon">
+            <i class="bi bi-check-lg me-1"></i> Issue Diner Slip
           </button>
         </div>
       </form>
@@ -131,9 +133,9 @@
 <div class="modal fade" id="editCustomerModal" tabindex="-1" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content modal-content-custom">
-      <div class="modal-header modal-header-custom" style="background: var(--neo-cyan);">
-        <h5 class="modal-title text-dark">
-          <i class="bi bi-pencil-square text-dark me-2"></i>Update Customer Details
+      <div class="modal-header modal-header-custom">
+        <h5 class="modal-title">
+          <i class="bi bi-pencil-square me-2"></i>Update Diner Record
         </h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
@@ -159,8 +161,8 @@
         </div>
         <div class="modal-footer modal-footer-custom">
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-          <button type="submit" class="btn btn-info">
-            <i class="bi bi-check-lg me-1"></i> Update Customer
+          <button type="submit" class="btn btn-info btn-tear-coupon">
+            <i class="bi bi-check-lg me-1"></i> Update Diner Record
           </button>
         </div>
       </form>

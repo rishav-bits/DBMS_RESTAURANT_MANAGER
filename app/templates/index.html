@@ -1,113 +1,132 @@
 {% extends "base.html" %}
 
-{% block title %}Restaurant Management System · DBMS DA2{% endblock %}
+{% block title %}Receiptify · Restaurant Management DBMS (DA2){% endblock %}
 
 {% block content %}
-<!-- Welcome Banner -->
+<!-- Master Register Paper Slip Banner -->
 <div class="row g-4 mb-4">
   <div class="col-12">
-    <div class="card-glass p-4 p-md-5" style="background: #ffffff;">
+    <div class="card-glass receipt-sawtooth-top p-4 p-md-5 paper-tilt animate-print">
       <div class="d-flex flex-wrap align-items-center justify-content-between gap-3">
         <div>
-          <span class="badge bg-warning text-dark px-3 py-1 mb-2 fs-6">
-            <i class="bi bi-shield-check me-1"></i> Database Systems (BACSE202) · Multi-Role Architecture
-          </span>
-          <h1 class="fw-bold mb-2 text-dark">Restaurant Table Reservation & Food Ordering System</h1>
-          <p class="text-dark fw-bold mb-0" style="max-width: 850px; font-size: 1.05rem;">
-            Unified relational DBMS built on Oracle 21c XE with dedicated interfaces and tailored access permissions for 
-            <strong>Customers</strong>, <strong>Restaurant Staff (Receptionist)</strong>, and the <strong>Restaurant Owner</strong>.
+          <div class="receipt-divider-text text-start mb-2">*** RECEIPTIFY · MASTER TERMINAL #001 ***</div>
+          <div class="d-flex align-items-center gap-2 mb-2">
+            <span class="receipt-stamp stamp-ready py-0 px-2" style="font-size: 0.72rem;">NATIVE ORACLE 21c/12c</span>
+            <span class="badge bg-light text-dark border-1" style="font-size: 0.72rem;">BACSE202 · DIGITAL ASSIGNMENT 2</span>
+          </div>
+          <h1 class="fw-bold mb-2 text-dark" style="font-family: var(--font-title); letter-spacing: -0.5px;">
+            Restaurant Table Reservation & Food Ordering System
+          </h1>
+          <p class="text-muted fw-bold mb-0" style="max-width: 820px; font-size: 0.95rem;">
+            Unified relational DBMS powered by Oracle PL/SQL, compound triggers, and BCNF relational architecture with 
+            dedicated thermal interfaces for <strong>Customers</strong>, <strong>Front Desk Staff</strong>, and <strong>Executive Owners</strong>.
           </p>
         </div>
         <div class="d-flex flex-wrap gap-2">
-          <a href="{{ url_for('login') }}" class="btn btn-primary btn-lg">
+          <a href="{{ url_for('login') }}" class="btn btn-primary btn-lg btn-tear-coupon">
             <i class="bi bi-box-arrow-in-right me-1"></i> Sign In to Account
           </a>
-          <a href="{{ url_for('register') }}" class="btn btn-secondary btn-lg">
-            <i class="bi bi-person-plus me-1"></i> Register New User
+          <a href="{{ url_for('register') }}" class="btn btn-secondary btn-lg btn-tear-coupon">
+            <i class="bi bi-person-plus me-1"></i> New Registration Slip
           </a>
         </div>
+      </div>
+      <div class="receipt-divider mt-4"></div>
+      <div class="d-flex justify-content-between text-muted small">
+        <span>STATION: TERMINAL-POS-01</span>
+        <span>ENGINE: PYTHON-ORACLEDB THIN</span>
+        <span>STATUS: ONLINE &bull; READY</span>
       </div>
     </div>
   </div>
 </div>
 
-<!-- Three Distinct Role Portals Cards -->
+<!-- Three Distinct Role Ticket Slips -->
 <div class="row g-4 mb-5">
-  <!-- 1. Customer Role Card -->
+  <!-- 1. Customer Role Ticket -->
   <div class="col-lg-4 col-md-6">
-    <div class="card-glass h-100 p-4 d-flex flex-column justify-content-between" style="background: #ffffff;">
+    <div class="card-glass receipt-sawtooth-bottom h-100 p-4 d-flex flex-column justify-content-between paper-tilt animate-print delay-1">
       <div>
+        <div class="receipt-divider-text text-start mb-2">*** DINING SLIP ***</div>
         <div class="d-flex align-items-center justify-content-between mb-3">
           <span class="fs-1">🍽️</span>
-          <span class="badge bg-warning text-dark fs-6">CUSTOMER PORTAL</span>
+          <span class="receipt-stamp stamp-paid">CUSTOMER</span>
         </div>
-        <h4 class="fw-bold text-dark mb-2">Customer Experience</h4>
-        <p class="text-dark fw-semibold mb-3">
-          Designed for diners to reserve dining tables with real-time seat availability checking, order dishes from active menus, view personal running totals, and write verified dining feedback.
+        <h4 class="fw-bold mb-2" style="font-family: var(--font-title);">Diner Experience</h4>
+        <p class="small text-muted mb-3">
+          Reserve tables with real-time seat availability checking, order dishes from active menus, view personal running totals, and submit verified reviews.
         </p>
-        <ul class="list-unstyled text-dark fw-bold small mb-4">
-          <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i>Live table availability checking by time slot</li>
-          <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i>Multi-dish ordering with trigger total updates</li>
-          <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i>UPI, Card & Cash bill payments</li>
-          <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i>Personal reservations and order history</li>
+        <div class="receipt-divider"></div>
+        <ul class="list-unstyled small mb-4" style="line-height: 1.8;">
+          <li><i class="bi bi-check2 text-success me-2"></i>Live table availability query by slot</li>
+          <li><i class="bi bi-check2 text-success me-2"></i>Multi-dish ordering with trigger sync</li>
+          <li><i class="bi bi-check2 text-success me-2"></i>UPI, Card & Cash bill payments</li>
+          <li><i class="bi bi-check2 text-success me-2"></i>Personal reservations and order receipts</li>
         </ul>
       </div>
       <div>
-        <a href="{{ url_for('login') }}" class="btn btn-primary w-100">
+        <div class="receipt-barcode mb-2" style="height: 25px;"></div>
+        <a href="{{ url_for('login') }}" class="btn btn-primary w-100 btn-tear-coupon">
           <i class="bi bi-box-arrow-in-right me-1"></i> Enter Customer Portal
         </a>
       </div>
     </div>
   </div>
 
-  <!-- 2. Staff / Receptionist Role Card -->
+  <!-- 2. Staff / Receptionist Role Ticket -->
   <div class="col-lg-4 col-md-6">
-    <div class="card-glass h-100 p-4 d-flex flex-column justify-content-between" style="background: #ffffff;">
+    <div class="card-glass receipt-sawtooth-bottom h-100 p-4 d-flex flex-column justify-content-between paper-tilt animate-print delay-2">
       <div>
+        <div class="receipt-divider-text text-start mb-2">*** KITCHEN CHIT ***</div>
         <div class="d-flex align-items-center justify-content-between mb-3">
           <span class="fs-1">📋</span>
-          <span class="badge bg-info text-dark fs-6">STAFF & RECEPTION</span>
+          <span class="receipt-stamp stamp-preparing">STAFF DESK</span>
         </div>
-        <h4 class="fw-bold text-dark mb-2">Front Desk & Kitchen Operations</h4>
-        <p class="text-dark fw-semibold mb-3">
-          Designed for receptionists, floor captains, and kitchen coordinators to seat arriving guests, manage dining tables, and advance orders along the preparation track.
+        <h4 class="fw-bold mb-2" style="font-family: var(--font-title);">Front Desk & Kitchen</h4>
+        <p class="small text-muted mb-3">
+          For receptionists, floor captains, and kitchen coordinators to seat arriving guests, manage dining tables, and advance orders along the preparation track.
         </p>
-        <ul class="list-unstyled text-dark fw-bold small mb-4">
-          <li class="mb-2"><i class="bi bi-check-circle-fill text-info me-2"></i>Guest arrival check-in & seating desk</li>
-          <li class="mb-2"><i class="bi bi-check-circle-fill text-info me-2"></i>Live table occupancy status tracking</li>
-          <li class="mb-2"><i class="bi bi-check-circle-fill text-info me-2"></i>Kitchen order pipeline (PLACED &rarr; READY &rarr; SERVED)</li>
-          <li class="mb-2"><i class="bi bi-check-circle-fill text-info me-2"></i>Bill settlement at front counter</li>
+        <div class="receipt-divider"></div>
+        <ul class="list-unstyled small mb-4" style="line-height: 1.8;">
+          <li><i class="bi bi-check2 text-info me-2"></i>Guest arrival check-in & seating desk</li>
+          <li><i class="bi bi-check2 text-info me-2"></i>Live table occupancy status tracking</li>
+          <li><i class="bi bi-check2 text-info me-2"></i>Kitchen order pipeline (PLACED &rarr; SERVED)</li>
+          <li><i class="bi bi-check2 text-info me-2"></i>Counter bill settlement</li>
         </ul>
       </div>
       <div>
-        <a href="{{ url_for('login') }}" class="btn btn-info w-100">
+        <div class="receipt-barcode mb-2" style="height: 25px;"></div>
+        <a href="{{ url_for('login') }}" class="btn btn-info w-100 btn-tear-coupon">
           <i class="bi bi-box-arrow-in-right me-1"></i> Enter Staff Operations
         </a>
       </div>
     </div>
   </div>
 
-  <!-- 3. Owner Role Card -->
+  <!-- 3. Owner Role Ticket -->
   <div class="col-lg-4 col-md-12">
-    <div class="card-glass h-100 p-4 d-flex flex-column justify-content-between" style="background: #ffffff;">
+    <div class="card-glass receipt-sawtooth-bottom h-100 p-4 d-flex flex-column justify-content-between paper-tilt animate-print delay-3">
       <div>
+        <div class="receipt-divider-text text-start mb-2">*** MASTER AUDIT ***</div>
         <div class="d-flex align-items-center justify-content-between mb-3">
           <span class="fs-1">👑</span>
-          <span class="badge bg-success text-dark fs-6">EXECUTIVE OWNER</span>
+          <span class="receipt-stamp stamp-ready">OWNER</span>
         </div>
-        <h4 class="fw-bold text-dark mb-2">Executive Administration</h4>
-        <p class="text-dark fw-semibold mb-3">
-          Designed for restaurant owners and system administrators. Unrestricted control over menu pricing with PL/SQL audit history, customer and staff rosters, and 12 database reports.
+        <h4 class="fw-bold mb-2" style="font-family: var(--font-title);">Executive Administration</h4>
+        <p class="small text-muted mb-3">
+          For restaurant owners and administrators. Control over catalog pricing with PL/SQL audit history, customer/staff rosters, and 12 database reports.
         </p>
-        <ul class="list-unstyled text-dark fw-bold small mb-4">
-          <li class="mb-2"><i class="bi bi-check-circle-fill text-dark me-2"></i>Dynamic price adjustments via PL/SQL sp_set_price</li>
-          <li class="mb-2"><i class="bi bi-check-circle-fill text-dark me-2"></i>Execution of 12 system SQL & PL/SQL queries</li>
-          <li class="mb-2"><i class="bi bi-check-circle-fill text-dark me-2"></i>Full customer and staff records management</li>
-          <li class="mb-2"><i class="bi bi-check-circle-fill text-dark me-2"></i>Branch-wide financial revenue analytics</li>
+        <div class="receipt-divider"></div>
+        <ul class="list-unstyled small mb-4" style="line-height: 1.8;">
+          <li><i class="bi bi-check2 text-warning me-2"></i>Dynamic pricing via PL/SQL sp_set_price</li>
+          <li><i class="bi bi-check2 text-warning me-2"></i>Execution of 12 system SQL & PL/SQL queries</li>
+          <li><i class="bi bi-check2 text-warning me-2"></i>Full customer and staff records management</li>
+          <li><i class="bi bi-check2 text-warning me-2"></i>Multi-branch financial revenue analytics</li>
         </ul>
       </div>
       <div>
-        <a href="{{ url_for('login') }}" class="btn btn-warning w-100 fw-bold">
+        <div class="receipt-barcode mb-2" style="height: 25px;"></div>
+        <a href="{{ url_for('login') }}" class="btn btn-warning w-100 fw-bold btn-tear-coupon">
           <i class="bi bi-lightning-charge-fill me-1"></i> Enter Owner Portal
         </a>
       </div>
@@ -115,12 +134,12 @@
   </div>
 </div>
 
-<!-- Quick Statistics Banner -->
+<!-- Quick Register Totals Tapes -->
 <div class="row g-3 mb-4">
   {% for kpi in counts %}
   <div class="col-xl-3 col-md-6">
-    <div class="kpi-card">
-      <div class="kpi-icon bg-{{ kpi.color }} text-dark">
+    <div class="kpi-card paper-interactive animate-print delay-{{ loop.index }}">
+      <div class="kpi-icon">
         <i class="bi {{ kpi.icon }}"></i>
       </div>
       <div>

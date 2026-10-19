@@ -1,23 +1,25 @@
 {% extends "base.html" %}
 
-{% block title %}System Reports (12 SQL & PL/SQL Queries) · Restaurant DBMS{% endblock %}
+{% block title %}Register Tape Audit (12 Queries) · Receiptify{% endblock %}
 
 {% block content %}
-<div class="card-glass p-4 mb-4">
+<!-- Top Header Chit -->
+<div class="card-glass receipt-sawtooth-top p-4 mb-4 animate-print">
   <div class="d-flex flex-wrap align-items-center justify-content-between gap-3">
     <div>
-      <h3 class="fw-bold text-dark mb-1">
-        <i class="bi bi-bar-chart-line text-dark me-2"></i>System Analytics & Reports
+      <div class="receipt-divider-text text-start mb-1">*** REGISTER AUDIT TAPE · 12 ANALYTICAL QUERIES ***</div>
+      <h3 class="fw-bold mb-1" style="font-family: var(--font-title);">
+        <i class="bi bi-journal-code me-2"></i>Executive System Analytics & Register Tape
       </h3>
-      <p class="text-dark fw-semibold mb-0">
-        DA2 Evaluation Deliverable: 12 System-Specific Queries demonstrating Subqueries, Joins, Aggregations, Analytic Ranking, Database Views, and PL/SQL Stored Procedures.
+      <p class="small text-muted mb-0">
+        Digital Assignment 2 Deliverable: 12 System Queries covering Subqueries, Multi-table Joins, Aggregations, Analytic Ranking, Views, and PL/SQL Procedures with <code>DBMS_OUTPUT</code> & <code>SYS_REFCURSOR</code>.
       </p>
     </div>
   </div>
 </div>
 
 <!-- Query Selection Pills -->
-<div class="card-glass p-3 mb-4">
+<div class="card-glass p-3 mb-4 animate-print delay-1">
   <div class="d-flex flex-wrap gap-2">
     {% set q_labels = [
       ("1", "Q1: Free Tables", "NOT EXISTS"),
@@ -35,9 +37,9 @@
     ] %}
     {% for q_id, q_text, q_tech in q_labels %}
     <a href="{{ url_for('reports', q=q_id) }}" 
-       class="btn btn-sm {% if query_num == q_id %}btn-primary{% else %}btn-secondary{% endif %} d-flex align-items-center gap-2">
+       class="btn btn-sm {% if query_num == q_id %}btn-primary{% else %}btn-secondary{% endif %} d-flex align-items-center gap-2 btn-tear-coupon">
       <span>{{ q_text }}</span>
-      <span class="badge {% if 'PL/SQL' in q_tech %}bg-warning text-dark{% else %}bg-info text-dark{% endif %}" style="font-size: 0.72rem; border: 1.5px solid #000; box-shadow: 1px 1px 0 #000;">
+      <span class="badge bg-dark text-warning border-0" style="font-size: 0.68rem;">
         {{ q_tech }}
       </span>
     </a>
@@ -48,32 +50,32 @@
 <!-- Active Query Details & Parameter Form -->
 <div class="row g-4 mb-4">
   <div class="col-lg-8">
-    <div class="card-glass p-4 h-100">
+    <div class="card-glass p-4 h-100 animate-print delay-2">
       <div class="d-flex align-items-center gap-2 mb-2">
-        <span class="badge bg-warning text-dark border-2 border-dark">Query {{ query_num }}</span>
-        <h4 class="fw-bold text-dark mb-0">{{ query_title }}</h4>
+        <span class="receipt-stamp stamp-ready py-0 px-2" style="font-size: 0.75rem;">Query {{ query_num }}</span>
+        <h4 class="fw-bold mb-0" style="font-family: var(--font-title);">{{ query_title }}</h4>
       </div>
-      <div class="text-dark fw-bold small mb-3">
-        <strong>DBMS Technique:</strong> <span class="badge bg-info text-dark ms-1">{{ query_technique }}</span>
+      <div class="small mb-3">
+        <strong>DBMS Technique:</strong> <span class="badge bg-light text-dark ms-1">{{ query_technique }}</span>
       </div>
 
-      <label class="form-label text-dark small text-uppercase fw-bold">SQL / PL/SQL Executed in Oracle:</label>
+      <label class="form-label small text-muted">SQL / PL/SQL Executed in Oracle:</label>
       <div class="code-box">{{ query_sql }}</div>
     </div>
   </div>
 
   <!-- Parameter Controls (if applicable) -->
   <div class="col-lg-4">
-    <div class="card-glass p-4 h-100">
-      <h5 class="fw-bold text-dark mb-3">
-        <i class="bi bi-sliders text-dark me-2"></i>Query Parameters
+    <div class="card-glass p-4 h-100 animate-print delay-3">
+      <h5 class="fw-bold mb-3" style="font-family: var(--font-title);">
+        <i class="bi bi-sliders me-2"></i>Query Parameters
       </h5>
 
       {% if query_num == '1' %}
       <form method="GET" action="{{ url_for('reports') }}">
         <input type="hidden" name="q" value="1">
         <div class="mb-2">
-          <label class="form-label small">Restaurant:</label>
+          <label class="form-label small">Restaurant Branch:</label>
           <select name="p_rest_id" class="form-select form-select-sm">
             {% for r in restaurants %}
             <option value="{{ r.restaurant_id }}" {% if request.args.get('p_rest_id') == r.restaurant_id|string %}selected{% endif %}>
@@ -99,14 +101,14 @@
           <label class="form-label small">Min Capacity:</label>
           <input type="number" name="p_cap" class="form-control form-control-sm" value="{{ request.args.get('p_cap', '4') }}" min="1">
         </div>
-        <button type="submit" class="btn btn-sm btn-primary w-100">Apply Filter</button>
+        <button type="submit" class="btn btn-sm btn-primary w-100 btn-tear-coupon">Apply Filter</button>
       </form>
 
       {% elif query_num == '11' %}
       <form method="GET" action="{{ url_for('reports') }}">
         <input type="hidden" name="q" value="11">
         <div class="mb-3">
-          <label class="form-label small">Restaurant:</label>
+          <label class="form-label small">Restaurant Branch:</label>
           <select name="p_rest_id" class="form-select form-select-sm">
             {% for r in restaurants %}
             <option value="{{ r.restaurant_id }}" {% if request.args.get('p_rest_id', '1') == r.restaurant_id|string %}selected{% endif %}>
@@ -119,7 +121,7 @@
           <label class="form-label small">Report Date:</label>
           <input type="date" name="p_date" class="form-control form-control-sm" value="{{ request.args.get('p_date', '2026-06-10') }}">
         </div>
-        <button type="submit" class="btn btn-sm btn-warning w-100 fw-bold">Execute PL/SQL Procedure</button>
+        <button type="submit" class="btn btn-sm btn-warning w-100 fw-bold btn-tear-coupon">Run Procedure & Stream Buffer</button>
       </form>
 
       {% elif query_num == '12' %}
@@ -129,15 +131,15 @@
           <label class="form-label small">Minimum Orders Placed:</label>
           <input type="number" name="p_min_orders" class="form-control form-control-sm" value="{{ request.args.get('p_min_orders', '2') }}" min="1">
         </div>
-        <button type="submit" class="btn btn-sm btn-warning w-100 fw-bold">Fetch Ref Cursor</button>
+        <button type="submit" class="btn btn-sm btn-warning w-100 fw-bold btn-tear-coupon">Fetch Ref Cursor Tape</button>
       </form>
 
       {% else %}
-      <p class="text-dark fw-semibold small">
-        This query executes statically across all populated database records and requires no additional parameters.
+      <p class="small text-muted">
+        Executes across all populated database records and requires no additional parameters.
       </p>
-      <a href="{{ url_for('reports', q=query_num) }}" class="btn btn-sm btn-secondary w-100">
-        <i class="bi bi-arrow-clockwise me-1"></i> Re-execute Query
+      <a href="{{ url_for('reports', q=query_num) }}" class="btn btn-sm btn-secondary w-100 btn-tear-coupon">
+        <i class="bi bi-arrow-clockwise me-1"></i> Re-print Register Tape
       </a>
       {% endif %}
     </div>
@@ -147,24 +149,24 @@
 <!-- Output Section -->
 {% if query_num == '11' and plsql_output %}
 <!-- PL/SQL DBMS_OUTPUT Result Box -->
-<div class="card-glass p-4 mb-4">
+<div class="card-glass receipt-sawtooth-bottom p-4 mb-4 animate-print delay-3">
   <div class="d-flex align-items-center justify-content-between mb-3">
-    <h5 class="fw-bold text-dark mb-0">
-      <i class="bi bi-terminal text-dark me-2"></i>Captured Oracle DBMS_OUTPUT Buffer
+    <h5 class="fw-bold mb-0" style="font-family: var(--font-title);">
+      <i class="bi bi-terminal me-2"></i>Captured Oracle DBMS_OUTPUT Buffer
     </h5>
-    <span class="badge bg-success text-dark">Procedure Executed</span>
+    <span class="receipt-stamp stamp-paid py-0 px-2" style="font-size: 0.7rem;">BUFFER STREAMED</span>
   </div>
-  <div class="code-box p-3 font-monospace" style="color: #ffe600;">{{ plsql_output }}</div>
+  <div class="code-box p-3 font-monospace" style="color: #38bdf8;">{{ plsql_output }}</div>
 </div>
 
 {% else %}
 <!-- Tabular Results Table -->
-<div class="card-glass">
+<div class="card-glass receipt-sawtooth-bottom animate-print delay-3">
   <div class="card-header-custom d-flex justify-content-between align-items-center">
-    <span class="text-dark fs-6 fw-bold">
-      <i class="bi bi-table text-dark me-2"></i>Query Results Set
+    <span class="fs-6 fw-bold">
+      <i class="bi bi-table me-2"></i>Register Tape Result Set
     </span>
-    <span class="badge bg-dark border-2 border-dark text-dark">{{ results|length }} Rows Returned</span>
+    <span class="badge bg-light text-dark">{{ results|length }} Rows Returned</span>
   </div>
   <div class="table-responsive">
     <table class="table table-custom">
@@ -178,28 +180,28 @@
       </thead>
       <tbody>
         {% for row in results %}
-        <tr>
-          <td class="text-dark fw-bold small">{{ loop.index }}</td>
+        <tr class="paper-interactive">
+          <td class="fw-bold small">{{ loop.index }}</td>
           {% for col in columns %}
           <td>
             {% set val = row[col] %}
             {% if val is none %}
-              <span class="text-dark fw-bold fst-italic">—</span>
+              <span class="text-muted fst-italic">—</span>
             {% elif 'price' in col or 'amount' in col or 'spent' in col or 'revenue' in col %}
-              <span class="fw-bold fs-6" style="color: #b45309;">₹{{ "%.2f"|format(val|float) }}</span>
+              <span class="fw-bold fs-6" style="color: #b45309; font-family: var(--font-mono);">₹{{ "%.2f"|format(val|float) }}</span>
             {% elif 'status' in col %}
-              <span class="badge-status status-{{ val|string|lower }}">{{ val }}</span>
+              <span class="receipt-stamp status-{{ val|string|lower }}" style="font-size: 0.68rem;">{{ val }}</span>
             {% elif col == 'is_veg' %}
               {% if val == 'Y' %}<span class="badge-veg">VEG</span>{% else %}<span class="badge-nonveg">NON-VEG</span>{% endif %}
             {% else %}
-              <span class="text-dark fw-semibold">{{ val }}</span>
+              <span class="fw-semibold">{{ val }}</span>
             {% endif %}
           </td>
           {% endfor %}
         </tr>
         {% else %}
         <tr>
-          <td colspan="{{ (columns|length) + 1 }}" class="text-center text-dark py-4 fw-bold">No records returned for this query.</td>
+          <td colspan="{{ (columns|length) + 1 }}" class="text-center py-4 fw-bold">No records returned for this query tape.</td>
         </tr>
         {% endfor %}
       </tbody>

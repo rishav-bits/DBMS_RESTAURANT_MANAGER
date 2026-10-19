@@ -1,37 +1,37 @@
 {% extends "base.html" %}
 
-{% block title %}Log In · Restaurant DBMS{% endblock %}
+{% block title %}Sign In · POS Authentication Slip · Receiptify{% endblock %}
 
 {% block content %}
-<div class="row justify-content-center py-5">
-  <div class="col-lg-5 col-md-8">
-    <div class="card-glass p-4 p-md-5">
-      <!-- Title -->
-      <div class="text-center mb-4">
-        <span class="badge bg-warning text-dark px-3 py-1 mb-2 fs-6">
-          <i class="bi bi-shield-lock-fill me-1"></i> Access Portal
-        </span>
-        <h2 class="fw-bold text-dark mb-1">Sign In</h2>
-        <p class="text-dark fw-semibold mb-0">Sign in to your account to access your role dashboard.</p>
+<div class="row justify-content-center py-4">
+  <div class="col-lg-5 col-md-8 col-sm-11">
+    <div class="card-glass receipt-sawtooth-top receipt-sawtooth-bottom p-4 p-md-5 paper-tilt animate-print">
+      <!-- Receipt Header -->
+      <div class="text-center mb-3">
+        <div class="receipt-divider-text">*** POS AUTHENTICATION SLIP ***</div>
+        <h2 class="fw-bold mb-1" style="font-family: var(--font-title);">SIGN IN</h2>
+        <div class="small text-muted">TERMINAL #001 &bull; RESTAURANT DBMS ENGINE</div>
       </div>
 
-      <!-- Quick Demo Login Section -->
-      <div class="mb-4 p-3 border-2 border-dark" style="background: #ffffff; border: 2.5px solid #000; box-shadow: 2px 2px 0 #000; border-radius: 8px;">
-        <div class="small fw-bold text-dark text-uppercase mb-2 text-center">
-          <i class="bi bi-lightning-charge-fill text-warning me-1"></i> Quick Demo Access (1-Click Fill)
+      <div class="receipt-divider"></div>
+
+      <!-- Quick Demo Access Keys -->
+      <div class="mb-4 p-3" style="background: var(--paper-bg-crease); border: 1.5px dashed var(--ink-rule); border-radius: 4px;">
+        <div class="small fw-bold text-uppercase mb-2 text-center" style="font-family: var(--font-mono); letter-spacing: 1px;">
+          <i class="bi bi-lightning-charge-fill text-warning me-1"></i> Quick 1-Click Preset Access
         </div>
         <div class="d-flex flex-column gap-2">
-          <button type="button" class="btn btn-sm btn-outline-primary d-flex align-items-center justify-content-between" onclick="fillDemo('customer@example.com', 'customer123')">
-            <span class="fw-bold">🍽️ Log in as Customer</span>
-            <span class="badge bg-warning text-dark">Rohan Jena</span>
+          <button type="button" class="btn btn-sm btn-tear-coupon d-flex align-items-center justify-content-between" onclick="fillDemo('customer@example.com', 'customer123')">
+            <span class="fw-bold">🍽️ Diner / Customer</span>
+            <span class="receipt-stamp stamp-paid py-0 px-2" style="font-size: 0.65rem;">Rohan Jena</span>
           </button>
-          <button type="button" class="btn btn-sm btn-outline-info d-flex align-items-center justify-content-between" onclick="fillDemo('receptionist@example.com', 'staff123')">
-            <span class="fw-bold">📋 Log in as Staff / Receptionist</span>
-            <span class="badge bg-info text-dark">Kavita Roy</span>
+          <button type="button" class="btn btn-sm btn-tear-coupon d-flex align-items-center justify-content-between" onclick="fillDemo('receptionist@example.com', 'staff123')">
+            <span class="fw-bold">📋 Staff (Receptionist)</span>
+            <span class="receipt-stamp stamp-preparing py-0 px-2" style="font-size: 0.65rem;">Kavita Roy</span>
           </button>
-          <button type="button" class="btn btn-sm btn-outline-warning d-flex align-items-center justify-content-between" onclick="fillDemo('owner@example.com', 'owner123')">
-            <span class="fw-bold">👑 Log in as Restaurant Owner</span>
-            <span class="badge bg-success text-dark">Rajesh Khanna</span>
+          <button type="button" class="btn btn-sm btn-tear-coupon d-flex align-items-center justify-content-between" onclick="fillDemo('owner@example.com', 'owner123')">
+            <span class="fw-bold">👑 Restaurant Owner</span>
+            <span class="receipt-stamp stamp-ready py-0 px-2" style="font-size: 0.65rem;">Rajesh Khanna</span>
           </button>
         </div>
       </div>
@@ -41,30 +41,36 @@
         <input type="hidden" name="next" value="{{ request.args.get('next', '') }}">
 
         <div class="mb-3">
-          <label class="form-label text-dark fw-bold">Email Address *</label>
+          <label class="form-label">Email Address *</label>
           <input type="email" name="email" id="login_email" class="form-control" placeholder="name@example.com" required autofocus>
         </div>
 
         <div class="mb-4">
-          <div class="d-flex justify-content-between align-items-center mb-1">
-            <label class="form-label text-dark fw-bold mb-0">Password *</label>
-          </div>
+          <label class="form-label">Password *</label>
           <input type="password" name="password" id="login_password" class="form-control" placeholder="••••••••" required>
         </div>
 
         <div class="d-grid mb-3">
-          <button type="submit" class="btn btn-primary btn-lg">
-            <i class="bi bi-box-arrow-in-right me-1"></i> Sign In to Dashboard
+          <button type="submit" class="btn btn-primary btn-lg btn-tear-coupon">
+            <i class="bi bi-box-arrow-in-right me-1"></i> Clock In / Sign In
           </button>
         </div>
 
         <div class="text-center mt-3">
-          <span class="text-dark fw-bold">Don't have an account yet?</span>
-          <a href="{{ url_for('register') }}" class="fw-bold ms-1" style="color: #0369a1; text-decoration: underline;">
-            Register Here &rarr;
+          <span class="small fw-bold">Don't have a diner account?</span>
+          <a href="{{ url_for('register') }}" class="small fw-bold ms-1" style="color: #0284c7; text-decoration: underline;">
+            Print New Registration Slip &rarr;
           </a>
         </div>
       </form>
+
+      <div class="receipt-divider mt-4"></div>
+
+      <!-- Barcode Graphic -->
+      <div class="text-center pt-1">
+        <div class="receipt-barcode"></div>
+        <div class="barcode-number">* AUTH-GATE-2026-BACSE202 *</div>
+      </div>
     </div>
   </div>
 </div>

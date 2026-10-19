@@ -1,113 +1,156 @@
 {% extends "base.html" %}
 
-{% block title %}Order #{{ order.order_id }} Details · Restaurant DBMS{% endblock %}
+{% block title %}Receipt #{{ order.order_id }} · {{ order.restaurant_name }} · Receiptify{% endblock %}
 
 {% block content %}
-<!-- Order Header -->
-<div class="card-glass p-4 mb-4">
-  <div class="d-flex flex-wrap align-items-center justify-content-between gap-3">
-    <div>
-      <div class="d-flex align-items-center gap-2 mb-1">
-        <a href="{{ url_for('orders') }}" class="btn btn-sm btn-secondary py-0 px-2 me-1">
-          <i class="bi bi-arrow-left"></i>
-        </a>
-        <h3 class="fw-bold text-dark mb-0">Order #{{ order.order_id }}</h3>
-        <span class="badge-status status-{{ order.order_status|lower }} ms-2">{{ order.order_status }}</span>
-      </div>
-      <div class="text-dark fw-semibold small">
-        Placed on <strong>{{ order.order_date_str }}</strong> at <strong>{{ order.restaurant_name }}</strong> for <strong>{{ order.customer_name }}</strong> ({{ order.customer_phone or order.customer_email }})
-      </div>
-    </div>
-    <div class="text-end">
-      <div class="small text-dark text-uppercase fw-bold">Running Order Total</div>
-      <div class="fs-2 fw-bold" style="color: #b45309;">₹{{ "%.2f"|format(order.total_amount) }}</div>
-      <div class="small text-dark fw-bold"><i class="bi bi-check2-circle text-dark me-1"></i>Kept in sync by compound trigger</div>
-    </div>
+<!-- Back Bar & Quick Actions -->
+<div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-3">
+  <a href="{{ url_for('orders') }}" class="btn btn-sm btn-secondary d-inline-flex align-items-center gap-1">
+    <i class="bi bi-arrow-left"></i> All Receipts
+  </a>
+  <div class="d-flex gap-2">
+    <button type="button" class="btn btn-sm btn-outline-primary btn-print-receipt" onclick="printReceipt()">
+      <i class="bi bi-printer me-1"></i> Print Thermal Receipt
+    </button>
   </div>
 </div>
 
-<div class="row g-4">
-  <!-- Line Items & Add Item Section -->
-  <div class="col-lg-8">
-    <div class="card-glass mb-4">
-      <div class="card-header-custom d-flex justify-content-between align-items-center">
-        <span class="text-dark fs-6 fw-bold">
-          <i class="bi bi-basket3 text-dark me-2"></i>Order Line Items
-        </span>
-        <span class="badge bg-warning text-dark">{{ items|length }} Items Added</span>
+<div class="row g-4 justify-content-center">
+  <!-- THE THERMAL RECEIPT SLIP -->
+  <div class="col-lg-7 col-md-11">
+    <div class="card-glass receipt-sawtooth-top receipt-sawtooth-bottom p-4 p-md-5 paper-tilt animate-print">
+      <!-- Receipt Top Meta -->
+      <div class="text-center mb-3">
+        <div class="receipt-divider-text">*** RECEIPT CHIT ***</div>
+        <h2 class="fw-bold mb-1" style="font-family: var(--font-title); letter-spacing: -0.5px;">{{ order.restaurant_name | upper }}</h2>
+        <div class="small text-muted mb-1">AUTHENTIC INDIAN DINING & TABLE SERVICE</div>
+        <div class="small fw-bold">ORDER ID: #{{ order.order_id }} &bull; DATE: {{ order.order_date_str }}</div>
+        <div class="small">DINER: <strong>{{ order.customer_name }}</strong> ({{ order.customer_phone or order.customer_email }})</div>
       </div>
+
+      <div class="receipt-divider"></div>
+
+      <!-- Live Workflow Stamp Display -->
+      <div class="d-flex justify-content-between align-items-center my-3 px-2">
+        <span class="small fw-bold text-uppercase">ORDER STATUS:</span>
+        <span class="receipt-stamp status-{{ order.order_status|lower }}">{{ order.order_status }}</span>
+      </div>
+
+      <div class="receipt-divider"></div>
+
+      <!-- Line Items Section -->
       <div class="table-responsive">
         <table class="table table-custom">
           <thead>
             <tr>
-              <th>Dish Name</th>
-              <th>Category</th>
-              <th>Unit Price (Order Date)</th>
-              <th style="width: 140px;">Quantity</th>
-              <th>Line Subtotal</th>
-              <th class="text-end">Action</th>
+              <th>DISH DESCRIPTION</th>
+              <th class="text-center" style="width: 70px;">QTY</th>
+              <th class="text-end" style="width: 100px;">RATE</th>
+              <th class="text-end" style="width: 110px;">SUBTOTAL</th>
+              <th class="text-end no-print" style="width: 70px;">ACT</th>
             </tr>
           </thead>
           <tbody>
             {% for itm in items %}
             <tr>
               <td>
-                <div class="text-dark fw-bold">{{ itm.item_name }}</div>
-                <div>
+                <div class="fw-bold text-dark">{{ itm.item_name }}</div>
+                <div class="small">
                   {% if itm.is_veg == 'Y' %}
-                    <span class="badge-veg"><i class="bi bi-circle-fill" style="font-size: 7px;"></i> VEG</span>
+                    <span class="badge-veg"><i class="bi bi-circle-fill" style="font-size: 6px;"></i> VEG</span>
                   {% else %}
-                    <span class="badge-nonveg"><i class="bi bi-triangle-fill" style="font-size: 7px;"></i> NON-VEG</span>
+                    <span class="badge-nonveg"><i class="bi bi-triangle-fill" style="font-size: 6px;"></i> NON-VEG</span>
                   {% endif %}
+                  <span class="text-muted ms-1">({{ itm.category_name }})</span>
                 </div>
               </td>
-              <td class="text-dark small fw-semibold">{{ itm.category_name }}</td>
-              <td class="text-dark fw-bold">₹{{ "%.2f"|format(itm.unit_price) }}</td>
-              <td>
+              <td class="text-center">
                 <!-- Inline Quantity Update Form -->
-                <form method="POST" action="{{ url_for('order_update_item', order_id=order.order_id) }}" class="d-flex gap-1 align-items-center">
+                <form method="POST" action="{{ url_for('order_update_item', order_id=order.order_id) }}" class="d-inline-flex gap-1 align-items-center">
                   <input type="hidden" name="order_item_id" value="{{ itm.order_item_id }}">
-                  <input type="number" name="quantity" value="{{ itm.quantity }}" min="1" max="99" class="form-control form-control-sm text-center py-1 px-2" style="width: 65px;">
-                  <button type="submit" class="btn btn-sm btn-outline-info py-1 px-2" title="Update Quantity">
-                    <i class="bi bi-check-lg"></i>
+                  <input type="number" name="quantity" value="{{ itm.quantity }}" min="1" max="99" 
+                         class="form-control form-control-sm text-center py-0 px-1" style="width: 48px; font-weight: bold;">
+                  <button type="submit" class="btn btn-sm btn-outline-info py-0 px-1 no-print" title="Update Quantity">
+                    <i class="bi bi-check"></i>
                   </button>
                 </form>
               </td>
-              <td class="fw-bold fs-6" style="color: #b45309;">₹{{ "%.2f"|format(itm.line_subtotal) }}</td>
-              <td class="text-end">
+              <td class="text-end fw-bold">₹{{ "%.2f"|format(itm.unit_price) }}</td>
+              <td class="text-end fw-bold fs-6" style="color: #b45309;">₹{{ "%.2f"|format(itm.line_subtotal) }}</td>
+              <td class="text-end no-print">
                 <!-- Delete Line Item Form -->
                 <form method="POST" action="{{ url_for('order_delete_item', order_id=order.order_id, order_item_id=itm.order_item_id) }}" class="d-inline"
-                      onsubmit="return confirm('Remove {{ itm.item_name }} from this order? Total will recalculate.');">
-                  <button type="submit" class="btn btn-sm btn-outline-danger">
-                    <i class="bi bi-trash"></i>
+                      onsubmit="return confirm('Remove {{ itm.item_name }} from this receipt?');">
+                  <button type="submit" class="btn btn-sm btn-outline-danger py-0 px-2" title="Remove Dish">
+                    <i class="bi bi-x-lg"></i>
                   </button>
                 </form>
               </td>
             </tr>
             {% else %}
             <tr>
-              <td colspan="6" class="text-center text-dark py-4 fw-bold">No items added yet. Use the form below to add dishes.</td>
+              <td colspan="5" class="text-center py-4 fw-bold">No dishes added yet. Use the form on the side to add dishes.</td>
             </tr>
             {% endfor %}
           </tbody>
           <tfoot>
             <tr>
-              <td colspan="4" class="text-end fw-bold text-dark fs-6">Calculated Total:</td>
-              <td colspan="2" class="fw-bold fs-5" style="color: #b45309;">₹{{ "%.2f"|format(order.total_amount) }}</td>
+              <td colspan="3" class="text-end fw-bold fs-6">RUNNING NET TOTAL:</td>
+              <td class="text-end fw-bold fs-5" style="color: #b45309;">₹{{ "%.2f"|format(order.total_amount) }}</td>
+              <td class="no-print"></td>
             </tr>
           </tfoot>
         </table>
       </div>
-    </div>
 
-    <!-- Add Item to Order Form -->
-    <div class="card-glass p-4">
-      <h5 class="text-dark fw-bold mb-3">
-        <i class="bi bi-plus-circle text-dark me-2"></i>Add Dish to Order
-      </h5>
+      <div class="receipt-divider-double"></div>
+
+      <!-- Payment Settlement Snapshot -->
+      <div class="px-2 my-2">
+        {% if order.payment_id %}
+        <div class="d-flex justify-content-between align-items-center mb-1">
+          <span class="small fw-bold">SETTLEMENT METHOD:</span>
+          <span class="fw-bold">{{ order.payment_method }} (ID: #{{ order.payment_id }})</span>
+        </div>
+        <div class="d-flex justify-content-between align-items-center mb-1">
+          <span class="small fw-bold">PAYMENT DATE:</span>
+          <span class="small">{{ order.payment_date_str }}</span>
+        </div>
+        <div class="d-flex justify-content-between align-items-center mt-2">
+          <span class="fw-bold text-uppercase fs-6">PAYMENT STATUS:</span>
+          <span class="receipt-stamp stamp-paid">★ {{ order.payment_status }} ★</span>
+        </div>
+        {% else %}
+        <div class="d-flex justify-content-between align-items-center">
+          <span class="fw-bold text-uppercase text-muted">PAYMENT:</span>
+          <span class="receipt-stamp stamp-preparing">UNPAID / PENDING</span>
+        </div>
+        {% endif %}
+      </div>
+
+      <div class="receipt-divider"></div>
+
+      <!-- Barcode Graphic & Footer Note -->
+      <div class="text-center pt-2">
+        <div class="small fw-bold mb-1">*** THANK YOU FOR DINING WITH US ***</div>
+        <div class="small text-muted mb-2">PLEASE RETAIN SLIP FOR EXPENSE AUDIT</div>
+        <div class="receipt-barcode"></div>
+        <div class="barcode-number">* ORD-{{ order.order_id }}-2026-BACSE202 *</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CONTROL & ACTION CHITS (Right Column) -->
+  <div class="col-lg-5 col-md-11 no-print">
+    <!-- Add Dish Chit -->
+    <div class="card-glass p-4 mb-4 animate-print delay-1">
+      <div class="card-header-custom mb-3 p-2 bg-transparent border-bottom border-2 border-dark d-flex align-items-center gap-2">
+        <i class="bi bi-plus-circle fs-5"></i>
+        <span class="fw-bold fs-6">Add Dishes to Receipt</span>
+      </div>
       <form method="POST" action="{{ url_for('order_add_item', order_id=order.order_id) }}" class="row g-3">
-        <div class="col-md-7">
-          <label class="form-label">Select Menu Item (from {{ order.restaurant_name }}) *</label>
+        <div class="col-12">
+          <label class="form-label">Select Dish (from {{ order.restaurant_name }}) *</label>
           <select name="item_id" class="form-select" required>
             <option value="">-- Choose Item --</option>
             {% for m in available_items %}
@@ -117,28 +160,26 @@
             {% endfor %}
           </select>
         </div>
-        <div class="col-md-3">
+        <div class="col-6">
           <label class="form-label">Quantity *</label>
           <input type="number" name="quantity" value="1" min="1" max="50" class="form-control" required>
         </div>
-        <div class="col-md-2 d-flex align-items-end">
-          <button type="submit" class="btn btn-primary w-100">
-            <i class="bi bi-plus-lg me-1"></i> Add
+        <div class="col-6 d-flex align-items-end">
+          <button type="submit" class="btn btn-primary w-100 btn-tear-coupon">
+            <i class="bi bi-plus-lg me-1"></i> Add Dish
           </button>
         </div>
       </form>
     </div>
-  </div>
 
-  <!-- Status & Payment Column -->
-  <div class="col-lg-4">
-    <!-- Status Workflow Card -->
-    <div class="card-glass p-4 mb-4">
-      <h5 class="text-dark fw-bold mb-3">
-        <i class="bi bi-arrow-right-circle text-dark me-2"></i>Order Status Workflow
-      </h5>
-      <p class="text-dark fw-semibold small">
-        Enforced by procedure <code>sp_update_order_status</code>. Status moves along defined forward track:
+    <!-- Status Workflow Chit -->
+    <div class="card-glass p-4 mb-4 animate-print delay-2">
+      <div class="card-header-custom mb-3 p-2 bg-transparent border-bottom border-2 border-dark d-flex align-items-center gap-2">
+        <i class="bi bi-arrow-right-circle fs-5"></i>
+        <span class="fw-bold fs-6">Kitchen / Order Workflow</span>
+      </div>
+      <p class="small text-muted mb-3">
+        Enforced by procedure <code>sp_update_order_status</code>:
         <code>PLACED &rarr; PREPARING &rarr; READY &rarr; SERVED &rarr; DELIVERED</code>.
       </p>
 
@@ -161,51 +202,41 @@
             {% endif %}
           </select>
           <button type="submit" class="btn btn-info w-100 fw-bold" {% if order.order_status in ['DELIVERED', 'CANCELLED'] %}disabled{% endif %}>
-            <i class="bi bi-check2 me-1"></i> Update Status
+            <i class="bi bi-check2 me-1"></i> Update Status Stamp
           </button>
         </div>
       </form>
     </div>
 
-    <!-- Payment Card -->
-    <div class="card-glass p-4">
-      <h5 class="text-dark fw-bold mb-3">
-        <i class="bi bi-credit-card text-dark me-2"></i>Payment Settlement
-      </h5>
+    <!-- Payment Chit -->
+    <div class="card-glass p-4 animate-print delay-3">
+      <div class="card-header-custom mb-3 p-2 bg-transparent border-bottom border-2 border-dark d-flex align-items-center gap-2">
+        <i class="bi bi-credit-card fs-5"></i>
+        <span class="fw-bold fs-6">Payment Settlement Chit</span>
+      </div>
 
       {% if order.payment_id %}
-      <!-- Payment Already Recorded -->
-      <div class="p-3 mb-3" style="background: #ffffff; border: 2.5px solid #000; box-shadow: 2px 2px 0 #000; border-radius: 8px;">
-        <div class="d-flex justify-content-between align-items-center mb-2">
-          <span class="text-dark fw-bold small text-uppercase">Payment ID:</span>
-          <span class="fw-bold text-dark">#{{ order.payment_id }}</span>
+      <div class="p-3 mb-2" style="background: var(--paper-bg-crease); border: 1.5px dashed var(--ink-rule); border-radius: 4px;">
+        <div class="d-flex justify-content-between mb-1">
+          <span class="small fw-bold">PAYMENT REF:</span>
+          <span class="fw-bold">#{{ order.payment_id }}</span>
         </div>
-        <div class="d-flex justify-content-between align-items-center mb-2">
-          <span class="text-dark fw-bold small text-uppercase">Method:</span>
-          <span class="badge bg-warning text-dark">{{ order.payment_method }}</span>
+        <div class="d-flex justify-content-between mb-1">
+          <span class="small fw-bold">AMOUNT SETTLED:</span>
+          <span class="fw-bold text-success fs-6">₹{{ "%.2f"|format(order.paid_amount) }}</span>
         </div>
-        <div class="d-flex justify-content-between align-items-center mb-2">
-          <span class="text-dark fw-bold small text-uppercase">Status:</span>
-          <span class="badge-status status-{{ order.payment_status|lower }}">{{ order.payment_status }}</span>
-        </div>
-        <div class="d-flex justify-content-between align-items-center mb-2">
-          <span class="text-dark fw-bold small text-uppercase">Settled Date:</span>
-          <span class="small fw-bold text-dark">{{ order.payment_date_str }}</span>
-        </div>
-        <hr style="border-top: 2px solid #000; margin: 0.5rem 0;">
-        <div class="d-flex justify-content-between align-items-center">
-          <span class="fw-bold text-dark text-uppercase">Amount Paid:</span>
-          <span class="fs-5 fw-bold" style="color: #047857;">₹{{ "%.2f"|format(order.paid_amount) }}</span>
+        <div class="d-flex justify-content-between mb-1">
+          <span class="small fw-bold">SETTLEMENT DATE:</span>
+          <span class="small">{{ order.payment_date_str }}</span>
         </div>
       </div>
-      <div class="text-dark fw-bold small">
-        <i class="bi bi-shield-check text-dark me-1"></i> Payment successfully verified against order total.
+      <div class="small text-success fw-bold">
+        <i class="bi bi-shield-check me-1"></i> Trigger validated exact match to order total.
       </div>
 
       {% else %}
-      <!-- Record Payment Form -->
-      <p class="text-dark fw-semibold small">
-        Trigger <code>trg_payment_validate</code> validates that the payment amount matches the order total (₹{{ "%.2f"|format(order.total_amount) }}).
+      <p class="small text-muted mb-2">
+        Trigger <code>trg_payment_validate</code> validates exact settlement against total (₹{{ "%.2f"|format(order.total_amount) }}).
       </p>
 
       {% if order.total_amount <= 0 %}
@@ -235,8 +266,8 @@
             <option value="FAILED">FAILED</option>
           </select>
         </div>
-        <button type="submit" class="btn btn-success w-100 fw-bold">
-          <i class="bi bi-check2-circle me-1"></i> Submit Payment
+        <button type="submit" class="btn btn-success w-100 fw-bold btn-tear-coupon">
+          <i class="bi bi-check2-circle me-1"></i> Stamp & Submit Payment
         </button>
       </form>
       {% endif %}

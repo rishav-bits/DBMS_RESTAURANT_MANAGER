@@ -1,4 +1,5 @@
 // Client-side interactions for Restaurant Reservation & Ordering System
+// Receiptify Paper Animation & Thermal Printing Engine
 
 document.addEventListener("DOMContentLoaded", () => {
   // Auto-dismiss alerts after 6 seconds
@@ -9,7 +10,71 @@ document.addEventListener("DOMContentLoaded", () => {
       if (bsAlert) bsAlert.close();
     }, 6000);
   });
+
+  // Apply thermal printout rollout animation to cards
+  const slips = document.querySelectorAll('.card-glass, .receipt-card, .receipt-paper, .kpi-card');
+  slips.forEach((slip, idx) => {
+    slip.classList.add('animate-print');
+    slip.style.animationDelay = `${Math.min(idx * 0.07, 0.55)}s`;
+  });
+
+  // Add 3D tactile paper tilt on mouse movement for receipt elements
+  document.querySelectorAll('.paper-tilt').forEach(el => {
+    el.addEventListener('mousemove', (e) => {
+      const rect = el.getBoundingClientRect();
+      const x = e.clientX - rect.left - rect.width / 2;
+      const y = e.clientY - rect.top - rect.height / 2;
+      const rotateX = -(y / rect.height) * 8;
+      const rotateY = (x / rect.width) * 8;
+      el.style.transform = `perspective(800px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateY(-4px)`;
+    });
+    el.addEventListener('mouseleave', () => {
+      el.style.transform = '';
+    });
+  });
+
+  // Attach tactile paper sound to primary buttons
+  document.querySelectorAll('.btn-tear-coupon, .btn-print-receipt, .btn-primary').forEach(btn => {
+    btn.addEventListener('click', () => {
+      playPaperSound();
+    });
+  });
 });
+
+// Synthesize a subtle, satisfying paper tear / thermal printer feed sound via Web Audio API
+function playPaperSound() {
+  try {
+    const AudioCtx = window.AudioContext || window.webkitAudioContext;
+    if (!AudioCtx) return;
+    const ctx = new AudioCtx();
+    const bufferSize = ctx.sampleRate * 0.04;
+    const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+    const data = buffer.getChannelData(0);
+    for (let i = 0; i < bufferSize; i++) {
+      data[i] = (Math.random() * 2 - 1) * Math.exp(-i / (bufferSize * 0.3));
+    }
+    const noise = ctx.createBufferSource();
+    noise.buffer = buffer;
+    const filter = ctx.createBiquadFilter();
+    filter.type = 'highpass';
+    filter.frequency.value = 1400;
+    const gain = ctx.createGain();
+    gain.gain.setValueAtTime(0.03, ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.04);
+    noise.connect(filter);
+    filter.connect(gain);
+    gain.connect(ctx.destination);
+    noise.start();
+  } catch (e) {
+    // AudioContext blocked or not supported - silently continue
+  }
+}
+
+// 1-Click Thermal Receipt Print function
+function printReceipt() {
+  playPaperSound();
+  window.print();
+}
 
 // Populate Customer Edit Modal
 function openEditCustomerModal(id, name, email, phone, address) {

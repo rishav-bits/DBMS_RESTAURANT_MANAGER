@@ -1,65 +1,67 @@
 {% extends "base.html" %}
 
-{% block title %}Create Account · Restaurant DBMS{% endblock %}
+{% block title %}Register · Print Diner / Staff Registration Slip · Receiptify{% endblock %}
 
 {% block content %}
 <div class="row justify-content-center py-4">
-  <div class="col-lg-8 col-md-10">
-    <div class="card-glass p-4 p-md-5">
-      <!-- Header -->
-      <div class="text-center mb-4">
-        <span class="badge bg-warning text-dark px-3 py-1 mb-2 fs-6">
-          <i class="bi bi-person-badge me-1"></i> Account Registration
-        </span>
-        <h2 class="fw-bold text-dark mb-1">Join Restaurant DBMS</h2>
-        <p class="text-dark fw-semibold mb-0">Select your account type to access tailored features and permissions.</p>
+  <div class="col-lg-8 col-md-10 col-sm-11">
+    <div class="card-glass receipt-sawtooth-top receipt-sawtooth-bottom p-4 p-md-5 paper-tilt animate-print">
+      <!-- Receipt Header -->
+      <div class="text-center mb-3">
+        <div class="receipt-divider-text">*** ACCOUNT ENROLLMENT SLIP ***</div>
+        <h2 class="fw-bold mb-1" style="font-family: var(--font-title);">NEW USER REGISTRATION</h2>
+        <div class="small text-muted">ORACLE 21c/12c RBAC CREDENTIAL ISSUANCE</div>
       </div>
+
+      <div class="receipt-divider"></div>
 
       <form method="POST" action="{{ url_for('register') }}" id="registerForm">
         <!-- Account Type / Role Selector -->
-        <label class="form-label text-dark fw-bold mb-2">1. Select Your Account Role *</label>
+        <label class="form-label mb-2">1. Select Account Privilege Class *</label>
         <div class="row g-3 mb-4">
           <!-- Role: Customer -->
           <div class="col-md-4">
-            <div class="role-card p-3 text-center h-100 cursor-pointer selected" id="card_customer" onclick="selectRole('CUSTOMER')">
+            <div class="role-ticket p-3 text-center h-100 cursor-pointer selected" id="card_customer" onclick="selectRole('CUSTOMER')">
               <input type="radio" name="role" value="CUSTOMER" id="role_customer" class="d-none" checked>
-              <div class="fs-1 mb-2">🍽️</div>
-              <div class="fw-bold text-dark fs-5 mb-1">Customer</div>
-              <div class="small text-dark fw-semibold">Book tables, order food, track personal bills & submit reviews.</div>
+              <div class="fs-2 mb-1">🍽️</div>
+              <div class="fw-bold fs-6 mb-1">CUSTOMER</div>
+              <div class="small text-muted" style="font-size: 0.75rem;">Book dining tables, order dishes, track bills & submit reviews.</div>
             </div>
           </div>
           <!-- Role: Staff -->
           <div class="col-md-4">
-            <div class="role-card p-3 text-center h-100 cursor-pointer" id="card_staff" onclick="selectRole('STAFF')">
+            <div class="role-ticket p-3 text-center h-100 cursor-pointer" id="card_staff" onclick="selectRole('STAFF')">
               <input type="radio" name="role" value="STAFF" id="role_staff" class="d-none">
-              <div class="fs-1 mb-2">📋</div>
-              <div class="fw-bold text-dark fs-5 mb-1">Staff / Reception</div>
-              <div class="small text-dark fw-semibold">Seat walk-ins, manage reservations, advance kitchen orders & billing.</div>
+              <div class="fs-2 mb-1">📋</div>
+              <div class="fw-bold fs-6 mb-1">STAFF / DESK</div>
+              <div class="small text-muted" style="font-size: 0.75rem;">Front desk arrivals, kitchen order status flow & register billing.</div>
             </div>
           </div>
           <!-- Role: Owner -->
           <div class="col-md-4">
-            <div class="role-card p-3 text-center h-100 cursor-pointer" id="card_owner" onclick="selectRole('OWNER')">
+            <div class="role-ticket p-3 text-center h-100 cursor-pointer" id="card_owner" onclick="selectRole('OWNER')">
               <input type="radio" name="role" value="OWNER" id="role_owner" class="d-none">
-              <div class="fs-1 mb-2">👑</div>
-              <div class="fw-bold text-dark fs-5 mb-1">Owner</div>
-              <div class="small text-dark fw-semibold">Executive oversight, menu price revisions, staff & 12 system reports.</div>
+              <div class="fs-2 mb-1">👑</div>
+              <div class="fw-bold fs-6 mb-1">OWNER</div>
+              <div class="small text-muted" style="font-size: 0.75rem;">Catalog price revisions, branch oversight & 12 analytical reports.</div>
             </div>
           </div>
         </div>
 
-        <label class="form-label text-dark fw-bold mb-2">2. Personal & Login Details *</label>
+        <div class="receipt-divider"></div>
+
+        <label class="form-label mb-2">2. Personal & Account Details *</label>
         <div class="row g-3 mb-3">
           <div class="col-md-6">
             <label class="form-label small">Full Name *</label>
             <input type="text" name="name" class="form-control" placeholder="e.g. Rohan Jena" required>
           </div>
           <div class="col-md-6">
-            <label class="form-label small">Email Address * (Unique Account ID)</label>
+            <label class="form-label small">Email Address * (Unique Sign-in ID)</label>
             <input type="email" name="email" class="form-control" placeholder="e.g. rohan@example.com" required>
           </div>
           <div class="col-md-6">
-            <label class="form-label small">Phone Number</label>
+            <label class="form-label small">Contact Phone Number</label>
             <input type="text" name="phone" class="form-control" placeholder="+91 98765 43210">
           </div>
           <div class="col-md-6">
@@ -72,15 +74,15 @@
         <div id="customer_fields" class="mb-3">
           <label class="form-label small">Delivery / Residential Address</label>
           <textarea name="address" class="form-control" rows="2" placeholder="e.g. Flat 402, Royal Palms, New Delhi"></textarea>
-          <div class="form-text small fw-bold text-dark">Used for delivery orders and billing invoices.</div>
+          <div class="form-text small">Used for order routing and invoice generation.</div>
         </div>
 
         <!-- Conditional Fields for STAFF -->
-        <div id="staff_fields" class="mb-3 d-none p-3 border-2 border-dark" style="background: var(--neo-cyan); border: 2.5px solid #000; box-shadow: 2px 2px 0 #000; border-radius: 8px;">
+        <div id="staff_fields" class="mb-3 d-none p-3" style="background: var(--paper-bg-crease); border: 1.5px dashed var(--ink-rule); border-radius: 4px;">
           <h6 class="fw-bold text-dark mb-2"><i class="bi bi-briefcase me-1"></i> Staff Assignment Information</h6>
           <div class="row g-3">
             <div class="col-md-6">
-              <label class="form-label small">Assigned Restaurant *</label>
+              <label class="form-label small">Assigned Restaurant Branch *</label>
               <select name="restaurant_id" id="staff_rest_select" class="form-select">
                 <option value="">-- Select Restaurant --</option>
                 {% for r in restaurants %}
@@ -89,7 +91,7 @@
               </select>
             </div>
             <div class="col-md-6">
-              <label class="form-label small">Staff Job Title / Role *</label>
+              <label class="form-label small">Job Title / Designation *</label>
               <select name="staff_title" class="form-select">
                 <option value="Receptionist / Front Desk" selected>Receptionist / Front Desk</option>
                 <option value="Floor Captain">Floor Captain</option>
@@ -102,53 +104,61 @@
         </div>
 
         <!-- Conditional Fields for OWNER -->
-        <div id="owner_fields" class="mb-3 d-none p-3 border-2 border-dark" style="background: var(--neo-yellow); border: 2.5px solid #000; box-shadow: 2px 2px 0 #000; border-radius: 8px;">
+        <div id="owner_fields" class="mb-3 d-none p-3" style="background: var(--paper-bg-crease); border: 1.5px dashed var(--ink-rule); border-radius: 4px;">
           <div class="d-flex align-items-center gap-2">
-            <i class="bi bi-shield-lock-fill fs-4 text-dark"></i>
+            <span class="receipt-stamp stamp-ready py-1 px-2">ADMIN</span>
             <div>
-              <div class="fw-bold text-dark">Owner Account Verification</div>
-              <div class="small fw-semibold text-dark">Owner accounts obtain full system privileges: menu price management, database reports, and employee oversight.</div>
+              <div class="fw-bold">Owner Executive Privileges</div>
+              <div class="small text-muted">Owner accounts grant full multi-branch analytics, pricing rights, and employee oversight.</div>
             </div>
           </div>
         </div>
 
         <!-- Submit Button -->
         <div class="d-grid mt-4">
-          <button type="submit" class="btn btn-primary btn-lg">
-            <i class="bi bi-check-circle-fill me-1"></i> Complete Registration
+          <button type="submit" class="btn btn-primary btn-lg btn-tear-coupon">
+            <i class="bi bi-check2-circle me-1"></i> Complete Enrollment & Issue Credentials
           </button>
         </div>
 
         <!-- Login Link -->
         <div class="text-center mt-3">
-          <span class="text-dark fw-bold">Already have an account?</span>
-          <a href="{{ url_for('login') }}" class="fw-bold ms-1" style="color: #0369a1; text-decoration: underline;">
-            Log In Here &rarr;
+          <span class="small fw-bold">Already have an active account?</span>
+          <a href="{{ url_for('login') }}" class="small fw-bold ms-1" style="color: #0284c7; text-decoration: underline;">
+            Clock In / Sign In &rarr;
           </a>
         </div>
       </form>
+
+      <div class="receipt-divider mt-4"></div>
+
+      <!-- Barcode Graphic -->
+      <div class="text-center pt-1">
+        <div class="receipt-barcode"></div>
+        <div class="barcode-number">* USER-REG-2026-BACSE202 *</div>
+      </div>
     </div>
   </div>
 </div>
 
 <style>
-.role-card {
-  background: #ffffff;
-  border: 3px solid #000000;
-  box-shadow: 3px 3px 0px #000000;
-  border-radius: 10px;
-  transition: all 0.15s ease;
+.role-ticket {
+  background: var(--paper-bg-warm);
+  border: 1.5px dashed var(--ink-rule);
+  border-radius: 4px;
+  transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
   user-select: none;
 }
-.role-card:hover {
-  transform: translate(-2px, -2px);
-  box-shadow: 5px 5px 0px #000000;
+.role-ticket:hover {
+  transform: translateY(-2px);
+  background: var(--paper-bg-crease);
+  border-color: #f59e0b;
 }
-.role-card.selected {
-  background-color: var(--neo-yellow);
-  transform: translate(-2px, -2px);
-  box-shadow: 5px 5px 0px #000000;
-  border-width: 3.5px;
+.role-ticket.selected {
+  background-color: #fef3c7;
+  border: 2px solid var(--ink-pure);
+  box-shadow: 2px 2px 0px rgba(0,0,0,0.8);
+  transform: translateY(-2px);
 }
 </style>
 

@@ -1,32 +1,35 @@
 {% extends "base.html" %}
 
-{% block title %}Executive Overview · Restaurant DBMS{% endblock %}
+{% block title %}Executive Register Ledger · Receiptify{% endblock %}
 
 {% block content %}
+<!-- Executive Header Slip -->
 <div class="row g-4 mb-4">
   <div class="col-12">
-    <div class="card-glass p-4" style="background: #ffffff;">
+    <div class="card-glass receipt-sawtooth-top p-4 paper-tilt animate-print">
       <div class="d-flex flex-wrap align-items-center justify-content-between gap-3">
         <div>
-          <span class="badge bg-success text-dark px-3 py-1 mb-2">
-            <i class="bi bi-shield-lock-fill me-1"></i> Executive Owner Portal · Unrestricted Database Access
-          </span>
-          <h2 class="fw-bold mb-1 text-dark">Executive Business Analytics Overview</h2>
-          <p class="text-dark fw-semibold mb-0" style="max-width: 850px;">
-            Unified management of all 3 restaurant branches, menu pricing audit control via <code>sp_set_price</code>, customer relations, staff operations, and 12 system-specific PL/SQL analytical queries.
+          <div class="receipt-divider-text text-start mb-1">*** EXECUTIVE Z-REPORT · MASTER REGISTER LEDGER ***</div>
+          <div class="d-flex align-items-center gap-2 mb-2">
+            <span class="receipt-stamp stamp-ready py-0 px-2" style="font-size: 0.7rem;">EXECUTIVE PRIVILEGE</span>
+            <span class="small text-muted">TERMINAL: ROOT-ADMIN</span>
+          </div>
+          <h2 class="fw-bold mb-1" style="font-family: var(--font-title);">Executive Business & Operations Ledger</h2>
+          <p class="small text-muted mb-0" style="max-width: 820px;">
+            Full multi-branch control over all 3 dining locations, pricing adjustments via PL/SQL <code>sp_set_price</code>, customer relations, staff operations, and 12 analytical database reports.
           </p>
         </div>
         <div class="d-flex flex-wrap gap-2">
-          <a href="{{ url_for('reports') }}" class="btn btn-warning">
-            <i class="bi bi-lightning-charge me-1"></i> 12 SQL & PL/SQL Queries
+          <a href="{{ url_for('reports') }}" class="btn btn-warning btn-tear-coupon">
+            <i class="bi bi-journal-code me-1"></i> Register Tape (12 Queries)
           </a>
-          <a href="{{ url_for('menu') }}" class="btn btn-primary">
-            <i class="bi bi-currency-rupee me-1"></i> Manage Prices
+          <a href="{{ url_for('menu') }}" class="btn btn-primary btn-tear-coupon">
+            <i class="bi bi-currency-rupee me-1"></i> Catalog Pricing
           </a>
-          <a href="{{ url_for('customers') }}" class="btn btn-secondary">
-            <i class="bi bi-people me-1"></i> Customer Directory
+          <a href="{{ url_for('customers') }}" class="btn btn-secondary btn-tear-coupon">
+            <i class="bi bi-people me-1"></i> Diner Roster
           </a>
-          <a href="{{ url_for('reservations') }}" class="btn btn-info">
+          <a href="{{ url_for('reservations') }}" class="btn btn-info btn-tear-coupon">
             <i class="bi bi-calendar2-check me-1"></i> Master Bookings
           </a>
         </div>
@@ -39,8 +42,8 @@
 <div class="row g-3 mb-4">
   {% for kpi in counts %}
   <div class="col-xl-3 col-md-6">
-    <div class="kpi-card">
-      <div class="kpi-icon bg-{{ kpi.color }} text-dark">
+    <div class="kpi-card paper-interactive animate-print delay-{{ loop.index }}">
+      <div class="kpi-icon">
         <i class="bi {{ kpi.icon }}"></i>
       </div>
       <div>
@@ -52,54 +55,56 @@
   {% endfor %}
 </div>
 
-<!-- Revenue & Branch Overview -->
+<!-- Revenue Tape & Branch Directory -->
 <div class="row g-4 mb-4">
   <div class="col-lg-4">
-    <div class="card-glass p-4 h-100" style="background: var(--neo-yellow);">
-      <div class="small fw-bold text-dark text-uppercase mb-1">Total Settled Revenue (Oracle Verified)</div>
-      <div class="display-5 fw-extrabold text-dark mb-2">₹{{ "%.2f"|format(total_revenue) }}</div>
-      <div class="small text-dark fw-bold mb-3">
-        <i class="bi bi-shield-check me-1"></i> Audited through payments table & compound trigger
+    <div class="card-glass receipt-sawtooth-bottom p-4 h-100 paper-tilt animate-print delay-2">
+      <div class="receipt-divider-text text-start mb-1">*** REVENUE AUDIT TAPE ***</div>
+      <div class="small fw-bold text-uppercase mb-1">Total Settled Revenue (Oracle Verified)</div>
+      <div class="display-6 fw-bold mb-2" style="font-family: var(--font-mono); color: #b45309;">₹{{ "%.2f"|format(total_revenue) }}</div>
+      <div class="small text-muted mb-3">
+        <i class="bi bi-shield-check me-1 text-success"></i> Audited through payment table & compound triggers
       </div>
-      <hr style="border-top: 2px solid #000;">
+      <div class="receipt-divider"></div>
       <div class="d-flex justify-content-between align-items-center mb-2">
-        <span class="small fw-bold text-dark">Average Customer Rating:</span>
-        <span class="badge bg-white text-dark fs-6">★ {{ "%.1f"|format(avg_rating) }} / 5.0</span>
+        <span class="small fw-bold">Avg Diner Satisfaction:</span>
+        <span class="receipt-stamp stamp-paid py-0 px-2" style="font-size: 0.72rem;">★ {{ "%.1f"|format(avg_rating) }} / 5.0</span>
       </div>
       <div class="d-flex justify-content-between align-items-center">
-        <span class="small fw-bold text-dark">Total Registered Accounts:</span>
-        <span class="badge bg-info text-dark fs-6">{{ user_count }} Accounts</span>
+        <span class="small fw-bold">Active Diner Accounts:</span>
+        <span class="badge bg-light text-dark">{{ user_count }} Accounts</span>
       </div>
+      <div class="receipt-barcode mt-3" style="height: 25px;"></div>
     </div>
   </div>
 
   <div class="col-lg-8">
-    <div class="card-glass h-100">
-      <div class="card-header-custom d-flex justify-content-between align-items-center" style="background: var(--neo-cyan);">
-        <span class="text-dark fs-6 fw-bold">
-          <i class="bi bi-shop text-dark me-2"></i>Restaurant Branches Status & Seating
+    <div class="card-glass receipt-sawtooth-bottom h-100 animate-print delay-3">
+      <div class="card-header-custom d-flex justify-content-between align-items-center">
+        <span class="fs-6 fw-bold">
+          <i class="bi bi-shop me-2"></i>Restaurant Branches & Seating Floorplan
         </span>
-        <span class="badge bg-warning text-dark">3 Locations Active</span>
+        <span class="badge bg-light text-dark">3 Locations Active</span>
       </div>
       <div class="table-responsive">
         <table class="table table-custom">
           <thead>
             <tr>
-              <th>Restaurant</th>
-              <th>Cuisine</th>
-              <th>Hours</th>
-              <th>Phone</th>
-              <th>Seating Capacity</th>
+              <th>BRANCH</th>
+              <th>CUISINE</th>
+              <th>OPERATING HOURS</th>
+              <th>PHONE</th>
+              <th>CAPACITY</th>
             </tr>
           </thead>
           <tbody>
             {% for b in branch_summary %}
-            <tr>
+            <tr class="paper-interactive">
               <td class="fw-bold text-dark">{{ b.name }}</td>
-              <td><span class="badge bg-info text-dark">{{ b.cuisine_type }}</span></td>
-              <td class="small fw-bold text-dark">{{ b.opening_hour }} - {{ b.closing_hour }}</td>
-              <td class="small fw-semibold text-dark">{{ b.phone }}</td>
-              <td class="fw-bold text-dark">{{ b.tables_count }} Tables ({{ b.total_seats }} Seats)</td>
+              <td><span class="badge bg-light text-dark">{{ b.cuisine_type }}</span></td>
+              <td class="small fw-bold">{{ b.opening_hour }} - {{ b.closing_hour }}</td>
+              <td class="small text-muted">{{ b.phone }}</td>
+              <td class="fw-bold">{{ b.tables_count }} Tables ({{ b.total_seats }} Seats)</td>
             </tr>
             {% endfor %}
           </tbody>
@@ -109,41 +114,41 @@
   </div>
 </div>
 
-<!-- Recent Orders & Active Bookings Master Feed -->
+<!-- Master Feeds -->
 <div class="row g-4">
   <div class="col-lg-7">
-    <div class="card-glass h-100">
+    <div class="card-glass receipt-sawtooth-bottom h-100 animate-print delay-2">
       <div class="card-header-custom d-flex justify-content-between align-items-center">
-        <span class="text-dark fs-6 fw-bold">
-          <i class="bi bi-receipt text-dark me-2"></i>Master Orders Feed
+        <span class="fs-6 fw-bold">
+          <i class="bi bi-receipt me-2"></i>Master Orders Feed
         </span>
-        <a href="{{ url_for('orders') }}" class="btn btn-sm btn-secondary">Manage Orders</a>
+        <a href="{{ url_for('orders') }}" class="btn btn-sm btn-secondary">All Orders</a>
       </div>
       <div class="table-responsive">
         <table class="table table-custom">
           <thead>
             <tr>
               <th>ID</th>
-              <th>Customer</th>
-              <th>Restaurant</th>
-              <th>Total Amount</th>
-              <th>Status</th>
-              <th>Action</th>
+              <th>DINER</th>
+              <th>BRANCH</th>
+              <th>AMOUNT</th>
+              <th>STATUS</th>
+              <th>ACTION</th>
             </tr>
           </thead>
           <tbody>
             {% for ord in recent_orders %}
-            <tr>
+            <tr class="paper-interactive">
               <td class="fw-bold">#{{ ord.order_id }}</td>
               <td class="fw-bold text-dark">{{ ord.customer_name }}</td>
-              <td class="text-dark small">{{ ord.restaurant_name }}</td>
+              <td class="small text-muted">{{ ord.restaurant_name }}</td>
               <td class="fw-bold fs-6" style="color: #b45309;">₹{{ "%.2f"|format(ord.total_amount) }}</td>
               <td>
-                <span class="badge-status status-{{ ord.status|lower }}">{{ ord.status }}</span>
+                <span class="receipt-stamp status-{{ ord.status|lower }}" style="font-size: 0.68rem;">{{ ord.status }}</span>
               </td>
               <td>
                 <a href="{{ url_for('order_detail', order_id=ord.order_id) }}" class="btn btn-sm btn-outline-primary py-0 px-2">
-                  <i class="bi bi-eye"></i> Details
+                  <i class="bi bi-receipt"></i> Slip
                 </a>
               </td>
             </tr>
@@ -155,37 +160,37 @@
   </div>
 
   <div class="col-lg-5">
-    <div class="card-glass h-100">
-      <div class="card-header-custom d-flex justify-content-between align-items-center" style="background: var(--neo-yellow);">
-        <span class="text-dark fs-6 fw-bold">
-          <i class="bi bi-calendar2-check text-dark me-2"></i>Master Reservations Feed
+    <div class="card-glass receipt-sawtooth-bottom h-100 animate-print delay-3">
+      <div class="card-header-custom d-flex justify-content-between align-items-center">
+        <span class="fs-6 fw-bold">
+          <i class="bi bi-calendar2-check me-2"></i>Master Reservations Feed
         </span>
-        <a href="{{ url_for('reservations') }}" class="btn btn-sm btn-secondary">Manage</a>
+        <a href="{{ url_for('reservations') }}" class="btn btn-sm btn-secondary">All Bookings</a>
       </div>
       <div class="table-responsive">
         <table class="table table-custom">
           <thead>
             <tr>
               <th>ID</th>
-              <th>Customer</th>
-              <th>Table</th>
-              <th>Slot</th>
-              <th>Status</th>
+              <th>DINER</th>
+              <th>TABLE</th>
+              <th>SLOT</th>
+              <th>STATUS</th>
             </tr>
           </thead>
           <tbody>
             {% for res in upcoming_res %}
-            <tr>
+            <tr class="paper-interactive">
               <td class="fw-bold">#{{ res.reservation_id }}</td>
               <td class="fw-bold text-dark">{{ res.customer_name }}</td>
               <td>
-                <span class="badge bg-warning text-dark">Table {{ res.table_number }}</span>
+                <span class="badge bg-light text-dark">Table {{ res.table_number }}</span>
               </td>
               <td>
-                <div class="small fw-bold text-dark">{{ res.time_slot }}</div>
+                <div class="small fw-bold">{{ res.time_slot }}</div>
               </td>
               <td>
-                <span class="badge-status status-{{ res.status|lower }}">{{ res.status }}</span>
+                <span class="receipt-stamp status-{{ res.status|lower }}" style="font-size: 0.68rem;">{{ res.status }}</span>
               </td>
             </tr>
             {% endfor %}

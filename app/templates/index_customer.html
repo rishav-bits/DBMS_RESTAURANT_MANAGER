@@ -1,34 +1,36 @@
 {% extends "base.html" %}
 
-{% block title %}My Dining Portal · Restaurant DBMS{% endblock %}
+{% block title %}My Dining Receipts · Receiptify{% endblock %}
 
 {% block content %}
 <!-- Customer Hero Banner -->
 <div class="row g-4 mb-4">
   <div class="col-12">
-    <div class="card-glass p-4" style="background: #ffffff;">
+    <div class="card-glass receipt-sawtooth-top p-4 paper-tilt animate-print">
       <div class="d-flex flex-wrap align-items-center justify-content-between gap-3">
         <div>
-          <span class="badge bg-warning text-dark px-3 py-1 mb-2">
-            <i class="bi bi-person-check-fill me-1"></i> Customer Dining Portal
-          </span>
-          <h2 class="fw-bold mb-1 text-dark">Welcome back, {{ current_user.name }}! 🍽️</h2>
-          <p class="text-dark fw-semibold mb-0">
-            Reserve dining tables, explore chef specials, place live table orders, and track your dining bills.
+          <div class="receipt-divider-text text-start mb-1">*** PERSONAL DINING TERMINAL ***</div>
+          <div class="d-flex align-items-center gap-2 mb-2">
+            <span class="receipt-stamp stamp-paid py-0 px-2" style="font-size: 0.7rem;">VERIFIED DINER</span>
+            <span class="small text-muted">MEMBER ID: #{{ current_user.customer_id or current_user.id }}</span>
+          </div>
+          <h2 class="fw-bold mb-1" style="font-family: var(--font-title);">Welcome back, {{ current_user.name }}! 🍽️</h2>
+          <p class="small text-muted mb-0">
+            Book dining tables, view active menu chits, track live order slips, and settle dining checks.
           </p>
         </div>
         <div class="d-flex flex-wrap gap-2">
-          <a href="{{ url_for('reservations') }}" class="btn btn-primary">
-            <i class="bi bi-calendar-plus me-1"></i> Book a Table
+          <a href="{{ url_for('reservations') }}" class="btn btn-primary btn-tear-coupon">
+            <i class="bi bi-calendar-plus me-1"></i> Book Table Chit
           </a>
-          <a href="{{ url_for('menu') }}" class="btn btn-secondary">
-            <i class="bi bi-menu-button-wide me-1"></i> Explore Menu
+          <a href="{{ url_for('menu') }}" class="btn btn-secondary btn-tear-coupon">
+            <i class="bi bi-journal-text me-1"></i> Menu Chits
           </a>
-          <a href="{{ url_for('orders') }}" class="btn btn-info">
-            <i class="bi bi-receipt me-1"></i> My Orders & Bills
+          <a href="{{ url_for('orders') }}" class="btn btn-info btn-tear-coupon">
+            <i class="bi bi-receipt me-1"></i> My Bills & Slips
           </a>
-          <a href="{{ url_for('reviews') }}" class="btn btn-outline-warning">
-            <i class="bi bi-star me-1"></i> Write Review
+          <a href="{{ url_for('reviews') }}" class="btn btn-outline-warning btn-tear-coupon">
+            <i class="bi bi-star me-1"></i> Rate Experience
           </a>
         </div>
       </div>
@@ -36,22 +38,22 @@
   </div>
 </div>
 
-<!-- Customer Personal KPIs -->
+<!-- Customer Personal Register KPIs -->
 <div class="row g-3 mb-4">
   <div class="col-xl-3 col-md-6">
-    <div class="kpi-card">
-      <div class="kpi-icon bg-info text-dark">
+    <div class="kpi-card paper-interactive animate-print delay-1">
+      <div class="kpi-icon">
         <i class="bi bi-calendar2-check"></i>
       </div>
       <div>
         <div class="kpi-val">{{ my_kpis.res_count }}</div>
-        <div class="kpi-lbl">My Reservations</div>
+        <div class="kpi-lbl">Booked Chits</div>
       </div>
     </div>
   </div>
   <div class="col-xl-3 col-md-6">
-    <div class="kpi-card">
-      <div class="kpi-icon bg-warning text-dark">
+    <div class="kpi-card paper-interactive animate-print delay-2">
+      <div class="kpi-icon">
         <i class="bi bi-receipt"></i>
       </div>
       <div>
@@ -61,19 +63,19 @@
     </div>
   </div>
   <div class="col-xl-3 col-md-6">
-    <div class="kpi-card">
-      <div class="kpi-icon bg-success text-dark">
+    <div class="kpi-card paper-interactive animate-print delay-3">
+      <div class="kpi-icon">
         <i class="bi bi-currency-rupee"></i>
       </div>
       <div>
         <div class="kpi-val">₹{{ "%.0f"|format(my_kpis.total_spent) }}</div>
-        <div class="kpi-lbl">Total Spent</div>
+        <div class="kpi-lbl">Total Settle</div>
       </div>
     </div>
   </div>
   <div class="col-xl-3 col-md-6">
-    <div class="kpi-card">
-      <div class="kpi-icon bg-danger text-dark">
+    <div class="kpi-card paper-interactive animate-print delay-4">
+      <div class="kpi-icon">
         <i class="bi bi-star-fill"></i>
       </div>
       <div>
@@ -85,60 +87,60 @@
 </div>
 
 <div class="row g-4">
-  <!-- My Active Reservations -->
+  <!-- My Active Reservations Slip -->
   <div class="col-lg-6">
-    <div class="card-glass h-100">
-      <div class="card-header-custom d-flex justify-content-between align-items-center" style="background: var(--neo-cyan);">
-        <span class="text-dark fs-6 fw-bold">
-          <i class="bi bi-calendar2-check text-dark me-2"></i>My Active & Upcoming Reservations
+    <div class="card-glass receipt-sawtooth-bottom h-100 animate-print delay-2">
+      <div class="card-header-custom d-flex justify-content-between align-items-center">
+        <span class="fs-6 fw-bold">
+          <i class="bi bi-calendar2-check me-2"></i>My Table Reservation Vouchers
         </span>
-        <a href="{{ url_for('reservations') }}" class="btn btn-sm btn-secondary">New Booking</a>
+        <a href="{{ url_for('reservations') }}" class="btn btn-sm btn-secondary">New Voucher</a>
       </div>
       <div class="table-responsive">
         <table class="table table-custom">
           <thead>
             <tr>
-              <th>ID</th>
-              <th>Restaurant</th>
-              <th>Table</th>
-              <th>Date & Slot</th>
-              <th>Status</th>
-              <th class="text-end">Action</th>
+              <th>SLIP #</th>
+              <th>BRANCH</th>
+              <th>TABLE</th>
+              <th>DATE & SLOT</th>
+              <th>STATUS</th>
+              <th class="text-end">ACTION</th>
             </tr>
           </thead>
           <tbody>
             {% for r in my_reservations %}
-            <tr>
+            <tr class="paper-interactive">
               <td class="fw-bold">#{{ r.reservation_id }}</td>
-              <td class="text-dark fw-bold">{{ r.restaurant_name }}</td>
+              <td class="fw-bold text-dark">{{ r.restaurant_name }}</td>
               <td>
-                <span class="badge bg-warning text-dark">Table {{ r.table_number }}</span>
+                <span class="badge bg-light text-dark">Table {{ r.table_number }}</span>
               </td>
               <td>
-                <div class="small fw-bold text-dark">{{ r.res_date }}</div>
-                <div class="small fw-semibold text-dark">{{ r.time_slot }}</div>
+                <div class="small fw-bold">{{ r.res_date }}</div>
+                <div class="small text-muted">{{ r.time_slot }}</div>
               </td>
               <td>
-                <span class="badge-status status-{{ r.status|lower }}">{{ r.status }}</span>
+                <span class="receipt-stamp status-{{ r.status|lower }}" style="font-size: 0.68rem;">{{ r.status }}</span>
               </td>
               <td class="text-end">
                 {% if r.status not in ['CANCELLED', 'COMPLETED'] %}
                 <form method="POST" action="{{ url_for('reservation_cancel', reservation_id=r.reservation_id) }}" class="d-inline"
-                      onsubmit="return confirm('Cancel reservation #{{ r.reservation_id }}?');">
-                  <button type="submit" class="btn btn-sm btn-outline-danger py-0 px-2" title="Cancel Booking">
-                    <i class="bi bi-x-circle"></i> Cancel
+                      onsubmit="return confirm('Cancel reservation voucher #{{ r.reservation_id }}?');">
+                  <button type="submit" class="btn btn-sm btn-outline-danger py-0 px-2" title="Void Slip">
+                    <i class="bi bi-x-circle"></i> Void
                   </button>
                 </form>
                 {% else %}
-                <span class="small text-dark fw-bold">—</span>
+                <span class="small text-muted">—</span>
                 {% endif %}
               </td>
             </tr>
             {% else %}
             <tr>
-              <td colspan="6" class="text-center text-dark py-4 fw-bold">
-                You have no upcoming table reservations. 
-                <a href="{{ url_for('reservations') }}" class="fw-bold ms-1" style="color: #0369a1;">Book a table now!</a>
+              <td colspan="6" class="text-center py-4 fw-bold">
+                No active table reservation vouchers found. 
+                <a href="{{ url_for('reservations') }}" class="fw-bold ms-1" style="color: #0284c7;">Book a table voucher!</a>
               </td>
             </tr>
             {% endfor %}
@@ -148,46 +150,46 @@
     </div>
   </div>
 
-  <!-- My Recent Orders -->
+  <!-- My Recent Orders Slip -->
   <div class="col-lg-6">
-    <div class="card-glass h-100">
+    <div class="card-glass receipt-sawtooth-bottom h-100 animate-print delay-3">
       <div class="card-header-custom d-flex justify-content-between align-items-center">
-        <span class="text-dark fs-6 fw-bold">
-          <i class="bi bi-receipt text-dark me-2"></i>My Recent Food Orders & Bills
+        <span class="fs-6 fw-bold">
+          <i class="bi bi-receipt me-2"></i>My Recent Order Receipts
         </span>
-        <a href="{{ url_for('orders') }}" class="btn btn-sm btn-secondary">Order Now</a>
+        <a href="{{ url_for('orders') }}" class="btn btn-sm btn-secondary">New Order</a>
       </div>
       <div class="table-responsive">
         <table class="table table-custom">
           <thead>
             <tr>
-              <th>Order #</th>
-              <th>Restaurant</th>
-              <th>Bill Amount</th>
-              <th>Workflow Status</th>
-              <th class="text-end">Action</th>
+              <th>RECEIPT #</th>
+              <th>BRANCH</th>
+              <th>BILL TOTAL</th>
+              <th>STATUS</th>
+              <th class="text-end">ACTION</th>
             </tr>
           </thead>
           <tbody>
             {% for o in my_orders %}
-            <tr>
+            <tr class="paper-interactive">
               <td class="fw-bold">#{{ o.order_id }}</td>
-              <td class="text-dark fw-bold">{{ o.restaurant_name }}</td>
+              <td class="fw-bold text-dark">{{ o.restaurant_name }}</td>
               <td class="fw-bold fs-6" style="color: #b45309;">₹{{ "%.2f"|format(o.total_amount) }}</td>
               <td>
-                <span class="badge-status status-{{ o.order_status|lower }}">{{ o.order_status }}</span>
+                <span class="receipt-stamp status-{{ o.order_status|lower }}" style="font-size: 0.68rem;">{{ o.order_status }}</span>
               </td>
               <td class="text-end">
                 <a href="{{ url_for('order_detail', order_id=o.order_id) }}" class="btn btn-sm btn-outline-primary py-0 px-2">
-                  <i class="bi bi-receipt"></i> View Bill
+                  <i class="bi bi-receipt"></i> View Slip
                 </a>
               </td>
             </tr>
             {% else %}
             <tr>
-              <td colspan="5" class="text-center text-dark py-4 fw-bold">
-                You haven't placed any food orders yet.
-                <a href="{{ url_for('orders') }}" class="fw-bold ms-1" style="color: #0369a1;">Create your first order!</a>
+              <td colspan="5" class="text-center py-4 fw-bold">
+                No food receipts on record yet.
+                <a href="{{ url_for('orders') }}" class="fw-bold ms-1" style="color: #0284c7;">Start your first order slip!</a>
               </td>
             </tr>
             {% endfor %}

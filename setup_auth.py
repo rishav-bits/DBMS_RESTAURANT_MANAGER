@@ -68,7 +68,7 @@ def setup_auth():
         {
             "email": "receptionist@example.com",
             "password": "staff123",
-            "full_name": "Kavita Roy (Receptionist)",
+            "full_name": "Khyati (Receptionist)",
             "phone": "+91 98111 22334",
             "role": "STAFF",
             "staff_title": "Receptionist / Front Desk",
@@ -79,7 +79,7 @@ def setup_auth():
         {
             "email": "owner@example.com",
             "password": "owner123",
-            "full_name": "Rajesh Khanna (Owner)",
+            "full_name": "Rishav Singh (Owner)",
             "phone": "+91 99999 88888",
             "role": "OWNER",
             "staff_title": "Restaurant Owner & Founder",

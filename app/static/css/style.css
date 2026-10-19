@@ -1,17 +1,26 @@
 /* ==========================================================================
    RESTAURANT TABLE RESERVATION & FOOD ORDERING SYSTEM (DA2)
-   RECEIPTIFY DESIGN SYSTEM & PAPER ANIMATION ENGINE
-   Aesthetic: Thermal Printed Restaurant Receipts, Perforated Tickets,
-              Rubber Ink Stamps, Tactile Paper Animations & Monospaced Typography
+   RECEIPTIFY & MENU CARD DESIGN SYSTEM
+   Aesthetic: Fine Dining Hardcover Menu Card Backdrop & Gilded Header,
+              Thermal Printed Receipts, Rubber Ink Stamps & Paper Animations
    ========================================================================== */
 
-@import url('https://fonts.googleapis.com/css2?family=Courier+Prime:ital,wght@0,400;0,700;1,400&family=DM+Mono:ital,wght@0,400;0,500;1,400&family=Libre+Barcode+128&family=Space+Grotesk:wght@600;700;800&family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Syne:wght@700;800;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800;900&family=Playfair+Display:ital,wght@0,600;0,700;0,800;1,600&family=Courier+Prime:ital,wght@0,400;0,700;1,400&family=DM+Mono:ital,wght@0,400;0,500;1,400&family=Libre+Barcode+128&family=Space+Grotesk:wght@600;700;800&family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Syne:wght@700;800;900&display=swap');
 
 :root {
-  /* Atmosphere & Countertop */
-  --counter-bg: #111215;
-  --counter-surface: #18191e;
-  --counter-border: #282a32;
+  /* Menu Card Fine Dining Leather & Gilded Palette */
+  --menu-leather-black: #120906;
+  --menu-leather-deep: #1a0d08;
+  --menu-leather-base: #22120b;
+  --menu-leather-warm: #2c170f;
+  --menu-leather-border: #3d2116;
+  
+  --menu-gold: #d4af37;
+  --menu-gold-bright: #f59e0b;
+  --menu-gold-light: #f7e6c4;
+  --menu-gold-dark: #a1780e;
+  --menu-gold-glow: rgba(212, 175, 55, 0.4);
+  --menu-gold-subtle: rgba(212, 175, 55, 0.18);
   
   /* Authentic Thermal Receipt Paper Palette */
   --paper-bg: #fffef9;
@@ -36,14 +45,16 @@
   --stamp-cancelled: #dc2626;
   --stamp-confirmed: #059669;
   --stamp-yellow: #ca8a04;
+  --stamp-gold: #d4af37;
   
   /* Thermal Paper Shadows */
-  --shadow-paper: 0 4px 6px -1px rgba(0, 0, 0, 0.25), 0 14px 28px -4px rgba(0, 0, 0, 0.45), 0 1px 2px rgba(0,0,0,0.15);
-  --shadow-paper-hover: 0 10px 15px -3px rgba(0, 0, 0, 0.3), 0 24px 38px -6px rgba(0, 0, 0, 0.55), 0 2px 4px rgba(0,0,0,0.2);
-  --shadow-paper-sm: 0 2px 4px rgba(0, 0, 0, 0.2), 0 6px 14px rgba(0, 0, 0, 0.3);
-  --shadow-slit: inset 0 3px 6px rgba(0,0,0,0.8), 0 2px 0 rgba(255,255,255,0.06);
+  --shadow-paper: 0 4px 6px -1px rgba(0, 0, 0, 0.35), 0 16px 32px -4px rgba(0, 0, 0, 0.65), 0 1px 2px rgba(0,0,0,0.25);
+  --shadow-paper-hover: 0 10px 15px -3px rgba(0, 0, 0, 0.4), 0 28px 46px -6px rgba(0, 0, 0, 0.75), 0 2px 4px rgba(0,0,0,0.3);
+  --shadow-paper-sm: 0 2px 4px rgba(0, 0, 0, 0.25), 0 8px 18px rgba(0, 0, 0, 0.4);
 
   /* Fonts */
+  --font-menu: 'Cinzel', 'Playfair Display', Georgia, serif;
+  --font-serif: 'Playfair Display', Georgia, serif;
   --font-mono: 'Space Mono', 'Courier Prime', monospace;
   --font-thermal: 'Courier Prime', 'DM Mono', monospace;
   --font-title: 'Space Grotesk', 'Syne', sans-serif;
@@ -55,15 +66,21 @@
 }
 
 /* --------------------------------------------------------------------------
-   BASE ATMOSPHERE (Moody Restaurant Countertop with Spotlight)
+   MENU CARD BACKDROP (Fine Dining Leather Hardcover Menu Binder)
    -------------------------------------------------------------------------- */
 body {
   font-family: var(--font-mono);
-  background-color: var(--counter-bg);
+  background-color: var(--menu-leather-black);
   background-image: 
-    radial-gradient(circle at 50% 0%, rgba(245, 158, 11, 0.08) 0%, transparent 65%),
-    radial-gradient(circle at 10% 90%, rgba(56, 189, 248, 0.04) 0%, transparent 50%),
-    repeating-linear-gradient(45deg, rgba(255,255,255,0.012) 0, rgba(255,255,255,0.012) 1px, transparent 1px, transparent 12px);
+    /* Warm candlelight spotlight beaming down on the open menu card */
+    radial-gradient(circle at 50% 0%, rgba(212, 175, 55, 0.14) 0%, transparent 60%),
+    radial-gradient(circle at 80% 80%, rgba(180, 83, 9, 0.08) 0%, transparent 50%),
+    radial-gradient(circle at 20% 90%, rgba(146, 64, 14, 0.06) 0%, transparent 45%),
+    /* Authentic leather / textured linen grain pattern */
+    radial-gradient(rgba(212, 175, 55, 0.04) 1px, transparent 1px),
+    /* Rich espresso leather vertical gradient */
+    linear-gradient(180deg, #24130c 0%, #170b07 40%, #110704 100%);
+  background-size: 100% 100%, 100% 100%, 100% 100%, 20px 20px, 100% 100%;
   background-attachment: fixed;
   color: var(--ink-black);
   min-height: 100vh;
@@ -72,6 +89,42 @@ body {
   margin: 0;
   padding: 0;
   letter-spacing: -0.2px;
+  position: relative;
+}
+
+/* Ornate Menu Card Gold Perimeter Frame */
+.menu-card-frame {
+  position: fixed;
+  inset: 12px;
+  border: 1.5px solid rgba(212, 175, 55, 0.3);
+  pointer-events: none;
+  z-index: 1020;
+  box-shadow: 
+    inset 0 0 0 3px rgba(18, 9, 6, 0.8),
+    inset 0 0 0 4.5px rgba(212, 175, 55, 0.15),
+    0 0 20px rgba(0, 0, 0, 0.5);
+}
+
+.menu-card-frame::before {
+  content: "⚜";
+  position: absolute;
+  top: 4px;
+  left: 10px;
+  color: #d4af37;
+  font-size: 1.15rem;
+  text-shadow: 0 0 8px rgba(212, 175, 55, 0.6);
+  opacity: 0.85;
+}
+
+.menu-card-frame::after {
+  content: "⚜";
+  position: absolute;
+  top: 4px;
+  right: 10px;
+  color: #d4af37;
+  font-size: 1.15rem;
+  text-shadow: 0 0 8px rgba(212, 175, 55, 0.6);
+  opacity: 0.85;
 }
 
 /* Typography Defaults */
@@ -81,6 +134,181 @@ h1, h2, h3, h4, h5, h6 {
   letter-spacing: -0.5px;
   color: var(--ink-pure);
   margin-bottom: 0.5rem;
+}
+
+/* --------------------------------------------------------------------------
+   THE MENU CARD TOP BAR (Gilded Fine Dining Menu Binder Header)
+   -------------------------------------------------------------------------- */
+.navbar-custom {
+  background: linear-gradient(180deg, #301912 0%, #20100a 65%, #150906 100%);
+  border-bottom: 2.5px solid var(--menu-gold);
+  box-shadow: 
+    0 8px 25px rgba(0, 0, 0, 0.8),
+    inset 0 1px 0 rgba(247, 230, 196, 0.35),
+    inset 0 -2px 0 rgba(0, 0, 0, 0.7);
+  padding: 0.65rem 1.85rem;
+  position: sticky;
+  top: 0;
+  z-index: 1030;
+  backdrop-filter: blur(10px);
+}
+
+/* Menu card bottom trim with gold gradient accent */
+.navbar-custom::after {
+  content: "";
+  position: absolute;
+  bottom: -4px;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, 
+    transparent 0%, 
+    rgba(212, 175, 55, 0.4) 15%, 
+    #d4af37 50%, 
+    rgba(212, 175, 55, 0.4) 85%, 
+    transparent 100%
+  );
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.9));
+}
+
+/* Menu Card Brand Plaque */
+.navbar-brand {
+  font-family: var(--font-menu);
+  font-weight: 800;
+  font-size: 1.18rem;
+  letter-spacing: 1.2px;
+  color: #f7e6c4 !important;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  background: linear-gradient(145deg, #3e2218, #22100a);
+  padding: 0.45rem 1.15rem;
+  border: 1.5px solid var(--menu-gold);
+  border-radius: 4px;
+  box-shadow: 
+    inset 0 1px 1px rgba(255, 235, 180, 0.3),
+    0 4px 12px rgba(0, 0, 0, 0.65);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.9);
+  transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+  position: relative;
+}
+
+.navbar-brand:hover {
+  background: linear-gradient(145deg, #4d2b1f, #2b150d);
+  border-color: #f59e0b;
+  transform: translateY(-1.5px);
+  box-shadow: 
+    inset 0 1px 2px rgba(255, 235, 180, 0.5),
+    0 6px 16px rgba(212, 175, 55, 0.35);
+}
+
+.navbar-brand .menu-crest {
+  font-size: 1.35rem;
+  color: var(--menu-gold);
+  filter: drop-shadow(0 0 8px rgba(212, 175, 55, 0.7));
+  line-height: 1;
+}
+
+.navbar-brand .menu-brand-title {
+  font-size: 1.05rem;
+  font-weight: 900;
+  letter-spacing: 2px;
+  line-height: 1.1;
+  background: linear-gradient(180deg, #ffffff 0%, #f7e6c4 60%, #d4af37 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.navbar-brand .menu-brand-sub {
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  letter-spacing: 1.5px;
+  color: #c5a059;
+  text-transform: uppercase;
+  font-weight: 700;
+}
+
+.navbar-brand .menu-badge-vintage {
+  font-family: var(--font-menu);
+  font-size: 0.65rem;
+  font-weight: 700;
+  background: rgba(0, 0, 0, 0.5);
+  color: #d4af37;
+  border: 1px solid rgba(212, 175, 55, 0.45);
+  padding: 0.2rem 0.5rem;
+  border-radius: 3px;
+  letter-spacing: 1.5px;
+  margin-left: 0.25rem;
+}
+
+/* Menu Section Navigation Links */
+.nav-link {
+  color: #dfcdb3 !important;
+  font-family: var(--font-menu);
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  padding: 0.45rem 0.85rem !important;
+  border-radius: 4px;
+  border: 1px solid transparent;
+  transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+  margin: 0 0.15rem;
+  display: inline-flex;
+  align-items: center;
+}
+
+.nav-link:hover {
+  color: #fff !important;
+  background: rgba(212, 175, 55, 0.15);
+  border-color: rgba(212, 175, 55, 0.4);
+  transform: translateY(-1.5px);
+  text-shadow: 0 0 10px rgba(212, 175, 55, 0.6);
+}
+
+/* Active Menu Tab (Gilded Gold Foil Tab) */
+.nav-link.active {
+  background: linear-gradient(135deg, #e5b955 0%, #c69214 50%, #9f6b00 100%) !important;
+  color: #170b04 !important;
+  border: 1px solid #fce8bd !important;
+  box-shadow: 
+    0 3px 12px rgba(212, 175, 55, 0.45),
+    inset 0 1px 1px rgba(255, 255, 255, 0.6) !important;
+  font-weight: 800;
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.4);
+  position: relative;
+}
+
+/* Gilded ribbon point beneath active tab */
+.nav-link.active::after {
+  content: "";
+  position: absolute;
+  bottom: -6px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 0;
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+  border-top: 5px solid #d4af37;
+}
+
+/* Menu Seal Badge for Database */
+.menu-seal-badge {
+  background: rgba(18, 9, 6, 0.7) !important;
+  color: var(--menu-gold) !important;
+  border: 1px solid rgba(212, 175, 55, 0.5) !important;
+  font-family: var(--font-menu);
+  font-size: 0.72rem;
+  letter-spacing: 1px;
+  box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.6);
+}
+
+/* Gold Stamp */
+.stamp-gold {
+  color: #d4af37 !important;
+  border-color: #d4af37 !important;
+  background-color: rgba(212, 175, 55, 0.12) !important;
 }
 
 /* --------------------------------------------------------------------------
@@ -154,104 +382,6 @@ h1, h2, h3, h4, h5, h6 {
 .delay-2 { animation-delay: 0.2s; }
 .delay-3 { animation-delay: 0.3s; }
 .delay-4 { animation-delay: 0.4s; }
-
-/* --------------------------------------------------------------------------
-   THE RECEIPTIFY TOP NAVIGATION BAR (Cash Register Terminal Tape)
-   -------------------------------------------------------------------------- */
-.navbar-custom {
-  background-color: var(--counter-surface);
-  border-bottom: 2px solid var(--counter-border);
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.6);
-  padding: 0.75rem 1.75rem;
-  position: sticky;
-  top: 0;
-  z-index: 1030;
-  backdrop-filter: blur(12px);
-}
-
-/* Thermal Printer Ejection Slit Line beneath Navbar */
-.navbar-custom::after {
-  content: "";
-  position: absolute;
-  bottom: -4px;
-  left: 0;
-  right: 0;
-  height: 4px;
-  background: repeating-linear-gradient(90deg, #1f2026, #1f2026 8px, #000 8px, #000 16px);
-  border-bottom: 1px dashed rgba(255, 255, 255, 0.15);
-}
-
-.navbar-brand {
-  font-family: var(--font-title);
-  font-weight: 900;
-  font-size: 1.25rem;
-  color: #fff !important;
-  display: flex;
-  align-items: center;
-  gap: 0.6rem;
-  background: #23252e;
-  padding: 0.4rem 0.9rem;
-  border: 1.5px solid #3a3d4a;
-  border-radius: 6px;
-  box-shadow: inset 0 1px 0 rgba(255,255,255,0.1), 0 2px 4px rgba(0,0,0,0.4);
-  transition: all 0.2s ease;
-}
-
-.navbar-brand:hover {
-  background: #2b2e3a;
-  border-color: #f59e0b;
-  transform: translateY(-1px);
-}
-
-.navbar-brand .receipt-icon {
-  font-size: 1.3rem;
-  filter: drop-shadow(0 0 6px rgba(245, 158, 11, 0.6));
-}
-
-.nav-link {
-  color: #c9cdd8 !important;
-  font-family: var(--font-mono);
-  font-size: 0.88rem;
-  font-weight: 600;
-  padding: 0.45rem 0.8rem !important;
-  border-radius: 6px;
-  border: 1px solid transparent;
-  transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
-  margin: 0 0.15rem;
-  display: inline-flex;
-  align-items: center;
-}
-
-.nav-link:hover {
-  color: #fff !important;
-  background-color: #272a34;
-  border-color: #3f4352;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 8px rgba(0,0,0,0.3);
-}
-
-.nav-link.active {
-  background: var(--paper-bg) !important;
-  color: var(--ink-pure) !important;
-  border-color: #fff !important;
-  box-shadow: 0 3px 10px rgba(255, 255, 255, 0.15), inset 0 0 4px rgba(0,0,0,0.05) !important;
-  font-weight: 700;
-  position: relative;
-}
-
-/* Little paper tear triangle indicator under active tab */
-.nav-link.active::after {
-  content: "";
-  position: absolute;
-  bottom: -6px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 0;
-  height: 0;
-  border-left: 5px solid transparent;
-  border-right: 5px solid transparent;
-  border-top: 5px solid var(--paper-bg);
-}
 
 /* --------------------------------------------------------------------------
    THE THERMAL RECEIPT PAPER CARDS (.card-glass, .card-neo, .receipt-paper)
@@ -879,23 +1009,23 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 /* --------------------------------------------------------------------------
-   FOOTER (Receipt Tape Reel End)
+   FOOTER (Menu Card Leather Base)
    -------------------------------------------------------------------------- */
 footer {
   margin-top: auto;
-  border-top: 2px dashed var(--counter-border);
-  background: var(--counter-surface);
-  padding: 1.25rem 0;
-  color: #8c909e;
-  font-family: var(--font-mono);
+  border-top: 1.5px solid rgba(212, 175, 55, 0.35);
+  background: linear-gradient(180deg, #20100a 0%, #150906 100%);
+  padding: 1.35rem 0;
+  color: #c5a059;
+  font-family: var(--font-menu);
   font-size: 0.82rem;
   text-align: center;
-  box-shadow: 0 -4px 16px rgba(0,0,0,0.4);
+  box-shadow: 0 -6px 20px rgba(0, 0, 0, 0.65);
 }
 
 footer .receipt-tear-strip {
-  letter-spacing: 2px;
-  color: #4a4e5e;
+  letter-spacing: 3px;
+  color: rgba(212, 175, 55, 0.4);
   margin-bottom: 0.35rem;
 }
 
@@ -907,7 +1037,7 @@ footer .receipt-tear-strip {
     background: #fff !important;
     color: #000 !important;
   }
-  .navbar-custom, footer, .btn, .no-print {
+  .menu-card-frame, .navbar-custom, footer, .btn, .no-print {
     display: none !important;
   }
   .card-glass, .receipt-card {
@@ -915,7 +1045,7 @@ footer .receipt-tear-strip {
     border: 1px solid #000 !important;
     margin: 0 !important;
     width: 100% !important;
-    max-width: 80mm !important; /* Standard thermal receipt width */
+    max-width: 80mm !important;
     page-break-inside: avoid;
   }
 }

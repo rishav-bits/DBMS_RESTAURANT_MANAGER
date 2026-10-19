@@ -3,32 +3,38 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>{% block title %}Receiptify · Restaurant Management System (DA2){% endblock %}</title>
+  <title>{% block title %}La Carte · Restaurant Management System (DA2){% endblock %}</title>
   
   <!-- Preconnect to Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Courier+Prime:ital,wght@0,400;0,700;1,400&family=DM+Mono:ital,wght@0,400;0,500;1,400&family=Libre+Barcode+128&family=Space+Grotesk:wght@600;700;800&family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Syne:wght@700;800;900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800;900&family=Playfair+Display:ital,wght@0,600;0,700;0,800;1,600&family=Courier+Prime:ital,wght@0,400;0,700;1,400&family=DM+Mono:ital,wght@0,400;0,500;1,400&family=Libre+Barcode+128&family=Space+Grotesk:wght@600;700;800&family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Syne:wght@700;800;900&display=swap" rel="stylesheet">
   
   <!-- Bootstrap 5 CSS -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
   <!-- Bootstrap Icons -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
-  <!-- Receiptify Design System -->
+  <!-- Receiptify & Menu Card Design System -->
   <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
 
-  <!-- Top Navbar: Cash Register POS Terminal Tape -->
+  <!-- Ornate Menu Card Gold Perimeter Frame -->
+  <div class="menu-card-frame d-none d-md-block"></div>
+
+  <!-- Top Navbar: Gilded Fine Dining Menu Card Header -->
   <nav class="navbar navbar-expand-lg navbar-custom">
     <div class="container-fluid">
       <a class="navbar-brand" href="{{ url_for('index') }}">
-        <i class="bi bi-receipt-cutoff receipt-icon text-warning"></i>
-        <span>RECEIPTIFY</span>
-        <span class="badge bg-dark text-warning border-0 py-1 d-none d-sm-inline" style="font-size: 0.65rem; letter-spacing: 1.5px;">POS #001</span>
+        <span class="menu-crest">⚜</span>
+        <div class="d-flex flex-column text-start">
+          <span class="menu-brand-title">LA CARTE</span>
+          <span class="menu-brand-sub">RESTAURANT DBMS</span>
+        </div>
+        <span class="badge menu-badge-vintage d-none d-sm-inline">MENU CARD</span>
       </a>
       <button class="navbar-toggler border-1 border-secondary text-white" type="button" data-bs-toggle="collapse" data-bs-target="#navContent">
-        <i class="bi bi-list fs-2 text-white"></i>
+        <i class="bi bi-list fs-2 text-warning"></i>
       </button>
       <div class="collapse navbar-collapse" id="navContent">
         <ul class="navbar-nav me-auto mb-2 mb-lg-0 ms-lg-3 gap-1">
@@ -42,7 +48,7 @@
           <!-- Menu Link (Visible to All) -->
           <li class="nav-item">
             <a class="nav-link {% if request.endpoint == 'menu' %}active{% endif %}" href="{{ url_for('menu') }}">
-              <i class="bi bi-journal-text me-1"></i> Menu Chits
+              <i class="bi bi-journal-bookmark me-1"></i> Menu Chits
             </a>
           </li>
 
@@ -91,15 +97,15 @@
         <!-- Right Side: User Authentication & Role Badge -->
         <div class="d-flex align-items-center gap-2">
           {% if current_user.is_authenticated %}
-            <!-- User Dropdown with Thermal Stamp Badge -->
+            <!-- User Dropdown with Gilded Gold Badge -->
             <div class="dropdown">
               <button class="btn btn-sm btn-outline-warning dropdown-toggle d-flex align-items-center gap-2" 
-                      type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                      type="button" data-bs-toggle="dropdown" aria-expanded="false" style="border-color: var(--menu-gold) !important; color: #f7e6c4 !important; background: rgba(36, 18, 11, 0.7) !important;">
                 <span>
                   {% if current_user.is_owner %}👑{% elif current_user.is_staff %}📋{% else %}🍽️{% endif %}
                 </span>
-                <span class="fw-bold">{{ current_user.name }}</span>
-                <span class="receipt-stamp {% if current_user.is_owner %}stamp-ready{% elif current_user.is_staff %}stamp-preparing{% else %}stamp-paid{% endif %} py-0 px-2" style="font-size: 0.65rem;">
+                <span class="fw-bold" style="font-family: var(--font-menu);">{{ current_user.name }}</span>
+                <span class="receipt-stamp stamp-gold py-0 px-2" style="font-size: 0.65rem;">
                   {{ current_user.role }}
                 </span>
               </button>
@@ -131,15 +137,15 @@
             </a>
           {% endif %}
 
-          <span class="badge bg-dark text-warning px-2 py-1 d-none d-xl-inline-block" style="border: 1px dashed #f59e0b !important; font-size: 0.72rem;">
-            <i class="bi bi-database-check me-1"></i> ORACLE 21c/12c XE
+          <span class="badge menu-seal-badge px-2 py-1 d-none d-xl-inline-block">
+            <i class="bi bi-award me-1"></i> ORACLE 21c/12c XE
           </span>
         </div>
       </div>
     </div>
   </nav>
 
-  <!-- Flash Messages Styled as Clipped Thermal Order Slips -->
+  <!-- Flash Messages Styled as Clipped Order Slips -->
   <div class="container-fluid px-4 mt-3">
     {% with messages = get_flashed_messages(with_categories=true) %}
       {% if messages %}
@@ -162,20 +168,22 @@
     {% endwith %}
   </div>
 
-  <!-- Main Body Content -->
+  <!-- Main Body Content (Clipped onto Menu Card Backdrop) -->
   <main class="container-fluid px-4 py-3 flex-grow-1">
     {% block content %}{% endblock %}
   </main>
 
-  <!-- Footer: Receipt Tape End -->
+  <!-- Footer: Gilded Menu Card Leather Base -->
   <footer>
     <div class="container-fluid">
-      <div class="receipt-tear-strip">- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -</div>
-      <div class="fw-bold mb-1">*** THANK YOU FOR VISITING RECEIPTIFY RESTAURANT DBMS ***</div>
-      <div class="small text-secondary">
-        Database Systems (BACSE202) Digital Assignment 2 · Team: Rohan Jena, Rishav Singh, Khyati Shreya · Native Oracle SQL & PL/SQL Engine
+      <div class="receipt-tear-strip">⚜ &bull; ⚜ &bull; ⚜ &bull; ⚜ &bull; ⚜ &bull; ⚜ &bull; ⚜ &bull; ⚜ &bull; ⚜ &bull; ⚜ &bull; ⚜ &bull; ⚜ &bull; ⚜ &bull; ⚜</div>
+      <div class="fw-bold mb-1" style="font-family: var(--font-menu); letter-spacing: 1.5px; color: var(--menu-gold-light);">
+        *** LA CARTE &bull; FINE DINING & RESERVATION MANAGEMENT SYSTEM ***
       </div>
-      <div class="receipt-tear-strip mt-1">- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -</div>
+      <div class="small" style="color: #a88448;">
+        Database Systems (BACSE202) Digital Assignment 2 &bull; Team: Rohan Jena, Rishav Singh, Khyati Shreya &bull; Native Oracle SQL & PL/SQL Engine
+      </div>
+      <div class="receipt-tear-strip mt-1">⚜ &bull; ⚜ &bull; ⚜ &bull; ⚜ &bull; ⚜ &bull; ⚜ &bull; ⚜ &bull; ⚜ &bull; ⚜ &bull; ⚜ &bull; ⚜ &bull; ⚜ &bull; ⚜</div>
     </div>
   </footer>
 

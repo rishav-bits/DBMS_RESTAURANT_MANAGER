@@ -1,0 +1,793 @@
+{
+  "namespace": "restaurant_ns",
+  "database": "restaurant_db",
+  "saved_at": "2026-10-29T08:05:01.144810",
+  "tables": {
+    "restaurant": {
+      "r1": {
+        "name": "The Royal Tandoor",
+        "address": "42 Heritage Boulevard, Indiranagar, Bengaluru",
+        "phone": "+91 98450 11223",
+        "cuisine_types": [
+          "North Indian",
+          "Mughlai",
+          "Tandoor"
+        ],
+        "operating_hours": {
+          "opening": "11:00",
+          "closing": "23:00"
+        },
+        "id": "restaurant:r1",
+        "_created_at": "2026-10-29T08:05:01.118378"
+      },
+      "r2": {
+        "name": "Spice Garden Bistro",
+        "address": "18 Palmgrove Avenue, Alwarpet, Chennai",
+        "phone": "+91 98410 44556",
+        "cuisine_types": [
+          "South Indian",
+          "Chettinad",
+          "Vegetarian"
+        ],
+        "operating_hours": {
+          "opening": "07:00",
+          "closing": "22:30"
+        },
+        "id": "restaurant:r2",
+        "_created_at": "2026-10-29T08:05:01.119324"
+      },
+      "r3": {
+        "name": "Saffron Bay Coastal Kitchen",
+        "address": "7 Marine Promenade, Bandra West, Mumbai",
+        "phone": "+91 98200 77889",
+        "cuisine_types": [
+          "Coastal",
+          "Seafood",
+          "Goan"
+        ],
+        "operating_hours": {
+          "opening": "12:00",
+          "closing": "23:30"
+        },
+        "id": "restaurant:r3",
+        "_created_at": "2026-10-29T08:05:01.120318"
+      }
+    },
+    "dining_table": {
+      "t101": {
+        "table_number": "T-101",
+        "capacity": 2,
+        "is_available": true,
+        "location_section": "Indoor AC",
+        "restaurant": "restaurant:r1",
+        "id": "dining_table:t101",
+        "_created_at": "2026-10-29T08:05:01.121075"
+      },
+      "t102": {
+        "table_number": "T-102",
+        "capacity": 2,
+        "is_available": true,
+        "location_section": "Indoor AC",
+        "restaurant": "restaurant:r1",
+        "id": "dining_table:t102",
+        "_created_at": "2026-10-29T08:05:01.121717"
+      },
+      "t103": {
+        "table_number": "T-103",
+        "capacity": 4,
+        "is_available": true,
+        "location_section": "Terrace Garden",
+        "restaurant": "restaurant:r1",
+        "id": "dining_table:t103",
+        "_created_at": "2026-10-29T08:05:01.122322"
+      },
+      "t104": {
+        "table_number": "T-104",
+        "capacity": 4,
+        "is_available": true,
+        "location_section": "Terrace Garden",
+        "restaurant": "restaurant:r1",
+        "id": "dining_table:t104",
+        "_created_at": "2026-10-29T08:05:01.122915"
+      },
+      "t105": {
+        "table_number": "T-105",
+        "capacity": 6,
+        "is_available": true,
+        "location_section": "Private Dining",
+        "restaurant": "restaurant:r1",
+        "id": "dining_table:t105",
+        "_created_at": "2026-10-29T08:05:01.123490"
+      },
+      "t106": {
+        "table_number": "T-106",
+        "capacity": 8,
+        "is_available": true,
+        "location_section": "Family Hall",
+        "restaurant": "restaurant:r1",
+        "id": "dining_table:t106",
+        "_created_at": "2026-10-29T08:05:01.124061"
+      },
+      "t201": {
+        "table_number": "SG-01",
+        "capacity": 2,
+        "is_available": true,
+        "location_section": "Courtyard",
+        "restaurant": "restaurant:r2",
+        "id": "dining_table:t201",
+        "_created_at": "2026-10-29T08:05:01.124665"
+      },
+      "t202": {
+        "table_number": "SG-02",
+        "capacity": 4,
+        "is_available": true,
+        "location_section": "Courtyard",
+        "restaurant": "restaurant:r2",
+        "id": "dining_table:t202",
+        "_created_at": "2026-10-29T08:05:01.125247"
+      },
+      "t203": {
+        "table_number": "SG-03",
+        "capacity": 4,
+        "is_available": true,
+        "location_section": "Indoor AC",
+        "restaurant": "restaurant:r2",
+        "id": "dining_table:t203",
+        "_created_at": "2026-10-29T08:05:01.125821"
+      },
+      "t301": {
+        "table_number": "SB-01",
+        "capacity": 2,
+        "is_available": true,
+        "location_section": "Sea Facing Deck",
+        "restaurant": "restaurant:r3",
+        "id": "dining_table:t301",
+        "_created_at": "2026-10-29T08:05:01.126403"
+      },
+      "t302": {
+        "table_number": "SB-02",
+        "capacity": 4,
+        "is_available": true,
+        "location_section": "Sea Facing Deck",
+        "restaurant": "restaurant:r3",
+        "id": "dining_table:t302",
+        "_created_at": "2026-10-29T08:05:01.126967"
+      }
+    },
+    "menu_item": {
+      "m101": {
+        "name": "Murgh Malai Kebab",
+        "description": "Tender chicken marinated in cream, cheese, cardamom",
+        "category": "Starters",
+        "price": 380.0,
+        "preparation_time_mins": 15,
+        "dietary_profile": {
+          "is_veg": false,
+          "is_vegan": false,
+          "is_gluten_free": true,
+          "spice_level": "Mild"
+        },
+        "allergens": [
+          "Dairy"
+        ],
+        "restaurant": "restaurant:r1",
+        "id": "menu_item:m101",
+        "_created_at": "2026-10-29T08:05:01.127559"
+      },
+      "m102": {
+        "name": "Paneer Tikka Shashlik",
+        "description": "Cottage cheese skewered with peppers and mustard glaze",
+        "category": "Starters",
+        "price": 320.0,
+        "preparation_time_mins": 12,
+        "dietary_profile": {
+          "is_veg": true,
+          "is_vegan": false,
+          "is_gluten_free": true,
+          "spice_level": "Medium"
+        },
+        "allergens": [
+          "Dairy",
+          "Mustard"
+        ],
+        "restaurant": "restaurant:r1",
+        "id": "menu_item:m102",
+        "_created_at": "2026-10-29T08:05:01.128136"
+      },
+      "m103": {
+        "name": "Dum Pukht Biryani (Chicken)",
+        "description": "Fragrant basmati rice slow cooked with saffron & chicken",
+        "category": "Main Course",
+        "price": 450.0,
+        "preparation_time_mins": 25,
+        "dietary_profile": {
+          "is_veg": false,
+          "is_vegan": false,
+          "is_gluten_free": true,
+          "spice_level": "Hot"
+        },
+        "allergens": [
+          "Dairy"
+        ],
+        "restaurant": "restaurant:r1",
+        "id": "menu_item:m103",
+        "_created_at": "2026-10-29T08:05:01.128693"
+      },
+      "m104": {
+        "name": "Dal Makhani Heritage",
+        "description": "Black lentils slow simmered overnight with butter & cream",
+        "category": "Main Course",
+        "price": 290.0,
+        "preparation_time_mins": 10,
+        "dietary_profile": {
+          "is_veg": true,
+          "is_vegan": false,
+          "is_gluten_free": true,
+          "spice_level": "Mild"
+        },
+        "allergens": [
+          "Dairy"
+        ],
+        "restaurant": "restaurant:r1",
+        "id": "menu_item:m104",
+        "_created_at": "2026-10-29T08:05:01.129269"
+      },
+      "m105": {
+        "name": "Garlic Butter Naan",
+        "description": "Leavened bread topped with minced garlic and melted butter",
+        "category": "Breads",
+        "price": 85.0,
+        "preparation_time_mins": 5,
+        "dietary_profile": {
+          "is_veg": true,
+          "is_vegan": false,
+          "is_gluten_free": false,
+          "spice_level": "Mild"
+        },
+        "allergens": [
+          "Gluten",
+          "Dairy"
+        ],
+        "restaurant": "restaurant:r1",
+        "id": "menu_item:m105",
+        "_created_at": "2026-10-29T08:05:01.129830"
+      },
+      "m106": {
+        "name": "Kesari Phirni",
+        "description": "Creamy ground rice pudding infused with saffron & pistachios",
+        "category": "Desserts",
+        "price": 180.0,
+        "preparation_time_mins": 5,
+        "dietary_profile": {
+          "is_veg": true,
+          "is_vegan": false,
+          "is_gluten_free": true,
+          "spice_level": "Mild"
+        },
+        "allergens": [
+          "Dairy",
+          "Nuts"
+        ],
+        "restaurant": "restaurant:r1",
+        "id": "menu_item:m106",
+        "_created_at": "2026-10-29T08:05:01.130414"
+      },
+      "m201": {
+        "name": "Ghee Roast Dosa",
+        "description": "Crispy fermented crepe roasted with cow ghee and coastal chutneys",
+        "category": "Main Course",
+        "price": 160.0,
+        "preparation_time_mins": 10,
+        "dietary_profile": {
+          "is_veg": true,
+          "is_vegan": false,
+          "is_gluten_free": true,
+          "spice_level": "Medium"
+        },
+        "allergens": [
+          "Dairy"
+        ],
+        "restaurant": "restaurant:r2",
+        "id": "menu_item:m201",
+        "_created_at": "2026-10-29T08:05:01.130983"
+      },
+      "m202": {
+        "name": "Chettinad Mushroom Chukka",
+        "description": "Button mushrooms pan-tossed in black pepper & curry leaves",
+        "category": "Starters",
+        "price": 240.0,
+        "preparation_time_mins": 12,
+        "dietary_profile": {
+          "is_veg": true,
+          "is_vegan": true,
+          "is_gluten_free": true,
+          "spice_level": "Extra Hot"
+        },
+        "allergens": [],
+        "restaurant": "restaurant:r2",
+        "id": "menu_item:m202",
+        "_created_at": "2026-10-29T08:05:01.131549"
+      },
+      "m301": {
+        "name": "Mangalorean Prawn Ghee Roast",
+        "description": "Tiger prawns braised in Kundapur chili paste and tamarind",
+        "category": "Starters",
+        "price": 520.0,
+        "preparation_time_mins": 18,
+        "dietary_profile": {
+          "is_veg": false,
+          "is_vegan": false,
+          "is_gluten_free": true,
+          "spice_level": "Hot"
+        },
+        "allergens": [
+          "Shellfish",
+          "Dairy"
+        ],
+        "restaurant": "restaurant:r3",
+        "id": "menu_item:m301",
+        "_created_at": "2026-10-29T08:05:01.132113"
+      }
+    },
+    "customer": {
+      "c101": {
+        "name": "Aarav Sharma",
+        "email": "aarav.sharma@gmail.com",
+        "phone": "+91 98450 11001",
+        "loyalty_points": 450,
+        "dining_preferences": {
+          "preferred_cuisine": "North Indian",
+          "dietary_restriction": "None"
+        },
+        "id": "customer:c101",
+        "_created_at": "2026-10-29T08:05:01.132768"
+      },
+      "c102": {
+        "name": "Priya Natarajan",
+        "email": "priya.n@outlook.com",
+        "phone": "+91 98410 22002",
+        "loyalty_points": 620,
+        "dining_preferences": {
+          "preferred_cuisine": "South Indian",
+          "dietary_restriction": "Vegetarian"
+        },
+        "id": "customer:c102",
+        "_created_at": "2026-10-29T08:05:01.133394"
+      },
+      "c103": {
+        "name": "Rohan Kulkarni",
+        "email": "rohan.kulkarni@yahoo.com",
+        "phone": "+91 98200 33003",
+        "loyalty_points": 890,
+        "dining_preferences": {
+          "preferred_cuisine": "Coastal",
+          "dietary_restriction": "Gluten-Free"
+        },
+        "id": "customer:c103",
+        "_created_at": "2026-10-29T08:05:01.133970"
+      },
+      "c104": {
+        "name": "Ananya Sen",
+        "email": "ananya.sen@gmail.com",
+        "phone": "+91 98300 44004",
+        "loyalty_points": 310,
+        "dining_preferences": {
+          "preferred_cuisine": "North Indian",
+          "dietary_restriction": "No Nuts"
+        },
+        "id": "customer:c104",
+        "_created_at": "2026-10-29T08:05:01.134552"
+      }
+    }
+  },
+  "edges": [
+    {
+      "id": "reserved:1793260632931_1",
+      "in": "customer:c101",
+      "relation": "reserved",
+      "out": "dining_table:t103",
+      "properties": {
+        "reservation_date": "2026-11-05T19:30:00Z",
+        "time_slot": "19:30-21:30",
+        "number_of_guests": 4,
+        "status": "BOOKED",
+        "special_request": "Terrace window seating"
+      },
+      "created_at": "2026-10-29T07:57:12.931928"
+    },
+    {
+      "id": "reserved:1793260632932_2",
+      "in": "customer:c102",
+      "relation": "reserved",
+      "out": "dining_table:t202",
+      "properties": {
+        "reservation_date": "2026-11-06T13:00:00Z",
+        "time_slot": "13:00-14:30",
+        "number_of_guests": 3,
+        "status": "BOOKED",
+        "special_request": "Baby high chair"
+      },
+      "created_at": "2026-10-29T07:57:12.932362"
+    },
+    {
+      "id": "reserved:1793260632932_3",
+      "in": "customer:c103",
+      "relation": "reserved",
+      "out": "dining_table:t301",
+      "properties": {
+        "reservation_date": "2026-11-07T20:00:00Z",
+        "time_slot": "20:00-22:00",
+        "number_of_guests": 2,
+        "status": "CHECKED_IN",
+        "special_request": "Anniversary candlelight"
+      },
+      "created_at": "2026-10-29T07:57:12.932804"
+    },
+    {
+      "id": "ordered:1793260632933_4",
+      "in": "customer:c101",
+      "relation": "ordered",
+      "out": "menu_item:m101",
+      "properties": {
+        "order_id": "ORD-8001",
+        "quantity": 2,
+        "unit_price": 380.0,
+        "subtotal": 760.0,
+        "customization": {
+          "spice": "Medium",
+          "extra_mint_chutney": true
+        },
+        "order_status": "SERVED"
+      },
+      "created_at": "2026-10-29T07:57:12.933237"
+    },
+    {
+      "id": "ordered:1793260632933_5",
+      "in": "customer:c101",
+      "relation": "ordered",
+      "out": "menu_item:m103",
+      "properties": {
+        "order_id": "ORD-8001",
+        "quantity": 2,
+        "unit_price": 450.0,
+        "subtotal": 900.0,
+        "customization": {
+          "spice": "Hot",
+          "extra_raita": true
+        },
+        "order_status": "SERVED"
+      },
+      "created_at": "2026-10-29T07:57:12.933685"
+    },
+    {
+      "id": "ordered:1793260632934_6",
+      "in": "customer:c101",
+      "relation": "ordered",
+      "out": "menu_item:m105",
+      "properties": {
+        "order_id": "ORD-8001",
+        "quantity": 4,
+        "unit_price": 85.0,
+        "subtotal": 340.0,
+        "customization": {
+          "crispy": true
+        },
+        "order_status": "SERVED"
+      },
+      "created_at": "2026-10-29T07:57:12.934141"
+    },
+    {
+      "id": "ordered:1793260632934_7",
+      "in": "customer:c104",
+      "relation": "ordered",
+      "out": "menu_item:m101",
+      "properties": {
+        "order_id": "ORD-8002",
+        "quantity": 1,
+        "unit_price": 380.0,
+        "subtotal": 380.0,
+        "customization": {
+          "spice": "Mild"
+        },
+        "order_status": "PREPARING"
+      },
+      "created_at": "2026-10-29T07:57:12.934628"
+    },
+    {
+      "id": "ordered:1793260632935_8",
+      "in": "customer:c104",
+      "relation": "ordered",
+      "out": "menu_item:m103",
+      "properties": {
+        "order_id": "ORD-8002",
+        "quantity": 1,
+        "unit_price": 450.0,
+        "subtotal": 450.0,
+        "customization": {
+          "spice": "Hot"
+        },
+        "order_status": "PREPARING"
+      },
+      "created_at": "2026-10-29T07:57:12.935125"
+    },
+    {
+      "id": "ordered:1793260632935_9",
+      "in": "customer:c102",
+      "relation": "ordered",
+      "out": "menu_item:m201",
+      "properties": {
+        "order_id": "ORD-8003",
+        "quantity": 2,
+        "unit_price": 160.0,
+        "subtotal": 320.0,
+        "customization": {
+          "crispy": true
+        },
+        "order_status": "DELIVERED"
+      },
+      "created_at": "2026-10-29T07:57:12.935633"
+    },
+    {
+      "id": "pairs_with:1793260632936_10",
+      "in": "menu_item:m103",
+      "relation": "pairs_with",
+      "out": "menu_item:m105",
+      "properties": {
+        "affinity_score": 0.94,
+        "co_order_count": 148,
+        "recommendation_reason": "94% of Biryani diners order Garlic Butter Naan"
+      },
+      "created_at": "2026-10-29T07:57:12.936176"
+    },
+    {
+      "id": "pairs_with:1793260632936_11",
+      "in": "menu_item:m103",
+      "relation": "pairs_with",
+      "out": "menu_item:m106",
+      "properties": {
+        "affinity_score": 0.81,
+        "co_order_count": 112,
+        "recommendation_reason": "Classic sweet pairing after spicy Biryani"
+      },
+      "created_at": "2026-10-29T07:57:12.936744"
+    },
+    {
+      "id": "pairs_with:1793260632937_12",
+      "in": "menu_item:m101",
+      "relation": "pairs_with",
+      "out": "menu_item:m104",
+      "properties": {
+        "affinity_score": 0.88,
+        "co_order_count": 129,
+        "recommendation_reason": "Malai Kebab pairs frequently with rich Dal Makhani"
+      },
+      "created_at": "2026-10-29T07:57:12.937299"
+    },
+    {
+      "id": "adjacent_to:1793260632937_13",
+      "in": "dining_table:t103",
+      "relation": "adjacent_to",
+      "out": "dining_table:t104",
+      "properties": {
+        "distance_meters": 1.2,
+        "can_merge": true
+      },
+      "created_at": "2026-10-29T07:57:12.937855"
+    },
+    {
+      "id": "adjacent_to:1793260632938_14",
+      "in": "dining_table:t101",
+      "relation": "adjacent_to",
+      "out": "dining_table:t102",
+      "properties": {
+        "distance_meters": 1.0,
+        "can_merge": true
+      },
+      "created_at": "2026-10-29T07:57:12.938440"
+    },
+    {
+      "id": "reserved:1793261101135_15",
+      "in": "customer:c101",
+      "relation": "reserved",
+      "out": "dining_table:t103",
+      "properties": {
+        "reservation_date": "2026-11-05T19:30:00Z",
+        "time_slot": "19:30-21:30",
+        "number_of_guests": 4,
+        "status": "BOOKED",
+        "special_request": "Terrace window seating"
+      },
+      "created_at": "2026-10-29T08:05:01.135155"
+    },
+    {
+      "id": "reserved:1793261101135_16",
+      "in": "customer:c102",
+      "relation": "reserved",
+      "out": "dining_table:t202",
+      "properties": {
+        "reservation_date": "2026-11-06T13:00:00Z",
+        "time_slot": "13:00-14:30",
+        "number_of_guests": 3,
+        "status": "BOOKED",
+        "special_request": "Baby high chair"
+      },
+      "created_at": "2026-10-29T08:05:01.135763"
+    },
+    {
+      "id": "reserved:1793261101136_17",
+      "in": "customer:c103",
+      "relation": "reserved",
+      "out": "dining_table:t301",
+      "properties": {
+        "reservation_date": "2026-11-07T20:00:00Z",
+        "time_slot": "20:00-22:00",
+        "number_of_guests": 2,
+        "status": "CHECKED_IN",
+        "special_request": "Anniversary candlelight"
+      },
+      "created_at": "2026-10-29T08:05:01.136370"
+    },
+    {
+      "id": "ordered:1793261101137_18",
+      "in": "customer:c101",
+      "relation": "ordered",
+      "out": "menu_item:m101",
+      "properties": {
+        "order_id": "ORD-8001",
+        "quantity": 2,
+        "unit_price": 380.0,
+        "subtotal": 760.0,
+        "customization": {
+          "spice": "Medium",
+          "extra_mint_chutney": true
+        },
+        "order_status": "SERVED"
+      },
+      "created_at": "2026-10-29T08:05:01.137140"
+    },
+    {
+      "id": "ordered:1793261101137_19",
+      "in": "customer:c101",
+      "relation": "ordered",
+      "out": "menu_item:m103",
+      "properties": {
+        "order_id": "ORD-8001",
+        "quantity": 2,
+        "unit_price": 450.0,
+        "subtotal": 900.0,
+        "customization": {
+          "spice": "Hot",
+          "extra_raita": true
+        },
+        "order_status": "SERVED"
+      },
+      "created_at": "2026-10-29T08:05:01.137878"
+    },
+    {
+      "id": "ordered:1793261101138_20",
+      "in": "customer:c101",
+      "relation": "ordered",
+      "out": "menu_item:m105",
+      "properties": {
+        "order_id": "ORD-8001",
+        "quantity": 4,
+        "unit_price": 85.0,
+        "subtotal": 340.0,
+        "customization": {
+          "crispy": true
+        },
+        "order_status": "SERVED"
+      },
+      "created_at": "2026-10-29T08:05:01.138580"
+    },
+    {
+      "id": "ordered:1793261101139_21",
+      "in": "customer:c104",
+      "relation": "ordered",
+      "out": "menu_item:m101",
+      "properties": {
+        "order_id": "ORD-8002",
+        "quantity": 1,
+        "unit_price": 380.0,
+        "subtotal": 380.0,
+        "customization": {
+          "spice": "Mild"
+        },
+        "order_status": "PREPARING"
+      },
+      "created_at": "2026-10-29T08:05:01.139248"
+    },
+    {
+      "id": "ordered:1793261101139_22",
+      "in": "customer:c104",
+      "relation": "ordered",
+      "out": "menu_item:m103",
+      "properties": {
+        "order_id": "ORD-8002",
+        "quantity": 1,
+        "unit_price": 450.0,
+        "subtotal": 450.0,
+        "customization": {
+          "spice": "Hot"
+        },
+        "order_status": "PREPARING"
+      },
+      "created_at": "2026-10-29T08:05:01.139904"
+    },
+    {
+      "id": "ordered:1793261101140_23",
+      "in": "customer:c102",
+      "relation": "ordered",
+      "out": "menu_item:m201",
+      "properties": {
+        "order_id": "ORD-8003",
+        "quantity": 2,
+        "unit_price": 160.0,
+        "subtotal": 320.0,
+        "customization": {
+          "crispy": true
+        },
+        "order_status": "DELIVERED"
+      },
+      "created_at": "2026-10-29T08:05:01.140568"
+    },
+    {
+      "id": "pairs_with:1793261101141_24",
+      "in": "menu_item:m103",
+      "relation": "pairs_with",
+      "out": "menu_item:m105",
+      "properties": {
+        "affinity_score": 0.94,
+        "co_order_count": 148,
+        "recommendation_reason": "94% of Biryani diners order Garlic Butter Naan"
+      },
+      "created_at": "2026-10-29T08:05:01.141253"
+    },
+    {
+      "id": "pairs_with:1793261101141_25",
+      "in": "menu_item:m103",
+      "relation": "pairs_with",
+      "out": "menu_item:m106",
+      "properties": {
+        "affinity_score": 0.81,
+        "co_order_count": 112,
+        "recommendation_reason": "Classic sweet pairing after spicy Biryani"
+      },
+      "created_at": "2026-10-29T08:05:01.141941"
+    },
+    {
+      "id": "pairs_with:1793261101142_26",
+      "in": "menu_item:m101",
+      "relation": "pairs_with",
+      "out": "menu_item:m104",
+      "properties": {
+        "affinity_score": 0.88,
+        "co_order_count": 129,
+        "recommendation_reason": "Malai Kebab pairs frequently with rich Dal Makhani"
+      },
+      "created_at": "2026-10-29T08:05:01.142622"
+    },
+    {
+      "id": "adjacent_to:1793261101143_27",
+      "in": "dining_table:t103",
+      "relation": "adjacent_to",
+      "out": "dining_table:t104",
+      "properties": {
+        "distance_meters": 1.2,
+        "can_merge": true
+      },
+      "created_at": "2026-10-29T08:05:01.143333"
+    },
+    {
+      "id": "adjacent_to:1793261101144_28",
+      "in": "dining_table:t101",
+      "relation": "adjacent_to",
+      "out": "dining_table:t102",
+      "properties": {
+        "distance_meters": 1.0,
+        "can_merge": true
+      },
+      "created_at": "2026-10-29T08:05:01.144032"
+    }
+  ]
+}

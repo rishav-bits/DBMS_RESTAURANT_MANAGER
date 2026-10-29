@@ -1518,5 +1518,83 @@ END;"""
         restaurants=restaurants
     )
 
+# ============================================================================
+# DA3: SURREALDB MULTI-MODEL DATABASE EXTENSION ROUTES
+# ============================================================================
+import time
+from surreal_db import db_engine
+
+@app.route("/surreal")
+def surreal_dashboard():
+    """Main DA3 SurrealDB Showcase & Interactive Playground"""
+    tables_summary = {tbl: len(recs) for tbl, recs in db_engine.tables.items()}
+    total_records = sum(tables_summary.values())
+    total_edges = len(db_engine.edges)
+    query_history = db_engine.query_log[:10]
+    restaurants = list(db_engine.tables.get("restaurant", {}).values())
+    menu_items = list(db_engine.tables.get("menu_item", {}).values())
+    customers = list(db_engine.tables.get("customer", {}).values())
+    edges_sample = db_engine.edges[-10:]
+
+    return render_template(
+        "surreal_dashboard.html",
+        tables_summary=tables_summary,
+        total_records=total_records,
+        total_edges=total_edges,
+        query_history=query_history,
+        restaurants=restaurants,
+        menu_items=menu_items,
+        customers=customers,
+        edges_sample=edges_sample
+    )
+
+@app.route("/api/surreal/query", methods=["POST"])
+def surreal_query_api():
+    """Execute arbitrary SurrealQL query and return JSON"""
+    data = request.get_json(silent=True) or {}
+    query = data.get("query", "").strip()
+    if not query:
+        return jsonify({"status": "ERR", "error": "Query cannot be empty", "time": "0ms", "result": []})
+    response = db_engine.execute_surrealql(query)
+    return jsonify(response)
+
+@app.route("/api/surreal/order", methods=["POST"])
+def surreal_order_api():
+    """Create a new live order using RELATE customer->ordered->menu_item"""
+    data = request.get_json(silent=True) or {}
+    customer_id = data.get("customer_id", "customer:c101")
+    item_id = data.get("item_id", "menu_item:m103")
+    quantity = int(data.get("quantity", 1))
+    spice = data.get("spice", "Medium")
+
+    item = db_engine.get_record(item_id) or {}
+    price = item.get("price", 350.0)
+    subtotal = price * quantity
+    order_num = f"ORD-{int(time.time() * 1000) % 10000}"
+
+    edge = db_engine.relate(customer_id, "ordered", item_id, {
+        "order_id": order_num,
+        "quantity": quantity,
+        "unit_price": price,
+        "subtotal": subtotal,
+        "customization": {"spice": spice},
+        "order_status": "PLACED"
+    })
+
+    return jsonify({
+        "status": "OK",
+        "message": f"Live order {order_num} placed via SurrealDB graph relation!",
+        "edge": edge
+    })
+
+@app.route("/api/surreal/reset", methods=["POST"])
+def surreal_reset_api():
+    """Reset and re-seed SurrealDB"""
+    db_engine.reset()
+    db_engine.seed_default_data()
+    db_engine.save_to_disk()
+    return jsonify({"status": "OK", "message": "SurrealDB successfully re-seeded from surreal_data.surql!"})
+
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000, debug=True)
+

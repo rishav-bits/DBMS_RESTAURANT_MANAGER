@@ -187,6 +187,73 @@ class SurrealDBEngine:
                     })
         return results
 
+    def get_cytoscape_elements(self, filter_rel: Optional[str] = None) -> Dict[str, Any]:
+        """
+        Export graph in Cytoscape.js format for interactive canvas rendering.
+        """
+        nodes = []
+        node_ids = set()
+
+        for table, records in self.tables.items():
+            for key, rec in records.items():
+                rec_id = f"{table}:{key}"
+                node_ids.add(rec_id)
+                label = rec.get("name") or rec.get("table_number") or rec_id
+                nodes.append({
+                    "data": {
+                        "id": rec_id,
+                        "label": str(label),
+                        "type": table,
+                        "properties": rec
+                    }
+                })
+
+        edges = []
+        for edge in self.edges:
+            rel = edge["relation"]
+            if filter_rel and filter_rel != "all" and rel != filter_rel:
+                continue
+            if edge["in"] in node_ids and edge["out"] in node_ids:
+                edges.append({
+                    "data": {
+                        "id": edge["id"],
+                        "source": edge["in"],
+                        "target": edge["out"],
+                        "label": f"->{rel}->",
+                        "relation": rel,
+                        "properties": edge.get("properties", {})
+                    }
+                })
+
+        return {
+            "nodes": nodes,
+            "edges": edges,
+            "stats": {
+                "total_nodes": len(nodes),
+                "total_edges": len(edges)
+            }
+        }
+
+    def get_recommendations(self, item_id: str) -> List[Dict[str, Any]]:
+        """
+        Knowledge Graph Traversal: item -> pairs_with -> recommended_item
+        """
+        pairings = self.traverse(item_id, "pairs_with", "menu_item")
+        recs = []
+        for p in pairings:
+            target = p.get("target_record", {})
+            props = p.get("edge_properties", {})
+            recs.append({
+                "item_id": p.get("target_id"),
+                "name": target.get("name"),
+                "category": target.get("category"),
+                "price": target.get("price"),
+                "affinity_score": props.get("affinity_score", 0.0),
+                "co_order_count": props.get("co_order_count", 0),
+                "reason": props.get("recommendation_reason", "Frequently ordered together")
+            })
+        return sorted(recs, key=lambda x: x["affinity_score"], reverse=True)
+
     def subscribe_live(self, callback):
         """Register a subscriber for LIVE SELECT events"""
         self.live_subscribers.append(callback)

@@ -1587,6 +1587,47 @@ def surreal_order_api():
         "edge": edge
     })
 
+@app.route("/api/surreal/graph-data", methods=["GET"])
+def surreal_graph_data_api():
+    """Returns Cytoscape.js compatible graph elements (nodes and edges)"""
+    relation_filter = request.args.get("relation", "all")
+    elements = db_engine.get_cytoscape_elements(filter_rel=relation_filter)
+    return jsonify({
+        "status": "OK",
+        "elements": elements,
+        "counts": {
+            "nodes": len(elements["nodes"]),
+            "edges": len(elements["edges"])
+        }
+    })
+
+@app.route("/api/surreal/recommend/<item_id>", methods=["GET"])
+def surreal_recommend_api(item_id):
+    """Knowledge graph traversal for dish co-ordering recommendations"""
+    recs = db_engine.get_recommendations(item_id)
+    return jsonify({
+        "status": "OK",
+        "item_id": item_id,
+        "recommendations": recs
+    })
+
+@app.route("/api/surreal/customer-profile/<customer_id>", methods=["GET"])
+def surreal_customer_profile_api(customer_id):
+    """Customer 360 view via direct graph traversals (0 SQL JOINs)"""
+    customer = db_engine.get_record(customer_id)
+    if not customer:
+        return jsonify({"status": "ERR", "message": f"Customer {customer_id} not found"}), 404
+
+    reservations = db_engine.traverse(customer_id, "reserved", "dining_table")
+    orders = db_engine.traverse(customer_id, "ordered", "menu_item")
+
+    return jsonify({
+        "status": "OK",
+        "customer": customer,
+        "reservations": reservations,
+        "orders": orders
+    })
+
 @app.route("/api/surreal/reset", methods=["POST"])
 def surreal_reset_api():
     """Reset and re-seed SurrealDB"""
@@ -1597,4 +1638,5 @@ def surreal_reset_api():
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000, debug=True)
+
 

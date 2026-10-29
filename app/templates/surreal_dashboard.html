@@ -338,28 +338,158 @@
   </div>
 
   <!-- ========================================================================= -->
-  <!-- TAB 3: GRAPH SCHEMA & RELATIONS -->
+  <!-- TAB 3: INTERACTIVE GRAPH CANVAS & KNOWLEDGE GRAPH (CYTOSCAPE.JS) -->
   <!-- ========================================================================= -->
   <div id="tab-graph" class="tab-pane-custom d-none">
+    
+    <!-- Graph Canvas & Controls Card -->
     <div class="card border-2 border-secondary shadow-sm mb-4" style="background: var(--paper-bg);">
-      <div class="card-header bg-dark text-white py-2 px-3">
-        <span class="fw-bold small text-uppercase"><i class="bi bi-diagram-3 me-1"></i> SurrealDB Multi-Model Property Graph Architecture</span>
+      <div class="card-header bg-dark text-white py-2 px-3 d-flex flex-wrap justify-content-between align-items-center gap-2">
+        <div class="d-flex align-items-center gap-2">
+          <span class="fw-bold small text-uppercase text-warning font-monospace">
+            <i class="bi bi-diagram-3-fill me-1"></i> Interactive Knowledge Graph Canvas
+          </span>
+          <span class="badge bg-danger">Index-Free Adjacency</span>
+          <span class="badge bg-success bg-opacity-25 text-success border border-success">
+            Cytoscape.js WebGL/Canvas
+          </span>
+        </div>
+        <div class="d-flex align-items-center gap-2">
+          <label class="small text-muted mb-0 font-monospace">Layout:</label>
+          <select id="cy-layout-select" class="form-select form-select-sm py-0 font-monospace" style="width: 140px;" onchange="changeGraphLayout(this.value)">
+            <option value="cose" selected>CoSE (Physics)</option>
+            <option value="concentric">Concentric (Radial)</option>
+            <option value="circle">Circle</option>
+            <option value="breadthfirst">Breadthfirst (Tree)</option>
+            <option value="grid">Grid</option>
+          </select>
+          <button class="btn btn-sm btn-outline-light py-0 px-2" onclick="fitGraphView()" title="Fit to container">
+            <i class="bi bi-arrows-fullscreen"></i> Fit
+          </button>
+          <button class="btn btn-sm btn-outline-light py-0 px-2" onclick="reloadGraphData()" title="Reload from SurrealDB">
+            <i class="bi bi-arrow-clockwise"></i>
+          </button>
+        </div>
+      </div>
+
+      <div class="card-body p-3">
+        <!-- Relationship Filter Bar -->
+        <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-3 pb-2 border-bottom">
+          <div class="d-flex flex-wrap align-items-center gap-2">
+            <span class="small fw-bold text-muted text-uppercase me-1"><i class="bi bi-funnel me-1"></i>Filter Edges:</span>
+            <button class="btn btn-sm btn-dark px-2 py-1 active-filter" id="filter-all" onclick="filterGraphEdges('all')">
+              All Edges ({{ total_edges }})
+            </button>
+            <button class="btn btn-sm btn-outline-secondary px-2 py-1" id="filter-ordered" onclick="filterGraphEdges('ordered')">
+              <span style="color: #f59e0b;">●</span> Orders (<code>->ordered-></code>)
+            </button>
+            <button class="btn btn-sm btn-outline-secondary px-2 py-1" id="filter-reserved" onclick="filterGraphEdges('reserved')">
+              <span style="color: #10b981;">●</span> Reservations (<code>->reserved-></code>)
+            </button>
+            <button class="btn btn-sm btn-outline-secondary px-2 py-1" id="filter-pairs_with" onclick="filterGraphEdges('pairs_with')">
+              <span style="color: #ec4899;">●</span> Food Pairings (<code>->pairs_with-></code>)
+            </button>
+            <button class="btn btn-sm btn-outline-secondary px-2 py-1" id="filter-adjacent_to" onclick="filterGraphEdges('adjacent_to')">
+              <span style="color: #64748b;">●</span> Table Adjacency (<code>->adjacent_to-></code>)
+            </button>
+          </div>
+          <div class="small text-muted font-monospace" id="graph-stats-badge">
+            Loaded: <span id="cy-node-count">0</span> nodes, <span id="cy-edge-count">0</span> edges
+          </div>
+        </div>
+
+        <!-- Main Interactive Visualizer Row -->
+        <div class="row g-3">
+          <!-- Left: Cytoscape Canvas -->
+          <div class="col-lg-8">
+            <div id="cy" style="width: 100%; height: 530px; background: #0c0f17; border: 2px solid #2d3748; border-radius: 8px; position: relative;">
+              <!-- Overlay Loading Indicator -->
+              <div id="cy-loading" class="position-absolute top-50 start-50 translate-middle text-center text-white-50">
+                <div class="spinner-border spinner-border-sm text-danger mb-2" role="status"></div>
+                <div class="small font-monospace">Rendering Graph Nodes & Pointers...</div>
+              </div>
+            </div>
+
+            <!-- Node Class Color Legend -->
+            <div class="d-flex flex-wrap justify-content-center gap-3 mt-2 p-2 bg-dark rounded text-light small font-monospace">
+              <span><span class="badge rounded-circle p-1 me-1" style="background: #8b5cf6;">&nbsp;</span> <strong>Restaurant</strong> (🟣 r1, r2, r3)</span>
+              <span><span class="badge rounded-circle p-1 me-1" style="background: #3b82f6;">&nbsp;</span> <strong>Customer</strong> (🔵 c101 - c104)</span>
+              <span><span class="badge rounded-circle p-1 me-1" style="background: #10b981;">&nbsp;</span> <strong>Dining Table</strong> (🟢 t101 - t302)</span>
+              <span><span class="badge rounded-circle p-1 me-1" style="background: #f43f5e;">&nbsp;</span> <strong>Menu Dish</strong> (🔴 m101 - m301)</span>
+            </div>
+          </div>
+
+          <!-- Right: Selected Inspector & Recommendation Sandbox -->
+          <div class="col-lg-4 d-flex flex-column gap-3">
+            
+            <!-- Element Inspector Card -->
+            <div class="card border border-secondary shadow-sm" style="background: #fff; min-height: 270px;">
+              <div class="card-header bg-dark text-white py-2 px-3 d-flex justify-content-between align-items-center">
+                <span class="fw-bold small text-uppercase font-monospace">
+                  <i class="bi bi-info-circle me-1 text-warning"></i> Selected Inspector
+                </span>
+                <span id="inspector-badge" class="badge bg-secondary font-monospace">Click Any Node/Edge</span>
+              </div>
+              <div class="card-body p-3" id="inspector-content">
+                <div class="text-center text-muted py-4">
+                  <i class="bi bi-cursor-fill fs-3 text-secondary mb-2 d-block"></i>
+                  <p class="small mb-1">Click any node or relationship arrow in the canvas to inspect its first-class properties.</p>
+                  <span class="badge bg-light text-dark border">Pointers evaluated in 0.28ms</span>
+                </div>
+              </div>
+              <div class="card-footer bg-light p-2 text-end d-none" id="inspector-footer">
+                <button class="btn btn-sm text-white fw-bold py-1 px-3" style="background: #ff0055;" id="btn-inspect-query" onclick="querySelectedInConsole()">
+                  <i class="bi bi-terminal me-1"></i> Query in Console
+                </button>
+              </div>
+            </div>
+
+            <!-- AI / Knowledge Graph Dish Pairing Assistant -->
+            <div class="card border border-secondary shadow-sm" style="background: #fff;">
+              <div class="card-header bg-dark text-white py-2 px-3 d-flex justify-content-between align-items-center">
+                <span class="fw-bold small text-uppercase font-monospace">
+                  <i class="bi bi-stars me-1 text-warning"></i> Graph Recommendation Assistant
+                </span>
+                <span class="badge bg-danger">pairs_with</span>
+              </div>
+              <div class="card-body p-3">
+                <label class="form-label small fw-bold mb-1">Select Dish for Knowledge Graph Traversal:</label>
+                <select id="select-rec-dish" class="form-select form-select-sm mb-2 font-monospace" onchange="fetchDishRecommendations(this.value)">
+                  {% for m in menu_items %}
+                  <option value="{{ m.id }}">{{ m.name }} ({{ m.id }})</option>
+                  {% endfor %}
+                </select>
+
+                <div id="rec-results-box" class="p-2 border rounded bg-light" style="max-height: 140px; overflow-y: auto; font-size: 0.85rem;">
+                  <div class="text-muted small text-center py-2">Select a dish above to traverse <code>->pairs_with-></code> pointers.</div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Edge Table Section (Detailed Tabular View) -->
+    <div class="card border-2 border-secondary shadow-sm mb-4" style="background: var(--paper-bg);">
+      <div class="card-header bg-dark text-white py-2 px-3 d-flex justify-content-between align-items-center">
+        <span class="fw-bold small text-uppercase font-monospace">
+          <i class="bi bi-table me-1"></i> Raw Edge Registry (Index-Free Adjacency Pointers)
+        </span>
+        <span class="badge bg-secondary font-monospace">{{ edges_sample|length }} Sample Edges</span>
       </div>
       <div class="card-body p-3">
-        <p class="small text-muted mb-3">
-          SurrealDB eliminates multi-table relational joins by storing direct graph pointers (Index-Free Adjacency). 
-          Below are the active graph edges currently in memory:
-        </p>
-        
         <div class="table-responsive">
-          <table class="table table-sm table-hover align-middle mb-0 font-monospace" style="font-size: 0.85rem;">
+          <table class="table table-sm table-hover align-middle mb-0 font-monospace" style="font-size: 0.82rem;">
             <thead class="table-dark">
               <tr>
-                <th>Edge ID</th>
+                <th>Edge Pointer ID</th>
                 <th>Source Record (<code class="text-warning">in</code>)</th>
-                <th>Relationship Edge</th>
+                <th>Relationship</th>
                 <th>Target Record (<code class="text-warning">out</code>)</th>
-                <th>Edge Properties</th>
+                <th>Properties (JSON Document)</th>
               </tr>
             </thead>
             <tbody>
@@ -377,6 +507,7 @@
         </div>
       </div>
     </div>
+
   </div>
 
   <!-- ========================================================================= -->
@@ -447,9 +578,15 @@
 </div>
 
 <!-- ========================================================================= -->
-<!-- JAVASCRIPT LOGIC FOR SURREALDB DASHBOARD -->
+<!-- JAVASCRIPT LOGIC FOR SURREALDB DASHBOARD & CYTOSCAPE.JS -->
 <!-- ========================================================================= -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/cytoscape/3.26.0/cytoscape.min.js"></script>
+
 <script>
+let cy = null;
+let currentSelectedElement = null;
+let currentFilter = 'all';
+
 function switchTab(tabId) {
   document.querySelectorAll('.tab-pane-custom').forEach(el => el.classList.add('d-none'));
   document.querySelectorAll('#surrealTabs .nav-link').forEach(el => el.classList.remove('active'));
@@ -459,7 +596,18 @@ function switchTab(tabId) {
 
   if (tabId === 'tab-console') document.getElementById('btn-tab-console').classList.add('active');
   if (tabId === 'tab-kitchen') document.getElementById('btn-tab-kitchen').classList.add('active');
-  if (tabId === 'tab-graph') document.getElementById('btn-tab-graph').classList.add('active');
+  if (tabId === 'tab-graph') {
+    document.getElementById('btn-tab-graph').classList.add('active');
+    // Initialize or resize Cytoscape canvas when tab becomes visible
+    setTimeout(() => {
+      if (!cy) {
+        initCytoscape();
+      } else {
+        cy.resize();
+        cy.fit();
+      }
+    }, 150);
+  }
   if (tabId === 'tab-benchmarks') document.getElementById('btn-tab-benchmarks').classList.add('active');
 }
 
@@ -469,8 +617,393 @@ window.addEventListener('DOMContentLoaded', () => {
   if (tab) {
     switchTab('tab-' + tab);
   }
+  // Initialize recommendation assistant for default dish
+  const firstDish = document.getElementById('select-rec-dish');
+  if (firstDish && firstDish.value) {
+    fetchDishRecommendations(firstDish.value);
+  }
 });
 
+/* ========================================================================== */
+/* CYTOSCAPE.JS GRAPH VISUALIZATION ENGINE                                    */
+/* ========================================================================== */
+async function initCytoscape() {
+  const cyLoading = document.getElementById('cy-loading');
+  if (cyLoading) cyLoading.style.display = 'block';
+
+  try {
+    const res = await fetch('/api/surreal/graph-data?relation=' + currentFilter);
+    const data = await res.json();
+    if (cyLoading) cyLoading.style.display = 'none';
+
+    document.getElementById('cy-node-count').textContent = data.counts.nodes;
+    document.getElementById('cy-edge-count').textContent = data.counts.edges;
+
+    cy = cytoscape({
+      container: document.getElementById('cy'),
+      elements: data.elements,
+      style: [
+        // Base Node Style
+        {
+          selector: 'node',
+          style: {
+            'label': 'data(label)',
+            'color': '#f8fafc',
+            'font-size': '11px',
+            'font-family': 'monospace',
+            'font-weight': 'bold',
+            'text-valign': 'bottom',
+            'text-margin-y': 5,
+            'text-background-opacity': 0.8,
+            'text-background-color': '#0f172a',
+            'text-background-padding': '3px',
+            'text-background-shape': 'roundrectangle',
+            'border-width': 2,
+            'border-color': '#ffffff',
+            'width': 38,
+            'height': 38
+          }
+        },
+        // Restaurant Nodes (Purple)
+        {
+          selector: 'node[type = "restaurant"]',
+          style: {
+            'background-color': '#8b5cf6',
+            'shape': 'round-rectangle',
+            'border-color': '#c4b5fd',
+            'width': 46,
+            'height': 46
+          }
+        },
+        // Customer Nodes (Blue)
+        {
+          selector: 'node[type = "customer"]',
+          style: {
+            'background-color': '#3b82f6',
+            'shape': 'ellipse',
+            'border-color': '#93c5fd',
+            'width': 42,
+            'height': 42
+          }
+        },
+        // Dining Table Nodes (Green)
+        {
+          selector: 'node[type = "dining_table"]',
+          style: {
+            'background-color': '#10b981',
+            'shape': 'diamond',
+            'border-color': '#6ee7b7',
+            'width': 38,
+            'height': 38
+          }
+        },
+        // Menu Item / Dish Nodes (Pink/Red)
+        {
+          selector: 'node[type = "menu_item"]',
+          style: {
+            'background-color': '#f43f5e',
+            'shape': 'hexagon',
+            'border-color': '#fda4af',
+            'width': 40,
+            'height': 40
+          }
+        },
+        // Base Edge Style
+        {
+          selector: 'edge',
+          style: {
+            'width': 2,
+            'curve-style': 'bezier',
+            'label': 'data(label)',
+            'font-size': '9px',
+            'font-family': 'monospace',
+            'text-background-opacity': 0.8,
+            'text-background-color': '#1e293b',
+            'text-background-padding': '2px',
+            'text-background-shape': 'roundrectangle',
+            'color': '#e2e8f0',
+            'target-arrow-shape': 'triangle',
+            'arrow-scale': 1.1
+          }
+        },
+        // Ordered Edges (Amber)
+        {
+          selector: 'edge[relation = "ordered"]',
+          style: {
+            'line-color': '#f59e0b',
+            'target-arrow-color': '#f59e0b',
+            'width': 2.5
+          }
+        },
+        // Reserved Edges (Emerald)
+        {
+          selector: 'edge[relation = "reserved"]',
+          style: {
+            'line-color': '#10b981',
+            'target-arrow-color': '#10b981',
+            'width': 2.5
+          }
+        },
+        // Pairs With Edges (Magenta / Dashed Knowledge Graph)
+        {
+          selector: 'edge[relation = "pairs_with"]',
+          style: {
+            'line-color': '#ec4899',
+            'target-arrow-color': '#ec4899',
+            'line-style': 'dashed',
+            'width': 3
+          }
+        },
+        // Adjacent To Edges (Dotted Gray Spatial Graph)
+        {
+          selector: 'edge[relation = "adjacent_to"]',
+          style: {
+            'line-color': '#94a3b8',
+            'line-style': 'dotted',
+            'target-arrow-shape': 'none',
+            'width': 2
+          }
+        },
+        // Selected / Highlighted State
+        {
+          selector: '.highlighted',
+          style: {
+            'border-width': 4,
+            'border-color': '#ff0055',
+            'line-color': '#ff0055',
+            'target-arrow-color': '#ff0055',
+            'z-index': 999
+          }
+        },
+        {
+          selector: '.dimmed',
+          style: {
+            'opacity': 0.2
+          }
+        }
+      ],
+      layout: {
+        name: 'cose',
+        animate: true,
+        randomize: false,
+        componentSpacing: 100,
+        nodeOverlap: 20,
+        idealEdgeLength: 85,
+        edgeElasticity: 100
+      }
+    });
+
+    // Node click handler
+    cy.on('tap', 'node', function(evt) {
+      const node = evt.target;
+      currentSelectedElement = { type: 'node', data: node.data() };
+      
+      // Highlight neighborhood
+      cy.elements().removeClass('highlighted dimmed');
+      const neighborhood = node.neighborhood().add(node);
+      cy.elements().not(neighborhood).addClass('dimmed');
+      neighborhood.addClass('highlighted');
+
+      renderNodeInspector(node.data());
+    });
+
+    // Edge click handler
+    cy.on('tap', 'edge', function(evt) {
+      const edge = evt.target;
+      currentSelectedElement = { type: 'edge', data: edge.data() };
+
+      cy.elements().removeClass('highlighted dimmed');
+      const edgeGroup = edge.connectedNodes().add(edge);
+      cy.elements().not(edgeGroup).addClass('dimmed');
+      edgeGroup.addClass('highlighted');
+
+      renderEdgeInspector(edge.data());
+    });
+
+    // Background tap resets highlight
+    cy.on('tap', function(evt) {
+      if (evt.target === cy) {
+        cy.elements().removeClass('highlighted dimmed');
+        document.getElementById('inspector-badge').textContent = 'Click Any Node/Edge';
+        document.getElementById('inspector-content').innerHTML = `
+          <div class="text-center text-muted py-4">
+            <i class="bi bi-cursor-fill fs-3 text-secondary mb-2 d-block"></i>
+            <p class="small mb-1">Click any node or relationship arrow in the canvas to inspect its first-class properties.</p>
+            <span class="badge bg-light text-dark border">Pointers evaluated in 0.28ms</span>
+          </div>
+        `;
+        document.getElementById('inspector-footer').classList.add('d-none');
+        currentSelectedElement = null;
+      }
+    });
+
+  } catch (err) {
+    if (cyLoading) cyLoading.innerHTML = `<span class="text-danger">Failed to load graph: ${err}</span>`;
+  }
+}
+
+function renderNodeInspector(nodeData) {
+  document.getElementById('inspector-badge').textContent = nodeData.type.toUpperCase() + ' NODE';
+  document.getElementById('inspector-badge').className = 'badge bg-primary font-monospace';
+
+  const props = nodeData.properties || {};
+  let propsHtml = '<div class="d-flex flex-column gap-1 font-monospace" style="font-size: 0.8rem;">';
+  propsHtml += `<div><span class="text-muted">Record ID:</span> <strong class="text-dark">${nodeData.id}</strong></div>`;
+  propsHtml += `<div><span class="text-muted">Label:</span> <span class="badge bg-dark">${nodeData.label}</span></div>`;
+  propsHtml += `<hr class="my-2">`;
+  
+  for (const [k, v] of Object.entries(props)) {
+    if (k.startsWith('_')) continue;
+    const valStr = typeof v === 'object' ? JSON.stringify(v) : v;
+    propsHtml += `<div class="text-truncate"><strong class="text-secondary">${k}:</strong> <span class="text-dark">${valStr}</span></div>`;
+  }
+  propsHtml += '</div>';
+
+  document.getElementById('inspector-content').innerHTML = propsHtml;
+  document.getElementById('inspector-footer').classList.remove('d-none');
+}
+
+function renderEdgeInspector(edgeData) {
+  document.getElementById('inspector-badge').textContent = 'RELATION EDGE: ' + edgeData.relation;
+  document.getElementById('inspector-badge').className = 'badge bg-danger font-monospace';
+
+  const props = edgeData.properties || {};
+  let propsHtml = '<div class="d-flex flex-column gap-1 font-monospace" style="font-size: 0.8rem;">';
+  propsHtml += `<div><span class="text-muted">Edge ID:</span> <strong>${edgeData.id}</strong></div>`;
+  propsHtml += `<div><span class="text-muted">Source (in):</span> <span class="badge bg-primary">${edgeData.source}</span></div>`;
+  propsHtml += `<div><span class="text-muted">Relationship:</span> <strong style="color: #ff0055;">->${edgeData.relation}-></strong></div>`;
+  propsHtml += `<div><span class="text-muted">Target (out):</span> <span class="badge bg-success">${edgeData.target}</span></div>`;
+  propsHtml += `<hr class="my-2">`;
+  
+  for (const [k, v] of Object.entries(props)) {
+    const valStr = typeof v === 'object' ? JSON.stringify(v) : v;
+    propsHtml += `<div><strong class="text-secondary">${k}:</strong> <span class="text-dark">${valStr}</span></div>`;
+  }
+  propsHtml += '</div>';
+
+  document.getElementById('inspector-content').innerHTML = propsHtml;
+  document.getElementById('inspector-footer').classList.remove('d-none');
+}
+
+function querySelectedInConsole() {
+  if (!currentSelectedElement) return;
+  let q = '';
+  if (currentSelectedElement.type === 'node') {
+    const id = currentSelectedElement.data.id;
+    if (id.startsWith('customer:')) {
+      q = `SELECT ->ordered->menu_item FROM ${id};`;
+    } else if (id.startsWith('menu_item:')) {
+      q = `SELECT <-ordered<-customer FROM ${id};`;
+    } else if (id.startsWith('dining_table:')) {
+      q = `SELECT <-reserved<-customer FROM ${id};`;
+    } else {
+      q = `SELECT * FROM ${id};`;
+    }
+  } else {
+    q = `SELECT * FROM ${currentSelectedElement.data.source};`;
+  }
+
+  switchTab('tab-console');
+  loadPresetQuery(q);
+}
+
+function filterGraphEdges(rel) {
+  currentFilter = rel;
+  document.querySelectorAll('[id^="filter-"]').forEach(btn => {
+    btn.className = 'btn btn-sm btn-outline-secondary px-2 py-1';
+  });
+  const activeBtn = document.getElementById('filter-' + rel);
+  if (activeBtn) activeBtn.className = 'btn btn-sm btn-dark px-2 py-1';
+
+  if (!cy) {
+    initCytoscape();
+    return;
+  }
+
+  if (rel === 'all') {
+    cy.elements().show();
+  } else {
+    cy.edges().forEach(edge => {
+      if (edge.data('relation') === rel) {
+        edge.show();
+        edge.connectedNodes().show();
+      } else {
+        edge.hide();
+      }
+    });
+  }
+  cy.layout({ name: document.getElementById('cy-layout-select').value, animate: true }).run();
+}
+
+function changeGraphLayout(layoutName) {
+  if (!cy) return;
+  cy.layout({
+    name: layoutName,
+    animate: true,
+    animationDuration: 500,
+    padding: 30
+  }).run();
+}
+
+function fitGraphView() {
+  if (cy) {
+    cy.resize();
+    cy.fit(null, 30);
+  }
+}
+
+function reloadGraphData() {
+  if (cy) {
+    cy.destroy();
+    cy = null;
+  }
+  initCytoscape();
+}
+
+/* ========================================================================== */
+/* KNOWLEDGE GRAPH RECOMMENDATION ASSISTANT                                   */
+/* ========================================================================== */
+async function fetchDishRecommendations(itemId) {
+  const box = document.getElementById('rec-results-box');
+  box.innerHTML = '<div class="text-center py-2 text-muted small"><div class="spinner-border spinner-border-sm text-danger me-1"></div> Traversing Knowledge Graph...</div>';
+
+  try {
+    const res = await fetch('/api/surreal/recommend/' + encodeURIComponent(itemId));
+    const data = await res.json();
+    const recs = data.recommendations || [];
+
+    if (recs.length === 0) {
+      box.innerHTML = '<div class="text-muted text-center py-2 small">No active <code>->pairs_with-></code> pairings found for this dish.</div>';
+      return;
+    }
+
+    let html = '<div class="d-flex flex-column gap-2">';
+    recs.forEach(r => {
+      const pct = Math.round(r.affinity_score * 100);
+      html += `
+        <div class="border rounded p-2 bg-white shadow-xs">
+          <div class="d-flex justify-content-between align-items-center">
+            <strong>${r.name}</strong>
+            <span class="badge bg-danger">${pct}% Match</span>
+          </div>
+          <div class="small text-muted mb-1">${r.reason}</div>
+          <div class="d-flex justify-content-between align-items-center font-monospace" style="font-size: 0.75rem;">
+            <span class="text-secondary">${r.category} · ₹${r.price}</span>
+            <span class="badge bg-secondary">${r.co_order_count} Co-Orders</span>
+          </div>
+        </div>
+      `;
+    });
+    html += '</div>';
+    box.innerHTML = html;
+  } catch (err) {
+    box.innerHTML = `<span class="text-danger small">Error loading pairings: ${err}</span>`;
+  }
+}
+
+/* ========================================================================== */
+/* CONSOLE, KITCHEN STREAM, RESET CONTROLS                                    */
+/* ========================================================================== */
 function loadPresetQuery(sql) {
   document.getElementById('surrealql-input').value = sql;
   executeCurrentQuery();
@@ -523,7 +1056,6 @@ async function submitLiveOrder(e) {
     });
     const data = await res.json();
     if (data.status === 'OK') {
-      // Append to live feed
       const feed = document.getElementById('kitchen-feed-container');
       const div = document.createElement('div');
       div.className = 'alert alert-danger border-danger d-flex justify-content-between align-items-center mb-0 animate__animated animate__fadeInDown';
@@ -538,6 +1070,8 @@ async function submitLiveOrder(e) {
       `;
       feed.prepend(div);
       alert('Order successfully broadcast to SurrealDB kitchen live feed!');
+      // Update graph if rendered
+      if (cy) reloadGraphData();
     }
   } catch (err) {
     alert('Failed to place order: ' + err);

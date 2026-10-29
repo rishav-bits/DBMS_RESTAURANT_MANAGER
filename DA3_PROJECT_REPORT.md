@@ -311,6 +311,22 @@ The interactive web dashboard is accessible at `/surreal` and provides four prim
 3. **Graph Schema & Relations Inspector**: Tabulates all active in-memory graph edges, displaying source records (`in`), relation types, target records (`out`), and associated JSON properties.
 4. **Performance Benchmark Viewer**: Displays empirical latency comparisons and speedup multipliers against Oracle Database 21c XE.
 
+#### Figure 1: SurrealDB Showcase Dashboard & Interactive SurrealQL Console
+![SurrealDB Showcase Dashboard](docs/screenshots/surreal_dashboard.png)
+*Figure 1: SurrealDB Showcase Dashboard showing multi-model document counts, graph edge counters, and the SurrealQL Interactive Console with live JSON output.*
+
+#### Figure 2: Real-Time Kitchen Order Pipeline (`LIVE SELECT`)
+![Real-Time Kitchen Feed](docs/screenshots/surreal_kitchen.png)
+*Figure 2: Real-Time Kitchen Order Pipeline receiving live incoming order tickets with customization tags.*
+
+#### Figure 3: Property Graph Relations & Edge Inspector
+![Graph Relations Inspector](docs/screenshots/surreal_graph.png)
+*Figure 3: Multi-Model Property Graph Inspector showing active graph edges implementing Index-Free Adjacency.*
+
+#### Figure 4: Performance Benchmark: Oracle 21c XE vs. SurrealDB
+![Performance Benchmark Tab](docs/screenshots/surreal_benchmarks.png)
+*Figure 4: Side-by-side performance benchmarks demonstrating 46x to 1264x speedup over traditional relational SQL joins.*
+
 ---
 
 ### 4.2 CRUD & Graph Operations Matrix

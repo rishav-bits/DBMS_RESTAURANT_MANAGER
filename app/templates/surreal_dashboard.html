@@ -463,6 +463,14 @@ function switchTab(tabId) {
   if (tabId === 'tab-benchmarks') document.getElementById('btn-tab-benchmarks').classList.add('active');
 }
 
+window.addEventListener('DOMContentLoaded', () => {
+  const urlParams = new URLSearchParams(window.location.search);
+  const tab = urlParams.get('tab');
+  if (tab) {
+    switchTab('tab-' + tab);
+  }
+});
+
 function loadPresetQuery(sql) {
   document.getElementById('surrealql-input').value = sql;
   executeCurrentQuery();
